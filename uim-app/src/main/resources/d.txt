@@ -1,0 +1,15 @@
+alarmType	    : DBB4
+alarmContent	: DBB26
+eqptNo	        : DBB158
+appId	        : DBB224
+status	        : DBB258
+workModel	    : DBB280
+type	        : DBB302
+phone	        : DBB324
+no	            : DBB346
+craneNo	        : DBB378
+loadWeight	    : DBB410
+exchangeWeight	: DBB442
+beginTime	    : DBB474
+endTime	        : DBB506
+vehicleNo	    : DBB538

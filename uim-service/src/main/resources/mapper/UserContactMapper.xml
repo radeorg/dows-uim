@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.dows.uim.mapper.UserContactMapper">
+    <resultMap id="BaseResultMap" type="org.dows.uim.entity.UserContactEntity">
+        <id column="user_contact_id" jdbcType="BIGINT" property="userContactId"/>
+        <result column="user_instance_id" jdbcType="BIGINT" property="userInstanceId"/>
+        <result column="contact" jdbcType="VARCHAR" property="contact"/>
+        <result column="contact_num" jdbcType="VARCHAR" property="contactNum"/>
+        <result column="contact_typ" jdbcType="INTEGER" property="contactTyp"/>
+        <result column="sorted" jdbcType="INTEGER" property="sorted"/>
+        <result column="self" jdbcType="INTEGER" property="self"/>
+        <result column="state" jdbcType="INTEGER" property="state"/>
+        <result column="ver" jdbcType="INTEGER" property="ver"/>
+        <result column="operator_id" jdbcType="BIGINT" property="operatorId"/>
+        <result column="deleted" jdbcType="TINYINT" property="deleted"/>
+        <result column="ts" jdbcType="TIMESTAMP" property="ts"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        `user_contact_id`, `user_instance_id`, `contact`, `contact_num`, `contact_typ`, `sorted`, `self`, `state`,
+        `ver`, `operator_id`, `deleted`, `ts`
+    </sql>
+
+</mapper>

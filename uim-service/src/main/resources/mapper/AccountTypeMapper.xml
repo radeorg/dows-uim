@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.dows.uim.mapper.AccountTypeMapper">
+    <resultMap id="BaseResultMap" type="org.dows.uim.entity.AccountTypeEntity">
+        <id column="account_type_id" jdbcType="BIGINT" property="accountTypeId"/>
+        <result column="operator_id" jdbcType="BIGINT" property="operatorId"/>
+        <result column="account_instance_id" jdbcType="BIGINT" property="accountInstanceId"/>
+        <result column="user_instance_id" jdbcType="BIGINT" property="userInstanceId"/>
+        <result column="reference_id" jdbcType="BIGINT" property="referenceId"/>
+        <result column="type_name" jdbcType="VARCHAR" property="typeName"/>
+        <result column="type_value" jdbcType="INTEGER" property="typeValue"/>
+        <result column="ver" jdbcType="INTEGER" property="ver"/>
+        <result column="app_id" jdbcType="VARCHAR" property="appId"/>
+        <result column="deleted" jdbcType="TINYINT" property="deleted"/>
+        <result column="ts" jdbcType="TIMESTAMP" property="ts"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        `account_type_id`, `operator_id`, `account_instance_id`, `user_instance_id`, `reference_id`, `type_name`,
+        `type_value`, `ver`, `app_id`, `deleted`, `ts`
+    </sql>
+
+</mapper>

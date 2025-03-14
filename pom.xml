@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>dows-parent</artifactId>
+        <groupId>org.dows.framework</groupId>
+        <version>20240120-SNAPSHOT</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>dows-uim</artifactId>
+    <groupId>org.dows.cloud</groupId>
+    <version>${revision}</version>
+    <packaging>pom</packaging>
+
+    <properties>
+        <revision>1.0.0-SNAPSHOT</revision>
+        <uim.version>${revision}</uim.version>
+        <mybatis-flex.ext.version>1.10.8.110</mybatis-flex.ext.version>
+        <jdk.version>23</jdk.version>
+    </properties>
+
+
+    <modules>
+        <module>uim-api</module>
+        <module>uim-app</module>
+        <module>uim-biz</module>
+        <module>uim-boot</module>
+        <module>uim-cache</module>
+        <module>uim-config</module>
+        <module>uim-handler</module>
+        <module>uim-service</module>
+        <module>uim-rest</module>
+        <module>uim-pojo</module>
+        <module>uim-service</module>
+        <module>uim-handler</module>
+        <module>uim-feign</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <artifactId>uim-api</artifactId>
+                <groupId>org.dows.cloud</groupId>
+                <version>${uim.version}</version>
+            </dependency>
+
+            <dependency>
+                <artifactId>uim-app</artifactId>
+                <groupId>org.dows.cloud</groupId>
+                <version>${uim.version}</version>
+            </dependency>
+
+            <dependency>
+                <artifactId>uim-biz</artifactId>
+                <groupId>org.dows.cloud</groupId>
+                <version>${uim.version}</version>
+            </dependency>
+
+            <dependency>
+                <artifactId>uim-boot</artifactId>
+                <groupId>org.dows.cloud</groupId>
+                <version>${uim.version}</version>
+            </dependency>
+
+            <dependency>
+                <artifactId>uim-cache</artifactId>
+                <groupId>org.dows.cloud</groupId>
+                <version>${uim.version}</version>
+            </dependency>
+
+            <dependency>
+                <artifactId>uim-config</artifactId>
+                <groupId>org.dows.cloud</groupId>
+                <version>${uim.version}</version>
+            </dependency>
+
+            <dependency>
+                <artifactId>uim-feign</artifactId>
+                <groupId>org.dows.cloud</groupId>
+                <version>${uim.version}</version>
+            </dependency>
+
+            <dependency>
+                <artifactId>uim-handler</artifactId>
+                <groupId>org.dows.cloud</groupId>
+                <version>${uim.version}</version>
+            </dependency>
+
+            <dependency>
+                <artifactId>uim-pojo</artifactId>
+                <groupId>org.dows.cloud</groupId>
+                <version>${uim.version}</version>
+            </dependency>
+
+           <!-- <dependency>
+                <artifactId>uim-entity</artifactId>
+                <groupId>org.dows.cloud</groupId>
+                <version>${uim.version}</version>
+            </dependency>
+            <dependency>
+                <artifactId>uim-mapper</artifactId>
+                <groupId>org.dows.cloud</groupId>
+                <version>${uim.version}</version>
+            </dependency>-->
+            <dependency>
+                <artifactId>uim-service</artifactId>
+                <groupId>org.dows.cloud</groupId>
+                <version>${uim.version}</version>
+            </dependency>
+
+
+            <dependency>
+                <artifactId>uim-rest</artifactId>
+                <groupId>org.dows.cloud</groupId>
+                <version>${uim.version}</version>
+            </dependency>
+
+
+
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjweaver</artifactId>
+                <version>${aspectj.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.tangzc</groupId>
+                <artifactId>mybatis-flex-ext-spring-boot3-starter</artifactId>
+                <version>${mybatis-flex.ext.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+</project>

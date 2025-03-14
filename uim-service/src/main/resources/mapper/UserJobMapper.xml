@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.dows.uim.mapper.UserJobMapper">
+    <resultMap id="BaseResultMap" type="org.dows.uim.entity.UserJobEntity">
+        <id column="user_job_id" jdbcType="BIGINT" property="userJobId"/>
+        <result column="user_instance_id" jdbcType="BIGINT" property="userInstanceId"/>
+        <result column="profession" jdbcType="VARCHAR" property="profession"/>
+        <result column="org_name" jdbcType="VARCHAR" property="orgName"/>
+        <result column="unit" jdbcType="VARCHAR" property="unit"/>
+        <result column="start_time" jdbcType="TIMESTAMP" property="startTime"/>
+        <result column="end_time" jdbcType="TIMESTAMP" property="endTime"/>
+        <result column="duration" jdbcType="INTEGER" property="duration"/>
+        <result column="state" jdbcType="INTEGER" property="state"/>
+        <result column="ver" jdbcType="INTEGER" property="ver"/>
+        <result column="app_id" jdbcType="VARCHAR" property="appId"/>
+        <result column="deleted" jdbcType="TINYINT" property="deleted"/>
+        <result column="operator_id" jdbcType="BIGINT" property="operatorId"/>
+        <result column="ts" jdbcType="TIMESTAMP" property="ts"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        `user_job_id`, `user_instance_id`, `profession`, `org_name`, `unit`, `start_time`, `end_time`, `duration`,
+        `state`, `ver`, `app_id`, `deleted`, `operator_id`, `ts`
+    </sql>
+
+</mapper>

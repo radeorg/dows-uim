@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.dows.uim.mapper.AccountInstanceMapper">
+    <resultMap id="BaseResultMap" type="org.dows.uim.entity.AccountInstanceEntity">
+        <id column="account_instance_id" jdbcType="BIGINT" property="accountInstanceId"/>
+        <result column="identifier" jdbcType="VARCHAR" property="identifier"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="zone_no" jdbcType="VARCHAR" property="zoneNo"/>
+        <result column="cellphone" jdbcType="VARCHAR" property="cellphone"/>
+        <result column="avator" jdbcType="VARCHAR" property="avator"/>
+        <result column="referrals_no" jdbcType="VARCHAR" property="referralsNo"/>
+        <result column="source" jdbcType="VARCHAR" property="source"/>
+        <result column="app_id" jdbcType="VARCHAR" property="appId"/>
+        <result column="operator_id" jdbcType="BIGINT" property="operatorId"/>
+        <result column="ver" jdbcType="INTEGER" property="ver"/>
+        <result column="deleted" jdbcType="TINYINT" property="deleted"/>
+        <result column="ts" jdbcType="TIMESTAMP" property="ts"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        `account_instance_id`, `identifier`, `password`, `zone_no`, `cellphone`, `avator`, `referrals_no`, `source`,
+        `app_id`, `operator_id`, `ver`, `deleted`, `ts`
+    </sql>
+
+</mapper>

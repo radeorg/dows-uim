@@ -1,0 +1,21 @@
+server:
+  port: 8081
+  undertow:
+    buffer-size: 1024
+    direct-buffers: true
+    threads:
+      io: 4
+      worker: 32
+  #  servlet:
+  #    context-path: /${spring.application.name}
+spring:
+  application:
+    name: dows-vac
+  profiles:
+    include: mysql,apidoc,task,cdc,mybatis,register,vac,caffeine,feign
+    active: dev
+
+
+logging:
+  level:
+    root: info

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.dows.uim.mapper.OrgRuleMapper">
+    <resultMap id="BaseResultMap" type="org.dows.uim.entity.OrgRuleEntity">
+        <id column="org_rule_id" jdbcType="BIGINT" property="orgRuleId"/>
+        <result column="org_tree_id" jdbcType="BIGINT" property="orgTreeId"/>
+        <result column="rule_name" jdbcType="VARCHAR" property="ruleName"/>
+        <result column="rule_description" jdbcType="VARCHAR" property="ruleDescription"/>
+        <result column="operator_id" jdbcType="BIGINT" property="operatorId"/>
+        <result column="enabled" jdbcType="TINYINT" property="enabled"/>
+        <result column="app_id" jdbcType="VARCHAR" property="appId"/>
+        <result column="ts" jdbcType="TIMESTAMP" property="ts"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        `org_rule_id`, `org_tree_id`, `rule_name`, `rule_description`, `operator_id`, `enabled`, `app_id`, `ts`
+    </sql>
+
+</mapper>

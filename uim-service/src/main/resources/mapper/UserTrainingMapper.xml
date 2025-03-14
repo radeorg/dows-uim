@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.dows.uim.mapper.UserTrainingMapper">
+    <resultMap id="BaseResultMap" type="org.dows.uim.entity.UserTrainingEntity">
+        <id column="user_training_id" jdbcType="BIGINT" property="userTrainingId"/>
+        <result column="operator_id" jdbcType="BIGINT" property="operatorId"/>
+        <result column="user_instance_id" jdbcType="BIGINT" property="userInstanceId"/>
+        <result column="university_name" jdbcType="VARCHAR" property="universityName"/>
+        <result column="training_description" jdbcType="VARCHAR" property="trainingDescription"/>
+        <result column="app_id" jdbcType="VARCHAR" property="appId"/>
+        <result column="start_time" jdbcType="TIMESTAMP" property="startTime"/>
+        <result column="end_time" jdbcType="TIMESTAMP" property="endTime"/>
+        <result column="ts" jdbcType="TIMESTAMP" property="ts"/>
+        <result column="deleted" jdbcType="TINYINT" property="deleted"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        `user_training_id`, `operator_id`, `user_instance_id`, `university_name`, `training_description`, `app_id`,
+        `start_time`, `end_time`, `ts`, `deleted`
+    </sql>
+
+</mapper>
