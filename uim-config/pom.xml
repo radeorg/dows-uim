@@ -9,4 +9,11 @@
 
     <artifactId>uim-config</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.dows.cloud</groupId>
+            <artifactId>uim-feign</artifactId>
+        </dependency>
+    </dependencies>
+
 </project>

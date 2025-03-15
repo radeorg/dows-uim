@@ -11,5 +11,14 @@
 
     <dependencies>
 
+        <dependency>
+            <groupId>org.dows.cloud</groupId>
+            <artifactId>uim-rest</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.dows.cloud</groupId>
+            <artifactId>uim-config</artifactId>
+        </dependency>
     </dependencies>
 </project>

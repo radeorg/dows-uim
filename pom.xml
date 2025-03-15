@@ -32,8 +32,6 @@
         <module>uim-service</module>
         <module>uim-rest</module>
         <module>uim-pojo</module>
-        <module>uim-service</module>
-        <module>uim-handler</module>
         <module>uim-feign</module>
     </modules>
 
