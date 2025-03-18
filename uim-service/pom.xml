@@ -11,6 +11,12 @@
 
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.dows.cloud</groupId>
+            <artifactId>uim-api</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>com.tangzc</groupId>
             <artifactId>mybatis-flex-ext-spring-boot3-starter</artifactId>

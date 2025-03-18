@@ -13,9 +13,26 @@
         <result column="deleted" jdbcType="TINYINT" property="deleted"/>
         <result column="ts" jdbcType="TIMESTAMP" property="ts"/>
     </resultMap>
+
+    <resultMap id="BaseResultMap1" type="org.dows.uim.api.response.ResolveResumeResponse">
+        <result column="identifier" jdbcType="VARCHAR" property="identifier"/>
+        <result column="operator_id" jdbcType="BIGINT" property="operatorId"/>
+        <result column="type" jdbcType="INTEGER" property="type"/>
+        <result column="ver" jdbcType="INTEGER" property="ver"/>
+        <result column="app_id" jdbcType="VARCHAR" property="appId"/>
+        <result column="deleted" jdbcType="TINYINT" property="deleted"/>
+        <result column="ts" jdbcType="TIMESTAMP" property="ts"/>
+    </resultMap>
+
     <sql id="Base_Column_List">
         `account_identifier_id`, `identifier`, `operator_id`, `type`, `ver`, `app_id`, `deleted`, `ts`
     </sql>
-    <update id="dd"></update>
+
+
+    <select id="dd" resultMap="BaseResultMap1">
+
+
+
+    </select>
 
 </mapper>

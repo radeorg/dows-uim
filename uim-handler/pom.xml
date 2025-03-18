@@ -11,5 +11,10 @@
 
     <dependencies>
 
+        <!--<dependency>
+            <groupId>org.dows.cloud</groupId>
+            <artifactId>rbac-api</artifactId>
+        </dependency>-->
+
     </dependencies>
 </project>
