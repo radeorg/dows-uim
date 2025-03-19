@@ -1,11 +1,11 @@
 package org.dows.uim.service.impl;
 
 
-import org.springframework.stereotype.Service;
-import org.dows.uim.service.OrgNodeService;
+import org.dows.rade.crud.BaseServiceImpl;
 import org.dows.uim.entity.OrgNodeEntity;
 import org.dows.uim.mapper.OrgNodeMapper;
-import com.mybatisflex.spring.service.impl.ServiceImpl;
+import org.dows.uim.service.OrgNodeService;
+import org.springframework.stereotype.Service;
 
 /**
  * 组织节点表 服务层实现。
@@ -14,6 +14,6 @@ import com.mybatisflex.spring.service.impl.ServiceImpl;
  * @since 1.0
  */
 @Service
-public class OrgNodeServiceImpl extends ServiceImpl<OrgNodeMapper, OrgNodeEntity> implements OrgNodeService {
+public class OrgNodeServiceImpl extends BaseServiceImpl<OrgNodeMapper, OrgNodeEntity> implements OrgNodeService {
 
 }

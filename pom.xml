@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <!--<parent>
         <artifactId>dows-parent</artifactId>
@@ -20,7 +20,7 @@
 
     <properties>
         <revision>1.0.0-SNAPSHOT</revision>
-        <uim.version>${revision}</uim.version>
+        <dows-hrm.version>1.0.0-SNAPSHOT</dows-hrm.version>
         <mybatis-flex.ext.version>1.10.8.110</mybatis-flex.ext.version>
         <jdk.version>23</jdk.version>
     </properties>
@@ -45,80 +45,86 @@
             <dependency>
                 <artifactId>uim-api</artifactId>
                 <groupId>org.dows.cloud</groupId>
-                <version>${uim.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <artifactId>uim-app</artifactId>
                 <groupId>org.dows.cloud</groupId>
-                <version>${uim.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <artifactId>uim-biz</artifactId>
                 <groupId>org.dows.cloud</groupId>
-                <version>${uim.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <artifactId>uim-boot</artifactId>
                 <groupId>org.dows.cloud</groupId>
-                <version>${uim.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <artifactId>uim-cache</artifactId>
                 <groupId>org.dows.cloud</groupId>
-                <version>${uim.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <artifactId>uim-config</artifactId>
                 <groupId>org.dows.cloud</groupId>
-                <version>${uim.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <artifactId>uim-feign</artifactId>
                 <groupId>org.dows.cloud</groupId>
-                <version>${uim.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <artifactId>uim-handler</artifactId>
                 <groupId>org.dows.cloud</groupId>
-                <version>${uim.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <artifactId>uim-pojo</artifactId>
                 <groupId>org.dows.cloud</groupId>
-                <version>${uim.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
-           <!-- <dependency>
-                <artifactId>uim-entity</artifactId>
-                <groupId>org.dows.cloud</groupId>
-                <version>${uim.version}</version>
-            </dependency>
-            <dependency>
-                <artifactId>uim-mapper</artifactId>
-                <groupId>org.dows.cloud</groupId>
-                <version>${uim.version}</version>
-            </dependency>-->
+            <!-- <dependency>
+                 <artifactId>uim-entity</artifactId>
+                 <groupId>org.dows.cloud</groupId>
+                 <version>${project.version}</version>
+             </dependency>
+             <dependency>
+                 <artifactId>uim-mapper</artifactId>
+                 <groupId>org.dows.cloud</groupId>
+                 <version>${project.version}</version>
+             </dependency>-->
             <dependency>
                 <artifactId>uim-service</artifactId>
                 <groupId>org.dows.cloud</groupId>
-                <version>${uim.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
 
             <dependency>
                 <artifactId>uim-rest</artifactId>
                 <groupId>org.dows.cloud</groupId>
-                <version>${uim.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
+
+            <dependency>
+                <groupId>org.dows.cloud</groupId>
+                <artifactId>hrm-feign</artifactId>
+                <version>${dows-hrm.version}</version>
+            </dependency>
 
 
             <dependency>

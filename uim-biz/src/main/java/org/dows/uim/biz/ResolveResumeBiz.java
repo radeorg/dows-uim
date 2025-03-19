@@ -14,6 +14,4 @@ public class ResolveResumeBiz {
 //    private final ResolveResumeHandler resolveResumeHandler;
 
 
-
-
 }

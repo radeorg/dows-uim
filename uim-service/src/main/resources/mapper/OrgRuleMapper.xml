@@ -14,7 +14,8 @@
         <result column="ts" jdbcType="TIMESTAMP" property="ts"/>
     </resultMap>
     <sql id="Base_Column_List">
-        `org_rule_id`, `org_tree_id`, `rule_name`, `rule_description`, `operator_id`, `enabled`, `app_id`, `ts`
+        `org_rule_id`
+        , `org_tree_id`, `rule_name`, `rule_description`, `operator_id`, `enabled`, `app_id`, `ts`
     </sql>
 
 </mapper>

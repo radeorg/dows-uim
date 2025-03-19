@@ -1,8 +1,8 @@
 package org.dows.uim.mapper;
 
-import org.dows.uim.entity.UserJobEntity;
 import com.mybatisflex.core.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.dows.uim.entity.UserJobEntity;
 
 /**
  * 用户工作表 映射层。

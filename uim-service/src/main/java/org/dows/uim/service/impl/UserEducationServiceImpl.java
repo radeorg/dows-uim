@@ -1,11 +1,11 @@
 package org.dows.uim.service.impl;
 
 
-import org.springframework.stereotype.Service;
-import org.dows.uim.service.UserEducationService;
+import org.dows.rade.crud.BaseServiceImpl;
 import org.dows.uim.entity.UserEducationEntity;
 import org.dows.uim.mapper.UserEducationMapper;
-import com.mybatisflex.spring.service.impl.ServiceImpl;
+import org.dows.uim.service.UserEducationService;
+import org.springframework.stereotype.Service;
 
 /**
  * 用户教育表 服务层实现。
@@ -14,6 +14,6 @@ import com.mybatisflex.spring.service.impl.ServiceImpl;
  * @since 1.0
  */
 @Service
-public class UserEducationServiceImpl extends ServiceImpl<UserEducationMapper, UserEducationEntity> implements UserEducationService {
+public class UserEducationServiceImpl extends BaseServiceImpl<UserEducationMapper, UserEducationEntity> implements UserEducationService {
 
 }

@@ -1,8 +1,8 @@
 package org.dows.uim.mapper;
 
-import org.dows.uim.entity.OrgInfoEntity;
 import com.mybatisflex.core.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.dows.uim.entity.OrgInfoEntity;
 
 /**
  * 组织信息表 映射层。

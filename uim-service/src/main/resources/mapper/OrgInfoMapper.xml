@@ -14,7 +14,8 @@
         <result column="ts" jdbcType="DATE" property="ts"/>
     </resultMap>
     <sql id="Base_Column_List">
-        `org_info_id`, `org_role_id`, `org_tree_id`, `operator_id`, `ver`, `app_id`, `deleted`, `ts`
+        `org_info_id`
+        , `org_role_id`, `org_tree_id`, `operator_id`, `ver`, `app_id`, `deleted`, `ts`
     </sql>
 
 </mapper>

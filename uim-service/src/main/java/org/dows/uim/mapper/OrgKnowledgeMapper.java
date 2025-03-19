@@ -1,8 +1,8 @@
 package org.dows.uim.mapper;
 
-import org.dows.uim.entity.OrgKnowledgeEntity;
 import com.mybatisflex.core.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.dows.uim.entity.OrgKnowledgeEntity;
 
 /**
  * 岗位知识表 映射层。

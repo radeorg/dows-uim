@@ -1,21 +1,17 @@
 package org.dows.uim.entity;
 
-import lombok.Data;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.Builder;
-import io.swagger.v3.oas.annotations.media.Schema;
-import com.mybatisflex.core.activerecord.Model;
 import com.mybatisflex.annotation.Column;
 import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.KeyType;
 import com.mybatisflex.annotation.Table;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.dows.rade.crud.BaseEntity;
 
-import java.lang.Long;
 import java.util.Date;
-import java.lang.String;
-import java.lang.Integer;
 
 /**
  * 账号推荐人表 实体类。
@@ -23,14 +19,13 @@ import java.lang.Integer;
  * @author lait.zhang@gmail.com
  * @since 1.0
  */
-@RequiredArgsConstructor
-@Data(staticConstructor = "create")
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(name = "账号推荐人表")
 @Table(value = "account_relation")
-public class AccountRelationEntity extends Model<AccountRelationEntity> {
+public class AccountRelationEntity extends BaseEntity<AccountRelationEntity> {
 
     /**
      * 账号关系ID

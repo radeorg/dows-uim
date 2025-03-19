@@ -14,7 +14,8 @@
         <result column="ts" jdbcType="TIMESTAMP" property="ts"/>
     </resultMap>
     <sql id="Base_Column_List">
-        `account_role_id`, `account_instance_id`, `rbac_role_id`, `operator_id`, `ver`, `app_id`, `deleted`, `ts`
+        `account_role_id`
+        , `account_instance_id`, `rbac_role_id`, `operator_id`, `ver`, `app_id`, `deleted`, `ts`
     </sql>
 
 </mapper>

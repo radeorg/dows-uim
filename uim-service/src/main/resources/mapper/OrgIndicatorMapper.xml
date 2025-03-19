@@ -16,7 +16,8 @@
         <result column="ts" jdbcType="TIMESTAMP" property="ts"/>
     </resultMap>
     <sql id="Base_Column_List">
-        `org_indicator_id`, `org_action_id`, `indicator_name`, `indicator_keyword`, `indicator_score`, `match_score`,
+        `org_indicator_id`
+        , `org_action_id`, `indicator_name`, `indicator_keyword`, `indicator_score`, `match_score`,
         `enabled`, `operator_id`, `app_id`, `ts`
     </sql>
 

@@ -7,6 +7,8 @@ springdoc:
     path: /doc
     packages-to-scan: org.dows.uim
   group-configs:
+    - group: uim-base
+      packagesToScan: org.dows.uim.base
     - group: uim-admin
       packagesToScan: org.dows.uim.admin
     - group: uim-tenant

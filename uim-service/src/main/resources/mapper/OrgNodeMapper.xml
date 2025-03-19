@@ -16,7 +16,8 @@
         <result column="ts" jdbcType="TIMESTAMP" property="ts"/>
     </resultMap>
     <sql id="Base_Column_List">
-        `org_node_id`, `org_tree_id`, `account_instance_id`, `user_instance_id`, `alias_name`, `app_id`, `ver`,
+        `org_node_id`
+        , `org_tree_id`, `account_instance_id`, `user_instance_id`, `alias_name`, `app_id`, `ver`,
         `operator_id`, `deleted`, `ts`
     </sql>
 

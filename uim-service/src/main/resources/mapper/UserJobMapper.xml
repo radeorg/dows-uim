@@ -20,7 +20,8 @@
         <result column="ts" jdbcType="TIMESTAMP" property="ts"/>
     </resultMap>
     <sql id="Base_Column_List">
-        `user_job_id`, `user_instance_id`, `profession`, `org_name`, `unit`, `start_time`, `end_time`, `duration`,
+        `user_job_id`
+        , `user_instance_id`, `profession`, `org_name`, `unit`, `start_time`, `end_time`, `duration`,
         `state`, `ver`, `app_id`, `deleted`, `operator_id`, `ts`
     </sql>
 

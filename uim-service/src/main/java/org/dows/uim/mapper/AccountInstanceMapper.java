@@ -1,8 +1,8 @@
 package org.dows.uim.mapper;
 
-import org.dows.uim.entity.AccountInstanceEntity;
 import com.mybatisflex.core.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.dows.uim.entity.AccountInstanceEntity;
 
 /**
  * 账号实例表 映射层。

@@ -1,8 +1,9 @@
 package org.dows.uim.service;
 
 
+import org.dows.rade.crud.BaseService;
 import org.dows.uim.entity.OrgKnowledgeEntity;
-import com.mybatisflex.core.service.IService;
+
 
 /**
  * 岗位知识表 服务层。
@@ -10,6 +11,6 @@ import com.mybatisflex.core.service.IService;
  * @author lait.zhang@gmail.com
  * @since 1.0
  */
-public interface OrgKnowledgeService extends IService<OrgKnowledgeEntity> {
+public interface OrgKnowledgeService extends BaseService<OrgKnowledgeEntity> {
 
 }

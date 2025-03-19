@@ -19,7 +19,8 @@
         <result column="ts" jdbcType="TIMESTAMP" property="ts"/>
     </resultMap>
     <sql id="Base_Column_List">
-        `user_education_id`, `operator_id`, `user_instance_id`, `application`, `university_name`,
+        `user_education_id`
+        , `operator_id`, `user_instance_id`, `application`, `university_name`,
         `application_description`, `start_time`, `end_time`, `education_type`, `current_today`, `deleted`, `app_id`,
         `ts`
     </sql>

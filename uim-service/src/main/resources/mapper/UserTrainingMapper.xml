@@ -16,7 +16,8 @@
         <result column="deleted" jdbcType="TINYINT" property="deleted"/>
     </resultMap>
     <sql id="Base_Column_List">
-        `user_training_id`, `operator_id`, `user_instance_id`, `university_name`, `training_description`, `app_id`,
+        `user_training_id`
+        , `operator_id`, `user_instance_id`, `university_name`, `training_description`, `app_id`,
         `start_time`, `end_time`, `ts`, `deleted`
     </sql>
 

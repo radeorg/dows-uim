@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -11,19 +11,24 @@
     </parent>
     <artifactId>uim-app</artifactId>
 
-
-    <prerequisites>
-        <spring-cloud-dependencies.version>2023.0.5</spring-cloud-dependencies.version>
+    <properties>
+        <spring-cloud-dependencies.version>2024.0.0</spring-cloud-dependencies.version>
         <maven.deploy.skip>true</maven.deploy.skip>
-    </prerequisites>
-
-
-    <dependency>
-        <groupId>org.dows.cloud</groupId>
-        <artifactId>hrm-feign</artifactId>
-    </dependency>
+    </properties>
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.dows.cloud</groupId>
+            <artifactId>hrm-feign</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.dows.cloud</groupId>
+            <artifactId>uim-boot</artifactId>
+        </dependency>
+
+
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
@@ -63,12 +68,6 @@
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
         </dependency>
 
-
-
-
-
-
-
     </dependencies>
 
     <build>
@@ -79,5 +78,5 @@
             </plugin>
         </plugins>
     </build>
-    
+
 </project>

@@ -1,11 +1,11 @@
 package org.dows.uim.service.impl;
 
 
-import org.springframework.stereotype.Service;
-import org.dows.uim.service.OrgKnowledgeService;
+import org.dows.rade.crud.BaseServiceImpl;
 import org.dows.uim.entity.OrgKnowledgeEntity;
 import org.dows.uim.mapper.OrgKnowledgeMapper;
-import com.mybatisflex.spring.service.impl.ServiceImpl;
+import org.dows.uim.service.OrgKnowledgeService;
+import org.springframework.stereotype.Service;
 
 /**
  * 岗位知识表 服务层实现。
@@ -14,6 +14,6 @@ import com.mybatisflex.spring.service.impl.ServiceImpl;
  * @since 1.0
  */
 @Service
-public class OrgKnowledgeServiceImpl extends ServiceImpl<OrgKnowledgeMapper, OrgKnowledgeEntity> implements OrgKnowledgeService {
+public class OrgKnowledgeServiceImpl extends BaseServiceImpl<OrgKnowledgeMapper, OrgKnowledgeEntity> implements OrgKnowledgeService {
 
 }

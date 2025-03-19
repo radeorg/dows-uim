@@ -1,8 +1,9 @@
 package org.dows.uim.service;
 
 
+import org.dows.rade.crud.BaseService;
 import org.dows.uim.entity.OrgActionEntity;
-import com.mybatisflex.core.service.IService;
+
 
 /**
  * 岗位行动表 服务层。
@@ -10,6 +11,6 @@ import com.mybatisflex.core.service.IService;
  * @author lait.zhang@gmail.com
  * @since 1.0
  */
-public interface OrgActionService extends IService<OrgActionEntity> {
+public interface OrgActionService extends BaseService<OrgActionEntity> {
 
 }

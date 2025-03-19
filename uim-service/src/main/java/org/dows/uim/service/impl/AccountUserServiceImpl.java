@@ -1,11 +1,11 @@
 package org.dows.uim.service.impl;
 
 
-import org.springframework.stereotype.Service;
-import org.dows.uim.service.AccountUserService;
+import org.dows.rade.crud.BaseServiceImpl;
 import org.dows.uim.entity.AccountUserEntity;
 import org.dows.uim.mapper.AccountUserMapper;
-import com.mybatisflex.spring.service.impl.ServiceImpl;
+import org.dows.uim.service.AccountUserService;
+import org.springframework.stereotype.Service;
 
 /**
  * 账号用户表 服务层实现。
@@ -14,6 +14,6 @@ import com.mybatisflex.spring.service.impl.ServiceImpl;
  * @since 1.0
  */
 @Service
-public class AccountUserServiceImpl extends ServiceImpl<AccountUserMapper, AccountUserEntity> implements AccountUserService {
+public class AccountUserServiceImpl extends BaseServiceImpl<AccountUserMapper, AccountUserEntity> implements AccountUserService {
 
 }

@@ -17,7 +17,8 @@
         <result column="ts" jdbcType="TIMESTAMP" property="ts"/>
     </resultMap>
     <sql id="Base_Column_List">
-        `user_certication_id`, `operator_id`, `user_instance_id`, `cert_name`, `cert_no`, `app_id`, `perminent`,
+        `user_certication_id`
+        , `operator_id`, `user_instance_id`, `cert_name`, `cert_no`, `app_id`, `perminent`,
         `award_date`, `expiry_date`, `deleted`, `ts`
     </sql>
 

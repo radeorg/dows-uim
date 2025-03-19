@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.dows.uim.api.response.JobSearchResponse;
-import org.dows.uim.api.request.ResumePostRequest;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,11 +27,11 @@ public class UserOrgRest {
         return List.of(new JobSearchResponse()); // 示例返回值
     }
 
-    @PostMapping("/resume/post")
-    @Operation(summary = "用户投递简历")
-    public Long resumePost(@RequestBody ResumePostRequest request) {
-        // 实现逻辑
-        return 1L; // 示例返回值
-    }
+//    @PostMapping("/resume/post")
+//    @Operation(summary = "用户投递简历")
+//    public Long resumePost(@RequestBody ResumePostRequest request) {
+//        // 实现逻辑
+//        return 1L; // 示例返回值
+//    }
 }
 

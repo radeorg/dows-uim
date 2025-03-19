@@ -1,8 +1,9 @@
 package org.dows.uim.service;
 
 
+import org.dows.rade.crud.BaseService;
 import org.dows.uim.entity.UserContactEntity;
-import com.mybatisflex.core.service.IService;
+
 
 /**
  * 用户联系人表 服务层。
@@ -10,6 +11,6 @@ import com.mybatisflex.core.service.IService;
  * @author lait.zhang@gmail.com
  * @since 1.0
  */
-public interface UserContactService extends IService<UserContactEntity> {
+public interface UserContactService extends BaseService<UserContactEntity> {
 
 }

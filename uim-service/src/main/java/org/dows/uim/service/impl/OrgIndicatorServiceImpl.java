@@ -1,11 +1,11 @@
 package org.dows.uim.service.impl;
 
 
-import org.springframework.stereotype.Service;
-import org.dows.uim.service.OrgIndicatorService;
+import org.dows.rade.crud.BaseServiceImpl;
 import org.dows.uim.entity.OrgIndicatorEntity;
 import org.dows.uim.mapper.OrgIndicatorMapper;
-import com.mybatisflex.spring.service.impl.ServiceImpl;
+import org.dows.uim.service.OrgIndicatorService;
+import org.springframework.stereotype.Service;
 
 /**
  * 岗位指标表 服务层实现。
@@ -14,6 +14,6 @@ import com.mybatisflex.spring.service.impl.ServiceImpl;
  * @since 1.0
  */
 @Service
-public class OrgIndicatorServiceImpl extends ServiceImpl<OrgIndicatorMapper, OrgIndicatorEntity> implements OrgIndicatorService {
+public class OrgIndicatorServiceImpl extends BaseServiceImpl<OrgIndicatorMapper, OrgIndicatorEntity> implements OrgIndicatorService {
 
 }

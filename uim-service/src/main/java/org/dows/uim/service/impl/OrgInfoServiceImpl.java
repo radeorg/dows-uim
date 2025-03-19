@@ -1,11 +1,11 @@
 package org.dows.uim.service.impl;
 
 
-import org.springframework.stereotype.Service;
-import org.dows.uim.service.OrgInfoService;
+import org.dows.rade.crud.BaseServiceImpl;
 import org.dows.uim.entity.OrgInfoEntity;
 import org.dows.uim.mapper.OrgInfoMapper;
-import com.mybatisflex.spring.service.impl.ServiceImpl;
+import org.dows.uim.service.OrgInfoService;
+import org.springframework.stereotype.Service;
 
 /**
  * 组织信息表 服务层实现。
@@ -14,6 +14,6 @@ import com.mybatisflex.spring.service.impl.ServiceImpl;
  * @since 1.0
  */
 @Service
-public class OrgInfoServiceImpl extends ServiceImpl<OrgInfoMapper, OrgInfoEntity> implements OrgInfoService {
+public class OrgInfoServiceImpl extends BaseServiceImpl<OrgInfoMapper, OrgInfoEntity> implements OrgInfoService {
 
 }

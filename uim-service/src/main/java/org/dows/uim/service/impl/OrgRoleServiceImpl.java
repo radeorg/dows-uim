@@ -1,11 +1,11 @@
 package org.dows.uim.service.impl;
 
 
-import org.springframework.stereotype.Service;
-import org.dows.uim.service.OrgRoleService;
+import org.dows.rade.crud.BaseServiceImpl;
 import org.dows.uim.entity.OrgRoleEntity;
 import org.dows.uim.mapper.OrgRoleMapper;
-import com.mybatisflex.spring.service.impl.ServiceImpl;
+import org.dows.uim.service.OrgRoleService;
+import org.springframework.stereotype.Service;
 
 /**
  * 组织角色表 服务层实现。
@@ -14,6 +14,6 @@ import com.mybatisflex.spring.service.impl.ServiceImpl;
  * @since 1.0
  */
 @Service
-public class OrgRoleServiceImpl extends ServiceImpl<OrgRoleMapper, OrgRoleEntity> implements OrgRoleService {
+public class OrgRoleServiceImpl extends BaseServiceImpl<OrgRoleMapper, OrgRoleEntity> implements OrgRoleService {
 
 }

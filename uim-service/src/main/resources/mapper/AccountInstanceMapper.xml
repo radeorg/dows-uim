@@ -19,7 +19,8 @@
         <result column="ts" jdbcType="TIMESTAMP" property="ts"/>
     </resultMap>
     <sql id="Base_Column_List">
-        `account_instance_id`, `identifier`, `password`, `zone_no`, `cellphone`, `avator`, `referrals_no`, `source`,
+        `account_instance_id`
+        , `identifier`, `password`, `zone_no`, `cellphone`, `avator`, `referrals_no`, `source`,
         `app_id`, `operator_id`, `ver`, `deleted`, `ts`
     </sql>
 

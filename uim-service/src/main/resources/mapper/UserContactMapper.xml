@@ -18,7 +18,8 @@
         <result column="ts" jdbcType="TIMESTAMP" property="ts"/>
     </resultMap>
     <sql id="Base_Column_List">
-        `user_contact_id`, `user_instance_id`, `contact`, `contact_num`, `contact_typ`, `sorted`, `self`, `state`,
+        `user_contact_id`
+        , `user_instance_id`, `contact`, `contact_num`, `contact_typ`, `sorted`, `self`, `state`,
         `ver`, `operator_id`, `deleted`, `ts`
     </sql>
 

@@ -1,11 +1,11 @@
 package org.dows.uim.service.impl;
 
 
-import org.springframework.stereotype.Service;
-import org.dows.uim.service.OrgActionService;
+import org.dows.rade.crud.BaseServiceImpl;
 import org.dows.uim.entity.OrgActionEntity;
 import org.dows.uim.mapper.OrgActionMapper;
-import com.mybatisflex.spring.service.impl.ServiceImpl;
+import org.dows.uim.service.OrgActionService;
+import org.springframework.stereotype.Service;
 
 /**
  * 岗位行动表 服务层实现。
@@ -14,6 +14,6 @@ import com.mybatisflex.spring.service.impl.ServiceImpl;
  * @since 1.0
  */
 @Service
-public class OrgActionServiceImpl extends ServiceImpl<OrgActionMapper, OrgActionEntity> implements OrgActionService {
+public class OrgActionServiceImpl extends BaseServiceImpl<OrgActionMapper, OrgActionEntity> implements OrgActionService {
 
 }

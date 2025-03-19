@@ -1,8 +1,9 @@
 package org.dows.uim.service;
 
 
+import org.dows.rade.crud.BaseService;
 import org.dows.uim.entity.UserCerticationEntity;
-import com.mybatisflex.core.service.IService;
+
 
 /**
  * 用户证书表 服务层。
@@ -10,6 +11,6 @@ import com.mybatisflex.core.service.IService;
  * @author lait.zhang@gmail.com
  * @since 1.0
  */
-public interface UserCerticationService extends IService<UserCerticationEntity> {
+public interface UserCerticationService extends BaseService<UserCerticationEntity> {
 
 }

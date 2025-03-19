@@ -8,6 +8,10 @@ server:
       worker: 32
   #  servlet:
   #    context-path: /${spring.application.name}
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/plain
+
 spring:
   application:
     name: dows-uim
@@ -15,7 +19,15 @@ spring:
     include: mysql,apidoc,mybatis,caffeine
     active: dev
 
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
 
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 100MB
 logging:
   level:
     root: info

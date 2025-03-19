@@ -1,21 +1,17 @@
 package org.dows.uim.entity;
 
-import lombok.Data;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.Builder;
-import io.swagger.v3.oas.annotations.media.Schema;
-import com.mybatisflex.core.activerecord.Model;
 import com.mybatisflex.annotation.Column;
 import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.KeyType;
 import com.mybatisflex.annotation.Table;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.dows.rade.crud.BaseEntity;
 
-import java.lang.Long;
 import java.util.Date;
-import java.lang.String;
-import java.lang.Integer;
 
 /**
  * 组织信息表 实体类。
@@ -23,14 +19,13 @@ import java.lang.Integer;
  * @author lait.zhang@gmail.com
  * @since 1.0
  */
-@RequiredArgsConstructor
-@Data(staticConstructor = "create")
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(name = "组织信息表")
 @Table(value = "org_info")
-public class OrgInfoEntity extends Model<OrgInfoEntity> {
+public class OrgInfoEntity extends BaseEntity<OrgInfoEntity> {
 
     /**
      * 组织信息ID

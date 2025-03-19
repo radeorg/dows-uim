@@ -1,11 +1,11 @@
 package org.dows.uim.service.impl;
 
 
-import org.springframework.stereotype.Service;
-import org.dows.uim.service.UserContactService;
+import org.dows.rade.crud.BaseServiceImpl;
 import org.dows.uim.entity.UserContactEntity;
 import org.dows.uim.mapper.UserContactMapper;
-import com.mybatisflex.spring.service.impl.ServiceImpl;
+import org.dows.uim.service.UserContactService;
+import org.springframework.stereotype.Service;
 
 /**
  * 用户联系人表 服务层实现。
@@ -14,6 +14,6 @@ import com.mybatisflex.spring.service.impl.ServiceImpl;
  * @since 1.0
  */
 @Service
-public class UserContactServiceImpl extends ServiceImpl<UserContactMapper, UserContactEntity> implements UserContactService {
+public class UserContactServiceImpl extends BaseServiceImpl<UserContactMapper, UserContactEntity> implements UserContactService {
 
 }

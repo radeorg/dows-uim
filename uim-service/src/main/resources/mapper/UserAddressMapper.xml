@@ -30,7 +30,8 @@
         <result column="ts" jdbcType="TIMESTAMP" property="ts"/>
     </resultMap>
     <sql id="Base_Column_List">
-        `user_address_id`, `operator_id`, `user_instance_id`, `country_no`, `country_name`, `country_code`,
+        `user_address_id`
+        , `operator_id`, `user_instance_id`, `country_no`, `country_name`, `country_code`,
         `province_no`, `province_name`, `province_code`, `city_no`, `city_name`, `city_code`, `address`, `street_no`,
         `street_name`, `district_no`, `district_name`, `zip_code`, `bizline`, `typ`, `state`, `ver`, `deleted`, `ts`
     </sql>
