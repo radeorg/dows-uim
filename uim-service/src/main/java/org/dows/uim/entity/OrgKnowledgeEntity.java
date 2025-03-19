@@ -3,6 +3,9 @@ package org.dows.uim.entity;
 import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.Builder;
+import io.swagger.v3.oas.annotations.media.Schema;
 import com.mybatisflex.core.activerecord.Model;
 import com.mybatisflex.annotation.Column;
 import com.mybatisflex.annotation.Id;
@@ -19,64 +22,76 @@ import java.lang.String;
  * @author lait.zhang@gmail.com
  * @since 1.0
  */
+@RequiredArgsConstructor
 @Data(staticConstructor = "create")
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(name = "岗位知识表")
 @Table(value = "org_knowledge")
 public class OrgKnowledgeEntity extends Model<OrgKnowledgeEntity> {
 
     /**
      * 岗位知识ID
      */
-    @Id(keyType = KeyType.Sequence)
+    @Schema(description = "岗位知识ID")
+    @Id(keyType = KeyType.Auto)
     private Long orgKnowledgeId;
 
     /**
      * 组织树ID
      */
-    @Column(value = "org_tree_id", comment = "组织树ID")
+    @Schema(description = "组织树ID")
+    @Column(value = "org_tree_id")
     private Long orgTreeId;
 
     /**
      * 岗位规则ID
      */
-    @Column(value = "org_rule_id", comment = "岗位规则ID")
+    @Schema(description = "岗位规则ID")
+    @Column(value = "org_rule_id")
     private Long orgRuleId;
 
     /**
      * 操作者ID
      */
-    @Column(value = "operator_id", comment = "操作者ID")
+    @Schema(description = "操作者ID")
+    @Column(value = "operator_id")
     private Long operatorId;
 
     /**
-     * 引用的知识ID，可以来自[uim,exam]
+     * 引用的知识ID，可以来自[hrm,exam...]
      */
-    @Column(value = "reference_id", comment = "引用的知识ID，可以来自[uim,exam]")
+    @Schema(description = "引用的知识ID，可以来自[hrm,exam...]")
+    @Column(value = "reference_id")
     private Long referenceId;
 
     /**
-     * 来源表，可以来自[uim,exam]表
+     * 来源表，可以来自[hrm,exam]表
      */
-    @Column(value = "reference_table", comment = "来源表，可以来自[uim,exam]表")
+    @Schema(description = "来源表，可以来自[hrm,exam]表")
+    @Column(value = "reference_table")
     private String referenceTable;
 
     /**
      * 内容资源
      */
-    @Column(value = "content_uri", comment = "内容资源")
+    @Schema(description = "内容资源")
+    @Column(value = "content_uri")
     private String contentUri;
 
     /**
      * 应用ID
      */
-    @Column(value = "app_id", comment = "应用ID")
+    @Schema(description = "应用ID")
+    @Column(value = "app_id")
     private String appId;
 
     /**
      * 时间戳
      */
-    @Column(value = "ts", comment = "时间戳")
+    @Schema(description = "时间戳")
+    @Column(value = "ts")
     private Date ts;
 
 

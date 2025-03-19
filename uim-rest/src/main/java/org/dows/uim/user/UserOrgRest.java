@@ -3,8 +3,9 @@ package org.dows.uim.user;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.dows.uim.api.response.JobSearchResponse;
+import org.dows.uim.api.request.ResumePostRequest;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,26 +36,3 @@ public class UserOrgRest {
     }
 }
 
-@Data
-class JobSearchResponse {
-    @Parameter(description = "岗位描述ID")
-    private Long orgJdId;
-
-    @Parameter(description = "岗位描述")
-    private String description;
-
-    @Parameter(description = "时间戳")
-    private Date ts;
-}
-
-@Data
-class ResumePostRequest {
-    @Parameter(description = "岗位描述ID")
-    private Long orgJdId;
-
-    @Parameter(description = "简历链接")
-    private String resumeLink;
-
-    @Parameter(description = "简历文件")
-    private String resumeDoc;
-}

@@ -1,18 +1,18 @@
 springdoc:
   api-docs:
-    enabled: false
+    enabled: true
     path: /api-docs
   swagger-ui:
     #自定义swagger前端请求路径，输入http：127.0.0.1:8080/doc会自动重定向到swagger-ui.html页面
     path: /doc
-    packages-to-scan: org.dows.task,org.dows.vac
+    packages-to-scan: org.dows.uim
   group-configs:
-    - group: avc-admin
-      packagesToScan: org.dows.vac.admin
-    - group: avc-tenant
-      packagesToScan: org.dows.vac.tenant
-    - group: avc-user
-      packagesToScan: org.dows.vac.user
+    - group: uim-admin
+      packagesToScan: org.dows.uim.admin
+    - group: uim-tenant
+      packagesToScan: org.dows.uim.tenant
+    - group: uim-user
+      packagesToScan: org.dows.uim.user
 
 ---
 #开发环境

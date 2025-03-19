@@ -9,5 +9,11 @@
     <artifactId>uim-pojo</artifactId>
 
 
+    <dependencies>
+        <dependency>
+            <groupId>org.dows.cloud</groupId>
+            <artifactId>uim-api</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>

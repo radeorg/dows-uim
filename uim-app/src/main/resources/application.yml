@@ -10,9 +10,9 @@ server:
   #    context-path: /${spring.application.name}
 spring:
   application:
-    name: dows-vac
+    name: dows-uim
   profiles:
-    include: mysql,apidoc,task,cdc,mybatis,register,vac,caffeine,feign
+    include: mysql,apidoc,mybatis,caffeine
     active: dev
 
 

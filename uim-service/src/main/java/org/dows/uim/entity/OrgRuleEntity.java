@@ -3,6 +3,9 @@ package org.dows.uim.entity;
 import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.Builder;
+import io.swagger.v3.oas.annotations.media.Schema;
 import com.mybatisflex.core.activerecord.Model;
 import com.mybatisflex.annotation.Column;
 import com.mybatisflex.annotation.Id;
@@ -20,58 +23,69 @@ import java.lang.Integer;
  * @author lait.zhang@gmail.com
  * @since 1.0
  */
+@RequiredArgsConstructor
 @Data(staticConstructor = "create")
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(name = "岗位规则表")
 @Table(value = "org_rule")
 public class OrgRuleEntity extends Model<OrgRuleEntity> {
 
     /**
      * 岗位规则ID
      */
-    @Id(keyType = KeyType.Sequence)
+    @Schema(description = "岗位规则ID")
+    @Id(keyType = KeyType.Auto)
     private Long orgRuleId;
 
     /**
      * 组织树ID
      */
-    @Column(value = "org_tree_id", comment = "组织树ID")
+    @Schema(description = "组织树ID")
+    @Column(value = "org_tree_id")
     private Long orgTreeId;
 
     /**
      * 规则名称
      */
-    @Column(value = "rule_name", comment = "规则名称")
+    @Schema(description = "规则名称")
+    @Column(value = "rule_name")
     private String ruleName;
 
     /**
      * 规则描述
      */
-    @Column(value = "rule_description", comment = "规则描述")
+    @Schema(description = "规则描述")
+    @Column(value = "rule_description")
     private String ruleDescription;
 
     /**
      * 操作者ID
      */
-    @Column(value = "operator_id", comment = "操作者ID")
+    @Schema(description = "操作者ID")
+    @Column(value = "operator_id")
     private Long operatorId;
 
     /**
      * 是否可用0-可用，1-不可用
      */
-    @Column(value = "enabled", comment = "是否可用0-可用，1-不可用")
+    @Schema(description = "是否可用0-可用，1-不可用")
+    @Column(value = "enabled")
     private Integer enabled;
 
     /**
      * 应用ID
      */
-    @Column(value = "app_id", comment = "应用ID")
+    @Schema(description = "应用ID")
+    @Column(value = "app_id")
     private String appId;
 
     /**
      * 时间戳
      */
-    @Column(value = "ts", comment = "时间戳")
+    @Schema(description = "时间戳")
+    @Column(value = "ts")
     private Date ts;
 
 
