@@ -1,0 +1,3 @@
+#org.dows.uim.admin.UimAdminAutoConfig
+#org.dows.uim.tenant.UimTenantAutoConfig
+#org.dows.uim.user.UimUserAutoConfig

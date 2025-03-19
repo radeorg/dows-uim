@@ -12,10 +12,9 @@
     <dependencies>
 
         <!--<dependency>
-            <groupId>org.dows.cloud</groupId>
-            <artifactId>uim-feign</artifactId>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis-spring</artifactId>
         </dependency>-->
-
     </dependencies>
 
 
