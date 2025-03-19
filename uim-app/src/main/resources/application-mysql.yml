@@ -20,7 +20,7 @@ spring:
       # 用于测试连接是否有效的 SQL 查询语句
       connectionTestQuery: SELECT 1
       # 连接池的名称，用于日志和监控
-      poolName: MyHikariCP
+      poolName: UimHikariCP
 
 
 
