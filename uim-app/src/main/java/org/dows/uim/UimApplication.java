@@ -63,7 +63,7 @@ public class UimApplication  implements AppInstance {
                 try {
                     classLoader.loadClass(PathUtils.getClassName(javaPath));
                 } catch (ClassNotFoundException e) {
-                    log.error("loadClassErr {}", javaPath, e);
+//                    log.error("loadClassErr {}", javaPath, e);
                 }
             });
             // 使用相同的参数运行Spring Boot应用程序并设置上下文

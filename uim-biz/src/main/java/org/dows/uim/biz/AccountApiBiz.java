@@ -4,6 +4,10 @@ import org.dows.uim.api.AccountApi;
 import org.dows.uim.api.request.FindAccountIdentifierRequest;
 import org.dows.uim.api.response.AccountIdentifierResponse;
 import org.dows.uim.api.response.AccountInstanceResponse;
+import org.dows.uim.api.response.AccountOrgIdsResponse;
+import org.dows.uim.api.response.AccountRoleRelationResponse;
+
+import java.util.List;
 
 public class AccountApiBiz implements AccountApi {
 
@@ -20,5 +24,15 @@ public class AccountApiBiz implements AccountApi {
     @Override
     public AccountInstanceResponse getAccountInstanceById(Long accountIdentifier) {
         return null;
+    }
+
+    @Override
+    public AccountOrgIdsResponse getOrgIdsByAccountId(Long accountInstanceId, boolean check, String appId) {
+        return null;
+    }
+
+    @Override
+    public List<AccountRoleRelationResponse> getRoleByAccountInstanceId(List<Long> principals, String appId) {
+        return List.of();
     }
 }

@@ -18,10 +18,10 @@
 
     <dependencies>
 
-        <dependency>
-            <groupId>org.dows.cloud</groupId>
-            <artifactId>hrm-feign</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.dows.cloud</groupId>-->
+<!--            <artifactId>hrm-feign</artifactId>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>org.dows.cloud</groupId>
