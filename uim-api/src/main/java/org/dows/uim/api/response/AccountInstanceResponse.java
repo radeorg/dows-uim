@@ -7,4 +7,5 @@ public class AccountInstanceResponse {
     private boolean isSuperAccount;
     private String password;
     private String accountName;
+    private Long accountInstanceId;
 }
