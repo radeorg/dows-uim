@@ -1,14 +1,18 @@
 package org.dows.uim.biz;
 
+import lombok.RequiredArgsConstructor;
 import org.dows.uim.api.AccountApi;
 import org.dows.uim.api.request.FindAccountIdentifierRequest;
 import org.dows.uim.api.response.AccountIdentifierResponse;
 import org.dows.uim.api.response.AccountInstanceResponse;
 import org.dows.uim.api.response.AccountOrgIdsResponse;
 import org.dows.uim.api.response.AccountRoleRelationResponse;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@RequiredArgsConstructor
+@Component
 public class AccountApiBiz implements AccountApi {
 
     @Override
