@@ -120,11 +120,11 @@
             </dependency>
 
 
-            <dependency>
-                <groupId>org.dows.cloud</groupId>
-                <artifactId>hrm-feign</artifactId>
-                <version>${dows-hrm.version}</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.dows.cloud</groupId>-->
+<!--                <artifactId>hrm-feign</artifactId>-->
+<!--                <version>${dows-hrm.version}</version>-->
+<!--            </dependency>-->
 
 
             <dependency>

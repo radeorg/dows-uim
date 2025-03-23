@@ -2,6 +2,7 @@ package org.dows.uim.biz;
 
 import lombok.RequiredArgsConstructor;
 import org.dows.uim.api.AccountApi;
+import org.dows.uim.api.request.AccountInstanceRequest;
 import org.dows.uim.api.request.FindAccountIdentifierRequest;
 import org.dows.uim.api.response.AccountIdentifierResponse;
 import org.dows.uim.api.response.AccountInstanceResponse;
@@ -14,6 +15,11 @@ import java.util.List;
 @RequiredArgsConstructor
 @Component
 public class AccountApiBiz implements AccountApi {
+
+    @Override
+    public Long setAccountInstance(AccountInstanceRequest accountInstance) {
+        return 0L;
+    }
 
     @Override
     public AccountInstanceResponse getAccountInstanceByAccountName(String accountName, String appId) {
