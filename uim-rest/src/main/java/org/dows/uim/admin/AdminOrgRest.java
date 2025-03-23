@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AdminOrgRest {
 
+
+
     @PostMapping("/role/config")
     @Operation(summary = "组织角色配置")
     public boolean roleConfig(@RequestBody RoleConfigRequest request) {

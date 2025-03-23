@@ -14,4 +14,5 @@ import org.dows.uim.entity.AccountIdentifierEntity;
 public interface AccountIdentifierMapper extends BaseMapper<AccountIdentifierEntity> {
 
 
+    void ddd();
 }

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @author lait.zhang@gmail.com
  * @since 1.0
  */
-@RadeController(api = {"add", "delete", "update", "page", "info"})
+@RadeController(api = {"add"})
 @RequestMapping("/accountIdentifier")
 @Tag(name = "账号标识表控制层")
 public class AccountIdentifierController extends BaseController<AccountIdentifierService, AccountIdentifierEntity> {

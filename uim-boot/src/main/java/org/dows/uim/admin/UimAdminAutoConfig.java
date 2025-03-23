@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @MapperScan("org.dows.uim.mapper")
 @Configuration
-@ComponentScan(basePackages = {"org.dows.uim"})
+@ComponentScan(basePackages = {/*"org.dows.rade",*/"org.dows.uim"})
 public class UimAdminAutoConfig {
 }
 
