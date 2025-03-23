@@ -36,7 +36,17 @@ spring:
     username: root
     password: root
     #driver-class-name: com.mysql.cj.jdbc.Driver
+---
+#开发环境
+spring:
+  config:
+    activate:
+      on-profile: sit
 
+  datasource:
+    url: jdbc:mysql://115.159.24.40:13306/rade?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2b8
+    username: root
+    password: radeorg123!
 ---
 #开发环境
 spring:

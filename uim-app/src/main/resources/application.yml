@@ -16,7 +16,7 @@ spring:
     name: dows-uim
   profiles:
     include: mysql,apidoc,mybatis,caffeine
-    active: dev
+    active: sit
 
   jackson:
     time-zone: GMT+8

@@ -18,6 +18,11 @@
         </dependency>
 
         <dependency>
+            <groupId>org.dows.cloud</groupId>
+            <artifactId>uim-pojo</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.dows.framework</groupId>
             <artifactId>rade-core</artifactId>
         </dependency>

@@ -13,4 +13,7 @@ import org.dows.uim.entity.AccountIdentifierEntity;
  */
 public interface AccountIdentifierService extends BaseService<AccountIdentifierEntity> {
 
+
+    void ddd();
+
 }
