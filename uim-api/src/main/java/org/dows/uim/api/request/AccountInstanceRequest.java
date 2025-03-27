@@ -9,6 +9,8 @@ public class AccountInstanceRequest {
     @Schema(description = "账号实例ID")
     private Long accountInstanceId;
 
+    private int identifierType;
+
     @Schema(description = "账号标识符")
     private String identifier;
 
