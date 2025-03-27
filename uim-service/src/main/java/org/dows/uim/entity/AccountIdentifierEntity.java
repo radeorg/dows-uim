@@ -35,6 +35,10 @@ public class AccountIdentifierEntity extends BaseEntity<AccountIdentifierEntity>
     @Id(keyType = KeyType.Generator, value = KeyGenerators.snowFlakeId)
     private Long accountIdentifierId;
 
+    @Schema(description = "主账号ID")
+    @Column(value = "account_instance_id")
+    private Long accountInstanceId;
+
     /**
      * 账号标识符
      */

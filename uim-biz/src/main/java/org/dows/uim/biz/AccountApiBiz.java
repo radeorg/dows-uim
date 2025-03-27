@@ -9,6 +9,7 @@ import org.dows.uim.api.response.AccountIdentifierResponse;
 import org.dows.uim.api.response.AccountInstanceResponse;
 import org.dows.uim.api.response.AccountOrgIdsResponse;
 import org.dows.uim.api.response.AccountRoleRelationResponse;
+import org.dows.uim.entity.AccountIdentifierEntity;
 import org.dows.uim.entity.AccountInstanceEntity;
 import org.dows.uim.service.AccountIdentifierService;
 import org.dows.uim.service.AccountInstanceService;
@@ -26,11 +27,17 @@ public class AccountApiBiz {
     private final AccountIdentifierService accountIdentifierService;
 
     public Long setAccountInstance(AccountInstanceRequest accountInstance) {
+        // 保存账号 实例
         AccountInstanceEntity accountInstanceEntity =
                 BeanUtil.copyProperties(accountInstance, AccountInstanceEntity.class);
         accountInstanceService.save(accountInstanceEntity);
         Long accountInstanceId = accountInstanceEntity.getAccountInstanceId();
-        return 0L;
+        // 保存账号 标识
+        AccountIdentifierEntity accountIdentifierEntity = new AccountIdentifierEntity();
+        accountIdentifierEntity.setAccountInstanceId(accountInstanceId);
+        accountIdentifierEntity.setIdentifier(accountInstance.getIdentifier());
+        accountIdentifierService.save(accountIdentifierEntity);
+        return accountInstanceId;
     }
 
     public AccountInstanceResponse getAccountInstanceByAccountName(String accountName, String appId) {
