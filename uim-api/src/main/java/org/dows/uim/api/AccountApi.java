@@ -67,18 +67,33 @@ public interface AccountApi {
     }
 
 
+    default Long setAccountInstance(AccountInstanceRequest accountInstance) {
+        throw new UnsupportedOperationException("not class implement");
+    }
 
 
+    default AccountInstanceResponse getAccountInstanceByAccountName(String accountName, String appId) {
+        throw new UnsupportedOperationException("not class implement");
+    }
 
-    Long setAccountInstance(AccountInstanceRequest accountInstance);
 
-    AccountInstanceResponse getAccountInstanceByAccountName(String accountName, String appId);
+    default AccountIdentifierResponse getAccountIdentifier(FindAccountIdentifierRequest findAccountIdentifierRequest) {
+        throw new UnsupportedOperationException("not class implement");
+    }
 
-    AccountIdentifierResponse getAccountIdentifier(FindAccountIdentifierRequest findAccountIdentifierRequest);
 
-    AccountInstanceResponse getAccountInstanceById(Long accountIdentifier);
+    default AccountInstanceResponse getAccountInstanceById(Long accountIdentifier) {
+        throw new UnsupportedOperationException("not class implement");
+    }
 
-    AccountOrgIdsResponse getOrgIdsByAccountId(Long accountInstanceId, boolean check, String appId);
 
-    List<AccountRoleRelationResponse>  getRoleByAccountInstanceId(List<Long> principals,String appId);
+    default AccountOrgIdsResponse getOrgIdsByAccountId(Long accountInstanceId, boolean check, String appId) {
+        throw new UnsupportedOperationException("not class implement");
+    }
+
+
+    default List<AccountRoleRelationResponse> getRoleByAccountInstanceId(List<Long> principals, String appId) {
+        throw new UnsupportedOperationException("not class implement");
+    }
+
 }
