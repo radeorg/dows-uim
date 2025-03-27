@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class AccountInstanceResponse {
-    private boolean isSuperAccount;
+    private boolean superAccount;
     private String password;
     private String accountName;
     private Long accountInstanceId;

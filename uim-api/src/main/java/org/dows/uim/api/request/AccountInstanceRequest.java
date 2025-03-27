@@ -1,9 +1,9 @@
 package org.dows.uim.api.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
 
-import java.util.Date;
-
+@Data
 public class AccountInstanceRequest {
 
     @Schema(description = "账号实例ID")
@@ -32,17 +32,5 @@ public class AccountInstanceRequest {
 
     @Schema(description = "应用ID")
     private String appId;
-
-    @Schema(description = "操作者ID")
-    private Long operatorId;
-
-    @Schema(description = "乐观锁, 默认: 0")
-    private Integer ver;
-
-    @Schema(description = "逻辑删除  0未删除  1 删除")
-    private Integer deleted;
-
-    @Schema(description = "时间戳")
-    private Date ts;
 
 }
