@@ -42,6 +42,7 @@
 
     <dependencyManagement>
         <dependencies>
+
             <dependency>
                 <artifactId>uim-api</artifactId>
                 <groupId>org.dows.cloud</groupId>
