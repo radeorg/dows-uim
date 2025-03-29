@@ -1,6 +1,7 @@
 package org.dows.uim.biz;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.mybatisflex.core.query.QueryChain;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.uim.api.request.AccountInstanceRequest;
@@ -15,14 +16,14 @@ import org.dows.uim.service.AccountIdentifierService;
 import org.dows.uim.service.AccountInstanceService;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @RequiredArgsConstructor
 @Component
 public class AccountApiBiz {
-
-
     private final AccountInstanceService accountInstanceService;
     private final AccountIdentifierService accountIdentifierService;
 
@@ -41,22 +42,42 @@ public class AccountApiBiz {
     }
 
     public AccountInstanceResponse getAccountInstanceByAccountName(String accountName, String appId) {
-        return null;
+        AccountInstanceResponse response = new AccountInstanceResponse();
+        List<AccountInstanceEntity> accountInstanceEntityList = QueryChain.of(AccountInstanceEntity.class)
+                .eq(AccountInstanceEntity::getIdentifier, accountName, Objects.nonNull(accountName))
+                .eq(AccountInstanceEntity::getAppId, appId, Objects.nonNull(appId)).list();
+        if(Objects.isNull(accountInstanceEntityList) || accountInstanceEntityList.size() == 0){
+            return response;
+        }
+        AccountInstanceEntity entity = new AccountInstanceEntity();
+        response.setAccountInstanceId(accountInstanceEntityList.get(0).getAccountInstanceId());
+        response.setAccountName(accountInstanceEntityList.get(0).getIdentifier());
+        response.setPassword(accountInstanceEntityList.get(0).getPassword());
+        response.setSuperAccount(true);
+
+        return response;
     }
 
     public AccountIdentifierResponse getAccountIdentifier(FindAccountIdentifierRequest findAccountIdentifierRequest) {
-        return null;
+        AccountIdentifierResponse response = new AccountIdentifierResponse();
+        return response;
     }
 
     public AccountInstanceResponse getAccountInstanceById(Long accountIdentifier) {
-        return null;
+        AccountInstanceResponse response = new AccountInstanceResponse();
+
+        return response;
     }
 
     public AccountOrgIdsResponse getOrgIdsByAccountId(Long accountInstanceId, boolean check, String appId) {
-        return null;
+        AccountOrgIdsResponse response = new AccountOrgIdsResponse();
+
+        return response;
     }
 
     public List<AccountRoleRelationResponse> getRoleByAccountInstanceId(List<Long> principals, String appId) {
+        List<AccountRoleRelationResponse> response = new ArrayList<>();
+
         return List.of();
     }
 }

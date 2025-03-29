@@ -22,6 +22,9 @@ public class OrgIndicatorResponse {
     @Schema(description = "岗位行动ID")
     private Long orgActionId;
 
+    @Schema(description = "岗位规则ID")
+    private Long orgRuleId;
+
     @Schema(description = "指标名称")
     private String indicatorName;
 
