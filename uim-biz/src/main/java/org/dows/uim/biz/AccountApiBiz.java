@@ -12,6 +12,7 @@ import org.dows.uim.api.response.AccountOrgIdsResponse;
 import org.dows.uim.api.response.AccountRoleRelationResponse;
 import org.dows.uim.entity.AccountIdentifierEntity;
 import org.dows.uim.entity.AccountInstanceEntity;
+import org.dows.uim.entity.AccountRoleEntity;
 import org.dows.uim.service.AccountIdentifierService;
 import org.dows.uim.service.AccountInstanceService;
 import org.springframework.stereotype.Component;
@@ -49,16 +50,23 @@ public class AccountApiBiz {
 
     public AccountInstanceResponse getAccountInstanceByAccountName(String appId, String accountName) {
         AccountInstanceResponse response = new AccountInstanceResponse();
-        List<AccountInstanceEntity> accountInstanceEntityList = QueryChain.of(AccountInstanceEntity.class)
-                .eq(AccountInstanceEntity::getIdentifier, accountName, Objects.nonNull(accountName))
-                .eq(AccountInstanceEntity::getAppId, appId, Objects.nonNull(appId)).list();
-        if(Objects.isNull(accountInstanceEntityList) || accountInstanceEntityList.size() == 0){
+
+        List<AccountIdentifierEntity> accountIdentifierEntityList = QueryChain.of(AccountIdentifierEntity.class)
+                .eq(AccountIdentifierEntity::getIdentifier, accountName, Objects.nonNull(accountName))
+                .eq(AccountIdentifierEntity::getAppId, appId, Objects.nonNull(appId)).list();
+        if(Objects.isNull(accountIdentifierEntityList) || accountIdentifierEntityList.size() == 0){
             return response;
         }
-        AccountInstanceEntity entity = new AccountInstanceEntity();
-        response.setAccountInstanceId(accountInstanceEntityList.get(0).getAccountInstanceId());
-        response.setAccountName(accountInstanceEntityList.get(0).getIdentifier());
-        response.setPassword(accountInstanceEntityList.get(0).getPassword());
+        Long accountInstanceId = accountIdentifierEntityList.get(0).getAccountInstanceId();
+
+        AccountInstanceEntity accountInstanceEntity = QueryChain.of(AccountInstanceEntity.class)
+                .eq(AccountInstanceEntity::getAccountInstanceId, accountInstanceId, Objects.nonNull(accountInstanceId))
+                .eq(AccountInstanceEntity::getAppId, appId, Objects.nonNull(appId)).one();
+        if(Objects.isNull(accountInstanceEntity)){
+            return response;
+        }
+
+        BeanUtil.copyProperties(accountInstanceEntity, response);
         response.setSuperAccount(true);
 
         return response;
@@ -76,8 +84,19 @@ public class AccountApiBiz {
      * @return
      */
     List<Long> getAllRoleIds(String appId, Long accountInstanceId){
+        List<Long> roleList = new ArrayList<>();
 
-        return List.of();
+        List<AccountRoleEntity> accountRoleEntityList = QueryChain.of(AccountRoleEntity.class)
+                .eq(AccountRoleEntity::getAppId, appId, Objects.nonNull(appId))
+                .eq(AccountRoleEntity::getAccountInstanceId, accountInstanceId, Objects.nonNull(accountInstanceId)).list();
+        if(Objects.isNull(accountRoleEntityList) || accountRoleEntityList.size() == 0){
+            return roleList;
+        }
+        for(AccountRoleEntity item : accountRoleEntityList){
+            roleList.add(item.getRbacRoleId());
+        }
+
+        return roleList;
     }
     /**
      *
