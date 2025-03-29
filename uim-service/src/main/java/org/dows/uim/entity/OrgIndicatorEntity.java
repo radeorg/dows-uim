@@ -43,6 +43,12 @@ public class OrgIndicatorEntity extends BaseEntity<OrgIndicatorEntity> {
     private Long orgActionId;
 
     /**
+     * 岗位规则ID
+     */
+    @Schema(description = "岗位规则ID")
+    private Long orgRuleId;
+
+    /**
      * 指标名称
      */
     @Schema(description = "指标名称")

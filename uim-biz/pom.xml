@@ -16,6 +16,12 @@
             <artifactId>uim-api</artifactId>
         </dependency>
 
+
+        <dependency>
+            <groupId>org.dows.cloud</groupId>
+            <artifactId>uim-service</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.dows.cloud</groupId>
             <artifactId>uim-handler</artifactId>

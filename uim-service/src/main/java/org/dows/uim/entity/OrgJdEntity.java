@@ -50,6 +50,12 @@ public class OrgJdEntity extends BaseEntity<OrgJdEntity> {
     private String description;
 
     /**
+     * 岗位规则ID
+     */
+    @Schema(description = "岗位规则ID")
+    private Long orgRuleId;
+
+    /**
      * 发布渠道集合
      */
     @Schema(description = "发布渠道集合")
