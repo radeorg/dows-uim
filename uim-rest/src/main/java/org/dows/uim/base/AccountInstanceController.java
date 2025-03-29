@@ -33,6 +33,6 @@ public class AccountInstanceController extends BaseController<AccountInstanceSer
     }
 
     public Long setAccountInstance(AccountInstanceRequest accountInstance) {
-        return accountApiBiz.setAccountInstance(accountInstance);
+        return accountApiBiz.setAccountInstance(accountInstance.getAppId(), accountInstance);
     }
 }

@@ -27,7 +27,13 @@ public class AccountApiBiz {
     private final AccountInstanceService accountInstanceService;
     private final AccountIdentifierService accountIdentifierService;
 
-    public Long setAccountInstance(AccountInstanceRequest accountInstance) {
+    /**
+     *
+     * @param appId
+     * @param accountInstance
+     * @return
+     */
+    public Long setAccountInstance(String appId, AccountInstanceRequest accountInstance) {
         // 保存账号 实例
         AccountInstanceEntity accountInstanceEntity =
                 BeanUtil.copyProperties(accountInstance, AccountInstanceEntity.class);
@@ -63,6 +69,22 @@ public class AccountApiBiz {
         return response;
     }
 
+    /**
+     *
+     * @param appId
+     * @param accountInstanceId
+     * @return
+     */
+    List<Long> getAllRoleIds(String appId, Long accountInstanceId){
+
+        return List.of();
+    }
+    /**
+     *
+     * @param appId
+     * @param accountIdentifier
+     * @return
+     */
     public AccountInstanceResponse getAccountInstanceById(String appId, Long accountIdentifier) {
         AccountInstanceResponse response = new AccountInstanceResponse();
 
