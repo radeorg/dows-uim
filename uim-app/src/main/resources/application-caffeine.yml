@@ -16,6 +16,8 @@ spring:
     type: caffeine
     file: assets/cache
 
+rade:
+  cacheName: test
 ---
 #开发环境
 spring:
