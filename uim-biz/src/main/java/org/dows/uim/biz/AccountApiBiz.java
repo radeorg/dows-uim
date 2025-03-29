@@ -83,7 +83,7 @@ public class AccountApiBiz {
      * @param accountInstanceId
      * @return
      */
-    List<Long> getAllRoleIds(String appId, Long accountInstanceId){
+    public List<Long> getAllRoleIds(String appId, Long accountInstanceId){
         List<Long> roleList = new ArrayList<>();
 
         List<AccountRoleEntity> accountRoleEntityList = QueryChain.of(AccountRoleEntity.class)
@@ -106,6 +106,24 @@ public class AccountApiBiz {
      */
     public AccountInstanceResponse getAccountInstanceById(String appId, Long accountIdentifier) {
         AccountInstanceResponse response = new AccountInstanceResponse();
+
+        List<AccountIdentifierEntity> accountIdentifierEntityList = QueryChain.of(AccountIdentifierEntity.class)
+                .eq(AccountIdentifierEntity::getAccountIdentifierId, accountIdentifier, Objects.nonNull(accountIdentifier))
+                .eq(AccountIdentifierEntity::getAppId, appId, Objects.nonNull(appId)).list();
+        if(Objects.isNull(accountIdentifierEntityList) || accountIdentifierEntityList.size() == 0){
+            return response;
+        }
+        Long accountInstanceId = accountIdentifierEntityList.get(0).getAccountInstanceId();
+
+        AccountInstanceEntity accountInstanceEntity = QueryChain.of(AccountInstanceEntity.class)
+                .eq(AccountInstanceEntity::getAccountInstanceId, accountInstanceId, Objects.nonNull(accountInstanceId))
+                .eq(AccountInstanceEntity::getAppId, appId, Objects.nonNull(appId)).one();
+        if(Objects.isNull(accountInstanceEntity)){
+            return response;
+        }
+
+        BeanUtil.copyProperties(accountInstanceEntity, response);
+        response.setSuperAccount(true);
 
         return response;
     }
