@@ -27,7 +27,7 @@ public class AccountApiBiz {
     private final AccountInstanceService accountInstanceService;
     private final AccountIdentifierService accountIdentifierService;
 
-    public Long setAccountInstance(AccountInstanceRequest accountInstance) {
+    public Long setAccountInstance(String appId, AccountInstanceRequest accountInstance) {
         // 保存账号 实例
         AccountInstanceEntity accountInstanceEntity =
                 BeanUtil.copyProperties(accountInstance, AccountInstanceEntity.class);
