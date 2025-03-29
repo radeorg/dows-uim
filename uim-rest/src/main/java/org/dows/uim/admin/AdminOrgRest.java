@@ -1,8 +1,10 @@
 package org.dows.uim.admin;
 
+import cn.hutool.json.JSONUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.dows.uim.api.request.RoleConfigRequest;
 import org.dows.uim.api.request.RuleConfigRequest;
 import org.dows.uim.api.response.RuleConfigResponse;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 
+@Slf4j
 @RestController
 @RequestMapping("/admin/org")
 @Tag(name = "管理端组织管理", description = "管理端组织管理")
@@ -23,6 +26,7 @@ public class AdminOrgRest {
     @PostMapping("/role/config")
     @Operation(summary = "组织角色配置")
     public boolean roleConfig(@RequestBody RoleConfigRequest request) {
+        log.info("request : {}", JSONUtil.toJsonStr(request));
         // 实现逻辑
         return true; // 示例返回值
     }
