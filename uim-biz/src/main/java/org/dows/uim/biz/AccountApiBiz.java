@@ -41,7 +41,7 @@ public class AccountApiBiz {
         return accountInstanceId;
     }
 
-    public AccountInstanceResponse getAccountInstanceByAccountName(String accountName, String appId) {
+    public AccountInstanceResponse getAccountInstanceByAccountName(String appId, String accountName) {
         AccountInstanceResponse response = new AccountInstanceResponse();
         List<AccountInstanceEntity> accountInstanceEntityList = QueryChain.of(AccountInstanceEntity.class)
                 .eq(AccountInstanceEntity::getIdentifier, accountName, Objects.nonNull(accountName))
@@ -58,24 +58,24 @@ public class AccountApiBiz {
         return response;
     }
 
-    public AccountIdentifierResponse getAccountIdentifier(FindAccountIdentifierRequest findAccountIdentifierRequest) {
+    public AccountIdentifierResponse getAccountIdentifier(String appId, FindAccountIdentifierRequest findAccountIdentifierRequest) {
         AccountIdentifierResponse response = new AccountIdentifierResponse();
         return response;
     }
 
-    public AccountInstanceResponse getAccountInstanceById(Long accountIdentifier) {
+    public AccountInstanceResponse getAccountInstanceById(String appId, Long accountIdentifier) {
         AccountInstanceResponse response = new AccountInstanceResponse();
 
         return response;
     }
 
-    public AccountOrgIdsResponse getOrgIdsByAccountId(Long accountInstanceId, boolean check, String appId) {
+    public AccountOrgIdsResponse getOrgIdsByAccountId(String appId, Long accountInstanceId, boolean check) {
         AccountOrgIdsResponse response = new AccountOrgIdsResponse();
 
         return response;
     }
 
-    public List<AccountRoleRelationResponse> getRoleByAccountInstanceId(List<Long> principals, String appId) {
+    public List<AccountRoleRelationResponse> getRoleByAccountInstanceId(String appId,  List<Long> principals) {
         List<AccountRoleRelationResponse> response = new ArrayList<>();
 
         return List.of();

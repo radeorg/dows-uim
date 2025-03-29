@@ -32,8 +32,6 @@ public class AccountInstanceController extends BaseController<AccountInstanceSer
     protected void init(HttpServletRequest request, JSONObject requestParams) {
     }
 
-
-    @Override
     public Long setAccountInstance(AccountInstanceRequest accountInstance) {
         return accountApiBiz.setAccountInstance(accountInstance);
     }
