@@ -134,9 +134,9 @@ jobs:
             
             sh ${{ vars.AS_SCRIPT_BOLE }} \
             "${{ github.repository }}.git" \
-            "$GITHUB_REF" \
-            "$GITHUB_ACTOR" \
-            "$COMMIT_EMAIL" \
+            "${GITHUB_REF}" \
+            "${GITHUB_ACTOR}" \
+            "${COMMIT_EMAIL}" \
             "${{ steps.cfl.outputs.changed_files }}" \
             "${{ steps.cfl.outputs.commit }}" \
             "${{ steps.cfl.outputs.commit_id }}" \
