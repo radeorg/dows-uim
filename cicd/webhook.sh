@@ -14,10 +14,7 @@ echo "当前路径: $(pwd)"
 # 加载环境变量
 source ./cicd.env && source ./deploy.env || { echo "加载环境变量失败"; exit 1; }
 
-#项目名
-PROJECT_NAME='用户身份[dows-uim]'
 # sh xxx.sh 项目地址 分支 触发人 触发邮箱 变更文件 提交信息 提交SHA 状态 描述
-
 ##项目地址
 #PROJECT_URL="$1"
 ##分支或标签
@@ -35,12 +32,6 @@ PROJECT_NAME='用户身份[dows-uim]'
 ##ACTION状态
 #ACTIONS_STATUS="$8"
 
-
-#打印信息
-echo "变更文件: ${CHANGED_FILES}"
-echo "代码检测: ${SONARQUBE_HOST}/dashboard?branch=${BRANCH_NAME}&id=${SONARQUBE_KEY}"
-echo "all params: ${PROJECT_URL} ,${BRANCH_NAME}, ${ACTOR_NAME},${ACTOR_MAIL},${CHANGED_FILES},${COMMIT_MSG},${COMMIT_SHA},${ACTIONS_STATUS}"
-
 # 状态颜色和文字设置
 if [ "$ACTIONS_STATUS" = "success" ]; then
     COLOR="green"
@@ -54,11 +45,16 @@ fi
 #CFL=$(echo "$CHANGED_FILES" | sed 's/ /\\n/g')
 # 处理变更文件换行显示（兼容含空格文件名）
 changedFileList=$(echo "$CHANGED_FILES" | tr ' ' '\n' | sed 's/^/> - /')
+#打印信息
+echo "变更文件: ${CHANGED_FILES}"
+echo "变更文件: $changedFileList"
+echo "代码检测: ${SONARQUBE_HOST}/dashboard?branch=${BRANCH_NAME}&id=${SONARQUBE_KEY}"
+echo "参数列表: ${PROJECT_URL} ,${BRANCH_NAME}, ${ACTOR_NAME},${ACTOR_MAIL},${CHANGED_FILES},${COMMIT_MSG},${COMMIT_SHA},${ACTIONS_STATUS}"
+
 #组装URL
 project_commit_url="${PROJECT_URL}/-/commit/${COMMIT_SHA}"
 #sonarqube
 sonarqube_branch_url="${SONARQUBE_HOST}/dashboard?branch=${BRANCH_NAME}&id=${SONARQUBE_KEY}"
-
 
 
 title='应用发布'

@@ -11,7 +11,6 @@ on:
     branches:
       - '*'
 env:
-  PROJECT_NAME: dows-uim
   BRANCH_NAME: ${{ github.ref_name }}
   PR_NUMBER: ${{ github.event.pull_request.number || 'NOT_A_PR' }}
   COMMIT_EMAIL: ${{ github.event.head_commit.author.email || 'unknown' }}
@@ -111,6 +110,7 @@ jobs:
         #run: echo "deploy_args=${{ env.PROJECT_NAME }}:${{ env.BRANCH_NAME }}:${{ steps.cfl.outputs.trigger_env }}:${{ steps.cfl.outputs.commit_id }}:${{ steps.cfl.outputs.changed_files }}:${{ steps.cfl.outputs.commit }}" >> $GITHUB_OUTPUT
         run: |
           {
+            echo "PROJECT_NAME=${{ env.PROJECT_NAME }}"
             echo "PROJECT_URL=${{ github.repository }}"
             echo "BRANCH_NAME=${{ env.BRANCH_NAME }}"
             echo "ACTOR_NAME=${{ github.actor }}"
