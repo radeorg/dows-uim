@@ -121,9 +121,26 @@ jobs:
           #项目地址 分支 触发人 触发邮箱 变更文件 提交信息 提交SHA 状态
           last_ssh: |
             cd ${{ vars.AS_WORKDIR_BOLE }}
-            echo "args: ${{ vars.AS_SCRIPT_BOLE }} '${{ github.repository }}.git' '$GITHUB_REF' '$GITHUB_ACTOR' '$COMMIT_EMAIL' '${{ steps.cfl.outputs.changed_files }}' '${{ steps.cfl.outputs.commit }}' '${{ steps.cfl.outputs.commit_id }}' 'green'"
-            sh ${{ vars.AS_SCRIPT_BOLE }} '${github.repository}' '${GITHUB_REF}' '$GITHUB_ACTOR' '$COMMIT_EMAIL' '${{ steps.cfl.outputs.changed_files }}' '${{ steps.cfl.outputs.commit }}' '${{ steps.cfl.outputs.commit_id }}' 'green'
+           
+            echo "===== 参数验证 ====="
+            echo "脚本路径: ${{ vars.AS_SCRIPT_BOLE }}"
+            echo "仓库: ${{ github.repository }}"
+            echo "分支: $GITHUB_REF"
+            echo "操作者: $GITHUB_ACTOR"
+            echo "邮箱: $COMMIT_EMAIL"
+            echo "变更文件: ${{ steps.cfl.outputs.changed_files }}"
+            echo "提交信息: ${{ steps.cfl.outputs.commit }}"
+            echo "提交SHA: ${{ steps.cfl.outputs.commit_id }}"
             
+            sh ${{ vars.AS_SCRIPT_BOLE }} \
+            "${{ github.repository }}.git" \
+            "$GITHUB_REF" \
+            "$GITHUB_ACTOR" \
+            "$COMMIT_EMAIL" \
+            "${{ steps.cfl.outputs.changed_files }}" \
+            "${{ steps.cfl.outputs.commit }}" \
+            "${{ steps.cfl.outputs.commit_id }}" \
+            "green"
 
 #          scp: |
 #            ./env/sit/* => $SERVER_SIT_PATH
