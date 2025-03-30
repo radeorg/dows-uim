@@ -1,48 +1,48 @@
 #!/bin/bash
 # 调试：打印所有参数
-echo "===== 接收参数 ====="
-echo "参数1(仓库): $1"
-echo "参数2(分支): $2"
-echo "参数3(操作者): $3"
-echo "参数4(邮箱): $4"
-echo "参数5(变更文件): $5"
-echo "参数6(提交信息): $6"
-echo "参数7(提交SHA): $7"
-echo "参数8(状态): $8"
+#echo "===== 接收参数 ====="
+#echo "参数1(仓库): $1"
+#echo "参数2(分支): $2"
+#echo "参数3(操作者): $3"
+#echo "参数4(邮箱): $4"
+#echo "参数5(变更文件): $5"
+#echo "参数6(提交信息): $6"
+#echo "参数7(提交SHA): $7"
+#echo "参数8(状态): $8"
 
 echo "当前路径: $(pwd)"
 # 加载环境变量
-source ./cicd.env || { echo "加载环境变量失败"; exit 1; }
+source ./cicd.env && source ./deploy.env || { echo "加载环境变量失败"; exit 1; }
 
 #项目名
 PROJECT_NAME='用户身份[dows-uim]'
 # sh xxx.sh 项目地址 分支 触发人 触发邮箱 变更文件 提交信息 提交SHA 状态 描述
 
-#项目地址
-PROJECT_URL="$1"
-#分支或标签
-BRANCH_NAME="$2"
-#触发人
-ACTOR_NAME="$3"
-#触发邮箱
-ACTOR_MAIL="$4"
-#变更文件
-CHANGED_FILES="$5"
-#提交信息
-COMMIT_MSG="$6"
-#提交SHA
-COMMIT_SHA="$7"
-#ACTION状态
-ACTIONS_STATUS="$8"
+##项目地址
+#PROJECT_URL="$1"
+##分支或标签
+#BRANCH_NAME="$2"
+##触发人
+#ACTOR_NAME="$3"
+##触发邮箱
+#ACTOR_MAIL="$4"
+##变更文件
+#CHANGED_FILES="$5"
+##提交信息
+#COMMIT_MSG="$6"
+##提交SHA
+#COMMIT_SHA="$7"
+##ACTION状态
+#ACTIONS_STATUS="$8"
 
 
 #打印信息
-echo "变更文件: ${changedFileList}"
+echo "变更文件: ${CHANGED_FILES}"
 echo "代码检测: ${SONARQUBE_HOST}/dashboard?branch=${BRANCH_NAME}&id=${SONARQUBE_KEY}"
 echo "all params: ${PROJECT_URL} ,${BRANCH_NAME}, ${ACTOR_NAME},${ACTOR_MAIL},${CHANGED_FILES},${COMMIT_MSG},${COMMIT_SHA},${ACTIONS_STATUS}"
 
 # 状态颜色和文字设置
-if [ "$ACTIONS_STATUS" = "green" ]; then
+if [ "$ACTIONS_STATUS" = "success" ]; then
     COLOR="green"
     STATE="部署成功 ✅"
 else
