@@ -11,9 +11,10 @@ on:
     branches:
       - '*'
 env:
-  GITHUB_PR_NUMBER: ${{github.event.pull_request.number}}
-  MODULE_NAME: dows-uim
+  PROJECT_NAME: dows-uim
   BRANCH_NAME: ${{ github.ref_name }}
+  PR_NUMBER: ${{ github.event.pull_request.number || 'NOT_A_PR' }}
+  COMMIT_EMAIL: ${{ github.event.head_commit.author.email || 'unknown' }}
 jobs:
   CI:
     #配置权限
@@ -98,13 +99,42 @@ jobs:
       - name: deploy with Maven
         run: mvn -B deploy --file pom.xml
 
-      - name: failure notification
-        if: ${{ failure() }}
-        run: |
-          sshpass -p ${{secrets.AS_PASS_BOLE}} ssh -o StrictHostKeyChecking=no ${{ secrets.AS_ACCOUNT_BOLE }}@${{secrets.AS_HOST_BOLE}} "sh ${{ vars.AS_SCRIPT_BOLE }} $GITHUB_REF $GITHUB_ACTOR '$APP_NAME-prd' '部署失败' '${{ steps.cfl.outputs.changed_files }}' '${{ steps.cfl.outputs.commit }}' 'red'" 
 
-      - name: success notification
-        if: ${{ success() }}
-        run: |
-          sshpass -p ${{secrets.AS_PASS_BOLE}} ssh -o StrictHostKeyChecking=no ${{ secrets.AS_ACCOUNT_BOLE }}@${{secrets.AS_HOST_BOLE}} "sh ${{ vars.AS_SCRIPT_BOLE }} $GITHUB_REF $GITHUB_ACTOR '$APP_NAME-prd' '部署成功' '${{ steps.cfl.outputs.changed_files }}' '${{ steps.cfl.outputs.commit }}' 'green'"
+      # if: ${{ steps.btv.outputs._0 == 'sit' || steps.cfl.outputs.trigger_env == 'release'}}
+      - name: deploy
+        uses: cross-the-world/ssh-scp-ssh-pipelines@latest
+        with:
+          host: ${{  secrets.AS_HOST_BOLE }}
+          user: ${{ secrets.AS_ACCOUNT_BOLE }}
+          pass: ${{ secrets.AS_PASS_BOLE }}
+          connect_timeout: 6000s
+          scp: |
+            ./cicd/webhook.sh => ${{ vars.AS_WORKDIR_BOLE }}
+          #项目地址 分支 触发人 触发邮箱 变更文件 提交信息 提交SHA 状态
+          last_ssh: |
+            cd ${{ vars.AS_WORKDIR_BOLE }}
+            echo "sh ${{ vars.AS_SCRIPT_BOLE }} '${{ github.repository }}.git' '$GITHUB_REF' '$GITHUB_ACTOR' '$COMMIT_EMAIL' '${{ steps.cfl.outputs.changed_files }}' '${{ steps.cfl.outputs.commit }}' '${{ steps.cfl.outputs.commit_id }}' 'green'"
+            sh ${{ vars.AS_SCRIPT_BOLE }} '${{ github.repository }}.git' '$GITHUB_REF' '$GITHUB_ACTOR' '$COMMIT_EMAIL' '${{ steps.cfl.outputs.changed_files }}' '${{ steps.cfl.outputs.commit }}' '${{ steps.cfl.outputs.commit_id }}' 'green'
+            
 
+#          scp: |
+#            ./env/sit/* => $SERVER_SIT_PATH
+#            ./env/sit/.env => $SERVER_SIT_PATH
+#          last_ssh: |
+#            cd $SERVER_SIT_PATH
+#            docker login --username=${{ secrets.DOCKER_ACCOUNT }} --password=${{ secrets.DOCKER_PASS }} $DOCKER_REGISTRY
+#            env=${{ steps.btv.outputs._0 }}
+#            tag=${{ steps.btv.outputs._1 }}
+#            docker-compose down
+#            docker-compose up -d
+
+#      - name: failure notification
+#        if: ${{ failure() }}
+#        run: |
+#          sshpass -p ${{secrets.AS_PASS_BOLE}} ssh -o StrictHostKeyChecking=no ${{ secrets.AS_ACCOUNT_BOLE }}@${{secrets.AS_HOST_BOLE}} "sh ${{ vars.AS_SCRIPT_BOLE }} $GITHUB_REF $GITHUB_ACTOR '$APP_NAME-prd' '部署失败' '${{ steps.cfl.outputs.changed_files }}' '${{ steps.cfl.outputs.commit }}' 'red'"
+#
+#      - name: success notification
+#        if: ${{ success() }}
+#        run: |
+#          sshpass -p ${{secrets.AS_PASS_BOLE}} ssh -o StrictHostKeyChecking=no ${{ secrets.AS_ACCOUNT_BOLE }}@${{secrets.AS_HOST_BOLE}} "sh ${{ vars.AS_SCRIPT_BOLE }} $GITHUB_REF $GITHUB_ACTOR '$APP_NAME-prd' '部署成功' '${{ steps.cfl.outputs.changed_files }}' '${{ steps.cfl.outputs.commit }}' 'green'"
+#
