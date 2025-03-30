@@ -6,6 +6,7 @@
 
 # BlueJ files
 *.ctxt
+
 .flattened-pom.xml
 
 # Mobile Tools for Java (J2ME)
