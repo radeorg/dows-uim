@@ -5,21 +5,21 @@ echo "当前路径: $(pwd)"
 #项目名
 PROJECT_NAME='用户身份[dows-uim]'
 #项目地址
-PROJECT_URL=$1
+PROJECT_URL=$0
 #分支或标签
-BRANCH_NAME=$2
+BRANCH_NAME=$1
 #触发人
-ACTOR_NAME=$3
+ACTOR_NAME=$2
 #触发邮箱
-ACTOR_MAIL=$4
+ACTOR_MAIL=$3
 #变更文件
-CHANGED_FILES=$5
+CHANGED_FILES=$4
 #提交信息
-COMMIT_MSG=$6
+COMMIT_MSG=$5
 #提交SHA
-COMMIT_SHA=$7
+COMMIT_SHA=$6
 #ACTION状态
-ACTIONS_STATUS=$8
+ACTIONS_STATUS=$7
 
 
 # 状态颜色和文字设置
@@ -34,14 +34,16 @@ fi
 #变更文件换行处理
 #CFL=$(echo "$CHANGED_FILES" | sed 's/ /\\n/g')
 # 处理变更文件换行显示（兼容含空格文件名）
-#changedFileList=$(echo "$CHANGED_FILES" | tr ' ' '\n' | sed 's/^/> - /')
+changedFileList=$(echo "$CHANGED_FILES" | tr ' ' '\n' | sed 's/^/> - /')
 #组装URL
 project_commit_url="${PROJECT_URL}/-/commit/${COMMIT_SHA}"
 #sonarqube
 sonarqube_branch_url="${SONARQUBE_HOST}/dashboard?branch=${BRANCH_NAME}&id=${SONARQUBE_KEY}"
 #打印信息
-echo "变更文件: ${CFL}"
+echo "变更文件: ${changedFileList}"
 echo "代码检测: ${SONARQUBE_HOST}/dashboard?branch=${BRANCH_NAME}&id=${SONARQUBE_KEY}"
+echo "all params: "
+
 
 title='应用发布'
 time="$(date "+%Y-%m-%d")"
@@ -75,32 +77,22 @@ curl $WEBHOOK_DING_TALK \
      "msgtype": "markdown",
      "markdown": {
          "title":"项目名",
-         "text": ">应用发布<font color='"$COLOR"'>'"$STATE"'</font>\n
+         "text": "应用发布<font color='"$COLOR"'>'"$STATE"'</font>\n
            发布时间: <font color=\"comment\">'"$time $times $xingqi"'</font>
            项目名称: <font color=\"comment\">'"$PROJECT_NAME"'</font>
            项目仓库: <font color=\"comment\">'"$PROJECT_URL"'</font>
            项目分支: <font color=\"comment\">'"$BRANCH_NAME"'</font>
            触发账号: <font color=\"comment\">'"$ACTOR_NAME"'</font>
            触发邮箱: <font color=\"comment\">'"$ACTOR_MAIL"'</font>
-           提交说明: <font color=\"comment\">'"$COMMIT_MSG"'</font>
-           COMMIT-ID: <font color=\"comment\">'"$COMMIT_SHA"'</font>
            HOST: <font color=\"comment\">'"$public_ip:$ip"'</font>
            DISK: <font color=\"comment\">'"$lsblk"'</font>
            MEM: <font color=\"comment\">'"$total_memory,$mem%"'</font>
            CPU: <font color=\"comment\">'"$cpu%"'</font>
-           描述: <font color='"$COLOR"'>'"$COMMIT"'</font>
+           COMMIT-ID: <font color=\"comment\">'"$COMMIT_SHA"'</font>
+           提交说明: <font color=\"comment\">'"$COMMIT_MSG"'</font>
            变更文件:
            <font color=\"comment\">'"$CHANGED_FILES"'</font>"
-     },
-      "at": {
-          "atMobiles": [
-              "150XXXXXXXX"
-          ],
-          "atUserIds": [
-              "user123"
-          ],
-          "isAtAll": false
-      }
+     }
  }'
 
 
