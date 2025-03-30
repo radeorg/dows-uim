@@ -110,14 +110,14 @@ jobs:
         #run: echo "deploy_args=${{ env.PROJECT_NAME }}:${{ env.BRANCH_NAME }}:${{ steps.cfl.outputs.trigger_env }}:${{ steps.cfl.outputs.commit_id }}:${{ steps.cfl.outputs.changed_files }}:${{ steps.cfl.outputs.commit }}" >> $GITHUB_OUTPUT
         run: |
           {
-            echo "PROJECT_URL=${{ github.repository }}"
-            echo "BRANCH_NAME=${{ env.BRANCH_NAME }}"
-            echo "ACTOR_NAME=${{ github.actor }}"
-            echo "ACTOR_MAIL=${{ env.COMMIT_EMAIL }}"
-            echo "CHANGED_FILES=${{ steps.cfl.outputs.changed_files }}"
-            echo "COMMIT_MSG=${{ steps.cfl.outputs.commit }}"
-            echo "COMMIT_SHA=${{ steps.cfl.outputs.commit_id }}"
-            echo "TRIGGER_ENV=${{ steps.cfl.outputs.trigger_env }}"
+            echo "PROJECT_URL='${{ github.repository }}'"
+            echo "BRANCH_NAME='${{ env.BRANCH_NAME }}'"
+            echo "ACTOR_NAME='${{ github.actor }}'"
+            echo "ACTOR_MAIL='${{ env.COMMIT_EMAIL }}'"
+            echo "CHANGED_FILES='${{ steps.cfl.outputs.changed_files }}'"
+            echo "COMMIT_MSG='${{ steps.cfl.outputs.commit }}'"
+            echo "COMMIT_SHA='${{ steps.cfl.outputs.commit_id }}'"
+            echo "TRIGGER_ENV='${{ steps.cfl.outputs.trigger_env }}'"
             
             if [ "${{ steps.deploy_with_maven.outcome }}" == "success" ]; then
               echo "ACTIONS_STATUS=success"
