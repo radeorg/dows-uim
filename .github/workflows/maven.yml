@@ -131,9 +131,10 @@ jobs:
             echo "变更文件: ${{ steps.cfl.outputs.changed_files }}"
             echo "提交信息: ${{ steps.cfl.outputs.commit }}"
             echo "提交SHA: ${{ steps.cfl.outputs.commit_id }}"
+            echo "工作路径: $GITHUB_WORKSPACE"
             echo "--------------------------------"
 
-            sh ./cicd/webhook.sh '$GITHUB_REF' '$GITHUB_ACTOR' '$COMMIT_EMAIL' '${{ steps.cfl.outputs.changed_files }}' '${{ steps.cfl.outputs.commit }}' '${{ steps.cfl.outputs.commit_id }}' 'green'
+            sh "$GITHUB_WORKSPACE/cicd/webhook.sh" '$GITHUB_REF' '$GITHUB_ACTOR' '$COMMIT_EMAIL' '${{ steps.cfl.outputs.changed_files }}' '${{ steps.cfl.outputs.commit }}' '${{ steps.cfl.outputs.commit_id }}' 'green'
         
 
 #      - name: failure notification
