@@ -39,49 +39,27 @@ disk_info=$(df -h / | awk 'NR==2{print $4"/"$2 " ("$5")"}')
 mem_info=$(free -m | awk 'NR==2{printf "%.1fG/%.1fG (%.0f%%)", $3/1024, $2/1024, $3/$2*100}')
 cpu_usage=$(top -bn1 | grep "Cpu(s)" | sed "s/.*, *\([0-9.]*\)%* id.*/\1/" | awk '{print 100 - $1"%"}')
 
-# 构造钉钉消息体
-markdown_content="
-### 开发环境CI/CD通知
-
-**发布时间**：$time $times $xingqi
-**项目名称**：$PROJECT_NAME
-**分支标签**：$BRANCH_NAME
-**触发人员**：$ACTOR_NAME ($ACTOR_MAIL)
-**构建状态**：<font color='$COLOR'>$STATE</font>
-
-**系统资源**：
-- 服务器IP：$public_ip ($ip)
-- 磁盘空间：$disk_info
-- 内存使用：$mem_info
-- CPU负载：$cpu_usage
-
-**代码变更**：
-$changedFileList
-
-**相关链接**：
-- [查看提交]($project_commit_url)
-- [SonarQube分析]($sonarqube_branch_url)
-
-**提交信息**：
-\`\`\`
-$COMMIT_MSG
-\`\`\`
-"
-
-# 发送钉钉通知
-curl --location "${WEBHOOK_DING_TALK}" \
---header 'Content-Type: application/json' \
---data-raw '{
+# 构造JSON数据（兼容旧版curl）
+json_data=$(cat <<EOF
+{
   "msgtype": "markdown",
   "markdown": {
     "title": "应用发布通知",
-    "text": "'"${markdown_content}"'"
+    "text": "### 开发环境CI/CD通知\n\n**发布时间**：$time $times $xingqi  \n**项目名称**：$PROJECT_NAME  \n**分支/标签**：$BRANCH_NAME  \n**触发人员**：$ACTOR_NAME ($ACTOR_MAIL)  \n**构建状态**：<font color='$COLOR'>$STATE</font>\n\n**系统资源**：\n- 服务器IP：$public_ip ($ip)  \n- 磁盘空间：$disk_info  \n- 内存使用：$mem_info  \n- CPU负载：$cpu_usage\n\n**代码变更**：\n$changedFileList\n\n**相关链接**：\n- [查看提交]($project_commit_url)  \n- [SonarQube分析]($sonarqube_branch_url)\n\n**提交信息**：\n\`\`\`\n$COMMIT_MSG\n\`\`\`"
   },
   "at": {
-    "atMobiles": ["'"${ACTOR_PHONE}"'"],
+    "atMobiles": ["${ACTOR_PHONE:-}"],
     "isAtAll": false
   }
-}'
+}
+EOF
+)
+
+curl --location "${WEBHOOK_DING_TALK}" \
+--header 'Content-Type: application/json' \
+--data "$json_data"
+
+
 ##!/bin/bash
 #source ./cicd.env
 #echo "当前路径: $(pwd)"
