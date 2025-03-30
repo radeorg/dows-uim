@@ -101,8 +101,8 @@ jobs:
           repositories: '[{"id":"2290151-snapshot-aLhHBl","url":"${{ secrets.MVN_REPOSITORY }}","releases":{"enabled":"false"},"snapshots":{"enabled":"true","updatePolicy":"always"}}]'
           servers: '[{ "id": "2290151-snapshot-aLhHBl", "username": "${{ secrets.MVN_ACCOUNT }}", "password": "${{ secrets.MVN_PASS }}" }]'
 
-      - name: deploy with Maven
-        id: deploy_with_maven
+#      - name: deploy with Maven
+#        id: deploy_with_maven
 #        run: mvn -B deploy --file pom.xml
 
 
