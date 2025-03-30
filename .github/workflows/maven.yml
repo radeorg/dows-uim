@@ -81,14 +81,19 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+
       # 本地仓库缓存
       - name: Cache local Maven repository
         uses: actions/cache@v3
         with:
-          path: ~/.m2/repository
+          path: |
+            ~/.m2/repository
+            ~/.m2/**/plugin
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
+            ${{ runner.os }}-
+
       # 配置settings.xml用于Maven私库验证
       - name: maven-settings-xml-action
         uses: whelk-io/maven-settings-xml-action@v20
