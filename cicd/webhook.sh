@@ -100,8 +100,8 @@ curl $WEBHOOK_DING_TALK \
            CPU: <font color=\"comment\">'"$cpu%"'</font>
            COMMIT-ID: <font color=\"comment\">'"$COMMIT_SHA"'</font>
            提交说明: <font color=\"comment\">'"$COMMIT_MSG"'</font>
-           提交链接: <font color=\"comment\">'"$project_commit_url"'</font>
-           代码检测: <font color=\"comment\">'"$sonarqube_branch_url"'</font>
+           提交链接: [点击查看提交]('"$project_commit_url"')\n
+           代码检测: [检测报告]('"$sonarqube_branch_url"')\n
            变更文件:
            <font color=\"comment\">'"$changedFileList"'</font>"
      }
