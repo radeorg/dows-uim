@@ -34,7 +34,7 @@ fi
 #变更文件换行处理
 #CFL=$(echo "$CHANGED_FILES" | sed 's/ /\\n/g')
 # 处理变更文件换行显示（兼容含空格文件名）
-changedFileList=$(echo "$CHANGED_FILES" | tr ' ' '\n' | sed 's/^/> - /')
+#changedFileList=$(echo "$CHANGED_FILES" | tr ' ' '\n' | sed 's/^/> - /')
 #组装URL
 project_commit_url="${PROJECT_URL}/-/commit/${COMMIT_SHA}"
 #sonarqube
@@ -67,25 +67,30 @@ cpu=$(top -b -n1 | grep "Cpu(s)" | awk '{print $2}')
 #cpu_usage=$(top -bn1 | grep "Cpu(s)" | sed "s/.*, *\([0-9.]*\)%* id.*/\1/" | awk '{print 100 - $1"%"}')
 
 
+#sh /radeorg/bole/webhook.sh && 'radeorg/dows-uim.git' 'refs/heads/sit-1.0.250313' 'geeker-lait' 'lait.zhang@gmail.com' '.github/workflows/maven.yml' 'test' 'd65f755ad2a524194e6b8fc41f6cb52f13d3d0f6' 'green'
+
 curl $WEBHOOK_DING_TALK \
 -H 'Content-Type: application/json' \
 -d '{
      "msgtype": "markdown",
      "markdown": {
          "title":"项目名",
-         "text": "###应用发布\n
-           >发布时间: <font color=\"comment\">'"$time $times $xingqi"'</font>
-           >项目名: <font color=\"comment\">'"$PROJECT_NAME"'</font>
-           >分支名: <font color=\"comment\">'"$BRANCH_NAME"'</font>
-           >触发者: <font color=\"comment\">'"$AUTHOR_NAME"'</font>
-           >状态: <font color='"$COLOR"'>'"$STATE"'</font>
-           >HOST: <font color=\"comment\">'"$public_ip:$ip"'</font>
-           >DISK: <font color=\"comment\">'"$lsblk"'</font>
-           >MEM: <font color=\"comment\">'"$total_memory,$mem%"'</font>
-           >CPU: <font color=\"comment\">'"$cpu%"'</font>
-           >描述: <font color='"$COLOR"'>'"$COMMIT"'</font>
-           >变更文件:
-           <font color=\"comment\">'"$changedFileList"'</font>"
+         "text": ">应用发布<font color='"$COLOR"'>'"$STATE"'</font>\n
+           发布时间: <font color=\"comment\">'"$time $times $xingqi"'</font>
+           项目名称: <font color=\"comment\">'"$PROJECT_NAME"'</font>
+           项目仓库: <font color=\"comment\">'"$PROJECT_URL"'</font>
+           项目分支: <font color=\"comment\">'"$BRANCH_NAME"'</font>
+           触发账号: <font color=\"comment\">'"$ACTOR_NAME"'</font>
+           触发邮箱: <font color=\"comment\">'"$ACTOR_MAIL"'</font>
+           提交说明: <font color=\"comment\">'"$COMMIT_MSG"'</font>
+           COMMIT-ID: <font color=\"comment\">'"$COMMIT_SHA"'</font>
+           HOST: <font color=\"comment\">'"$public_ip:$ip"'</font>
+           DISK: <font color=\"comment\">'"$lsblk"'</font>
+           MEM: <font color=\"comment\">'"$total_memory,$mem%"'</font>
+           CPU: <font color=\"comment\">'"$cpu%"'</font>
+           描述: <font color='"$COLOR"'>'"$COMMIT"'</font>
+           变更文件:
+           <font color=\"comment\">'"$CHANGED_FILES"'</font>"
      },
       "at": {
           "atMobiles": [
