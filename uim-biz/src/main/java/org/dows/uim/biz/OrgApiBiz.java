@@ -29,11 +29,16 @@ public class OrgApiBiz implements OrgApi {
     @Override
     public JobIndicatorResponse getOrgIndicatorByJobName(String jobName) {
         JobIndicatorResponse response = new JobIndicatorResponse();
-        jobName = "##";
         List<OrgJdEntity> orgJdEntities = QueryChain.of(OrgJdEntity.class)
                 .like(OrgJdEntity::getDescription, jobName, Objects.nonNull(jobName)).list();
         if(Objects.isNull(orgJdEntities) || orgJdEntities.size() == 0){
-            return response;
+            //如果找不到，通过默认值查询
+            jobName = "##";
+            orgJdEntities = QueryChain.of(OrgJdEntity.class)
+                    .like(OrgJdEntity::getDescription, jobName, Objects.nonNull(jobName)).list();
+            if(Objects.isNull(orgJdEntities) || orgJdEntities.size() == 0) {
+                return response;
+            }
         }
 
         List<OrgIndicatorResponse> responseList = new ArrayList<>();
