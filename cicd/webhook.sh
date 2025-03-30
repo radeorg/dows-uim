@@ -21,6 +21,10 @@ COMMIT_SHA=$6
 #ACTION状态
 ACTIONS_STATUS=$7
 
+#打印信息
+echo "变更文件: ${changedFileList}"
+echo "代码检测: ${SONARQUBE_HOST}/dashboard?branch=${BRANCH_NAME}&id=${SONARQUBE_KEY}"
+echo "all params: ${PROJECT_URL} ,${BRANCH_NAME}, ${ACTOR_NAME},${ACTOR_MAIL},${CHANGED_FILES},${COMMIT_MSG},${COMMIT_SHA},${ACTIONS_STATUS}"
 
 # 状态颜色和文字设置
 if [ "$ACTIONS_STATUS" = "green" ]; then
@@ -39,10 +43,7 @@ changedFileList=$(echo "$CHANGED_FILES" | tr ' ' '\n' | sed 's/^/> - /')
 project_commit_url="${PROJECT_URL}/-/commit/${COMMIT_SHA}"
 #sonarqube
 sonarqube_branch_url="${SONARQUBE_HOST}/dashboard?branch=${BRANCH_NAME}&id=${SONARQUBE_KEY}"
-#打印信息
-echo "变更文件: ${changedFileList}"
-echo "代码检测: ${SONARQUBE_HOST}/dashboard?branch=${BRANCH_NAME}&id=${SONARQUBE_KEY}"
-echo "all params: "
+
 
 
 title='应用发布'
