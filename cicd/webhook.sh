@@ -42,9 +42,9 @@ else
 fi
 
 #变更文件换行处理
-#CFL=$(echo "$CHANGED_FILES" | sed 's/ /\\n/g')
+changedFileList=$(echo "$CHANGED_FILES" | sed 's/ /\\n/g')
 # 处理变更文件换行显示（兼容含空格文件名）
-changedFileList=$(echo "$CHANGED_FILES" | tr ' ' '\n' | sed 's/^/> - /')
+#changedFileList=$(echo "$CHANGED_FILES" | tr ' ' '\n' | sed 's/^/> - /')
 #打印信息
 echo "变更文件: ${CHANGED_FILES}"
 echo "变更文件: ${changedFileList}"
