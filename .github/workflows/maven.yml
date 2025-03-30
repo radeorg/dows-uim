@@ -56,14 +56,30 @@ jobs:
               echo "$file was changed"
           done
           
+#
+#      - name: Set up JDK 21
+#        # 安装 JDK
+#        uses: actions/setup-java@v3
+#        with:
+#          java-version: '21'
+#          distribution: 'oracle'
+#          cache: maven
+
+      - name: Cache JDK
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.jdk/cache
+            ~/.jdk/temurin-jdk-21*
+          key: ${{ runner.os }}-jdk-21-temurin
 
       - name: Set up JDK 21
-        # 安装 JDK
         uses: actions/setup-java@v3
         with:
           java-version: '21'
-          distribution: 'oracle'
+          distribution: 'temurin'
           cache: maven
+
       # 本地仓库缓存
       - name: Cache local Maven repository
         uses: actions/cache@v3
