@@ -5,21 +5,21 @@ echo "当前路径: $(pwd)"
 #项目名
 PROJECT_NAME='用户身份[dows-uim]'
 #项目地址
-PROJECT_URL=$0
+PROJECT_URL=$1
 #分支或标签
-BRANCH_NAME=$1
+BRANCH_NAME=$2
 #触发人
-ACTOR_NAME=$2
+ACTOR_NAME=$3
 #触发邮箱
-ACTOR_MAIL=$3
+ACTOR_MAIL=$4
 #变更文件
-CHANGED_FILES=$4
+CHANGED_FILES=$5
 #提交信息
-COMMIT_MSG=$5
+COMMIT_MSG=$6
 #提交SHA
-COMMIT_SHA=$6
+COMMIT_SHA=$7
 #ACTION状态
-ACTIONS_STATUS=$7
+ACTIONS_STATUS=$8
 
 #打印信息
 echo "变更文件: ${changedFileList}"
