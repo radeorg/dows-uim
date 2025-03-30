@@ -83,12 +83,12 @@ jobs:
         run: mvn -B deploy --file pom.xml
 
       - name: failure notification
-        if: ${{ (steps.btv.outputs._0 == 'sit' || steps.cfl.outputs.trigger_env == 'release') && failure() }}
+        if: ${{ failure() }}
         run: |
           sshpass -p ${{secrets.AS_PASS_BOLE}} ssh -o StrictHostKeyChecking=no ${{ secrets.AS_ACCOUNT_BOLE }}@${{secrets.AS_HOST_BOLE}} "sh ${{ variables.AS_SCRIPT_BOLE }} $GITHUB_REF $GITHUB_ACTOR '$APP_NAME-prd' '部署失败' '${{ steps.cfl.outputs.changed_files }}' '${{ steps.cfl.outputs.commit }}' 'red'" 
 
       - name: success notification
-        if: ${{ (steps.btv.outputs._0 == 'sit' || steps.cfl.outputs.trigger_env == 'release') && success() }}
+        if: ${{ success() }}
         run: |
           sshpass -p ${{secrets.AS_PASS_BOLE}} ssh -o StrictHostKeyChecking=no ${{ secrets.AS_ACCOUNT_BOLE }}@${{secrets.AS_HOST_BOLE}} "sh ${{ variables.AS_SCRIPT_BOLE }} $GITHUB_REF $GITHUB_ACTOR '$APP_NAME-prd' '部署成功' '${{ steps.cfl.outputs.changed_files }}' '${{ steps.cfl.outputs.commit }}' 'green'"
 
