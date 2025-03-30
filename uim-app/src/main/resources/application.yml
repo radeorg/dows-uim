@@ -15,7 +15,7 @@ spring:
   application:
     name: dows-uim
   profiles:
-    include: mysql,apidoc,mybatis,caffeine
+    include: mysql,apidoc,mybatis,caffeine,rade
     active: sit
 
   jackson:
