@@ -133,7 +133,7 @@ jobs:
             echo "提交SHA: ${{ steps.cfl.outputs.commit_id }}"
             echo "--------------------------------"
 
-            sh ${{ vars.AS_SCRIPT_BOLE }} '${{ github.repository }}' '$GITHUB_REF' '$GITHUB_ACTOR' '$COMMIT_EMAIL' '${{ steps.cfl.outputs.changed_files }}' '${{ steps.cfl.outputs.commit }}' '${{ steps.cfl.outputs.commit_id }}' 'green'
+            sh ./cicd/webhook.sh '$GITHUB_REF' '$GITHUB_ACTOR' '$COMMIT_EMAIL' '${{ steps.cfl.outputs.changed_files }}' '${{ steps.cfl.outputs.commit }}' '${{ steps.cfl.outputs.commit_id }}' 'green'
         
 
 #      - name: failure notification
