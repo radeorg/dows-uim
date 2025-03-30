@@ -1,5 +1,5 @@
 #!/bin/bash
-source ./cicd.env
+source $(pwd)/cicd.env
 echo "当前路径: $(pwd)"
 # sh xxx.sh 项目地址 分支 触发人 触发邮箱 变更文件 提交信息 提交SHA 状态 描述
 #项目名
