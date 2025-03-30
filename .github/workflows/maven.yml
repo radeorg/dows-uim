@@ -1,0 +1,94 @@
+name: cicd
+
+on:
+  push:
+    branches:
+      #   - dev-*
+      - sit-*
+      - uat-*
+      - prd-*
+  pull_request:
+    branches:
+      - '*'
+env:
+  GITHUB_PR_NUMBER: ${{github.event.pull_request.number}}
+  MODULE_NAME: dows-uim
+  BRANCH_NAME: ${{ github.ref_name }}
+jobs:
+  CI:
+    #配置权限
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:
+      # 下载代码
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: ${{ github.event_name == 'pull_request' && 2 || 0 }}
+
+      - name: get commit and changed file list
+        id: cfl
+        # app_branch=dows-uim:dev-1.0.250330:
+        run: |
+          echo "commit=$(git log -1 --pretty=%B)" >> $GITHUB_OUTPUT
+          if ${{ github.event_name == 'pull_request' }}; then
+            echo "changed_files=$(git diff --name-only -r HEAD^1 HEAD | xargs)" >> $GITHUB_OUTPUT
+          else
+            echo "changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | xargs)" >> $GITHUB_OUTPUT
+          fi
+          echo "app_branch=${{ env.MODULE_NAME }}:${{ env.BRANCH_NAME }}" >> $GITHUB_OUTPUT
+          echo "commit_id=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+          echo "trigger_env=${{ github.event.client_payload.env }}" >> $GITHUB_OUTPUT
+
+      - name: get branch-version:tag
+        id: btv
+        uses: jungwinter/split@master
+        with:
+          msg: ${{ github.ref_name }}
+          separator: "-"
+          maxsplit: -1
+
+      - name: print branch-version and changed file list
+        run: |
+          echo "=====分支版本：${{ steps.btv.outputs._0 }},${{ steps.btv.outputs._1 }}====="
+          echo "=====触发环境：${{ steps.cfl.outputs.trigger_env }}"
+          echo "=====变化文件:"
+          for file in ${{ steps.cfl.outputs.changed_files }}; do
+              echo "$file was changed"
+          done
+          
+
+      - name: Set up JDK 21
+        # 安装 JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'oracle'
+          cache: maven
+      # 本地仓库缓存
+      - name: Cache local Maven repository
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+      # 配置settings.xml用于Maven私库验证
+      - name: maven-settings-xml-action
+        uses: whelk-io/maven-settings-xml-action@v20
+        with:
+          repositories: '[{"id":"rdc-snapshots","url":"${{ secrets.MVN_REPOSITORY }}","releases":{"enabled":"false"},"snapshots":{"enabled":"true","updatePolicy":"always"}}]'
+          servers: '[{ "id": "rdc-snapshots", "username": "${{ secrets.MVN_ACCOUNT }}", "password": "${{ secrets.MVN_PASS }}" }]'
+
+      - name: deploy with Maven
+        run: mvn -B deploy --file pom.xml
+
+      - name: failure notification
+        if: ${{ failure() }}
+        run: |
+          sshpass -p ${{secrets.AS_PASS_BOLE}} ssh -o StrictHostKeyChecking=no ${{ secrets.AS_ACCOUNT_BOLE }}@${{secrets.AS_HOST_BOLE}} "sh ${{ variables.AS_SCRIPT_BOLE }} $GITHUB_REF $GITHUB_ACTOR '$APP_NAME-prd' '部署失败' '${{ steps.cfl.outputs.changed_files }}' '${{ steps.cfl.outputs.commit }}' 'red'" 
+
+      - name: success notification
+        if: ${{ success() }}
+        run: |
+          sshpass -p ${{secrets.AS_PASS_BOLE}} ssh -o StrictHostKeyChecking=no ${{ secrets.AS_ACCOUNT_BOLE }}@${{secrets.AS_HOST_BOLE}} "sh ${{ variables.AS_SCRIPT_BOLE }} $GITHUB_REF $GITHUB_ACTOR '$APP_NAME-prd' '部署成功' '${{ steps.cfl.outputs.changed_files }}' '${{ steps.cfl.outputs.commit }}' 'green'"
+
