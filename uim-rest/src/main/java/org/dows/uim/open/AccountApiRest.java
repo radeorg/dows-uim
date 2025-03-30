@@ -7,9 +7,7 @@ import org.dows.uim.api.AccountApi;
 import org.dows.uim.api.request.AccountInstanceRequest;
 import org.dows.uim.api.response.AccountInstanceResponse;
 import org.dows.uim.biz.AccountApiBiz;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,25 +20,25 @@ public class AccountApiRest implements AccountApi{
 
     @GetMapping("/get/AccountInstance")
     @Operation(summary = "通过账户信息获取账户实例")
-    public AccountInstanceResponse getAccountInstanceByAccountName(String appId, String accountName){
+    public AccountInstanceResponse getAccountInstanceByAccountName(@RequestParam String appId, @RequestParam String accountName){
         return accountApiBiz.getAccountInstanceByAccountName(appId, accountName);
     }
 
-    @GetMapping("/set/AccountInstance")
+    @PostMapping("/set/AccountInstance")
     @Operation(summary = "保存账户实例")
-    public Long setAccountInstance(String appId, AccountInstanceRequest accountInstance) {
-        return accountApiBiz.setAccountInstance(appId, accountInstance);
+    public Long setAccountInstance(@RequestBody AccountInstanceRequest accountInstance) {
+        return accountApiBiz.setAccountInstance("appId", accountInstance);
     }
 
     @GetMapping("/get/RoleIds")
     @Operation(summary = "通过账户实例获取角色ID列表")
-    public List<Long> getAllRoleIds(String appId, Long accountInstanceId){
+    public List<Long> getAllRoleIds(@RequestParam String appId, @RequestParam Long accountInstanceId){
         return accountApiBiz.getAllRoleIds(appId, accountInstanceId);
     }
 
     @GetMapping("/get/ById")
     @Operation(summary = "通过账户标识符获取账户实例")
-    public AccountInstanceResponse getAccountInstanceById(String appId, Long accountIdentifier) {
+    public AccountInstanceResponse getAccountInstanceById(@RequestParam String appId, @RequestParam String accountIdentifier) {
         return accountApiBiz.getAccountInstanceById(appId, accountIdentifier);
     }
 }
