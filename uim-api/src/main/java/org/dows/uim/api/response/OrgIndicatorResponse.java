@@ -31,6 +31,9 @@ public class OrgIndicatorResponse {
     @Schema(description = "指标关键字")
     private String indicatorKeyword;
 
+    @Schema(description = "指标别名")
+    private String indicatorAlias;
+
     @Schema(description = "指标分值")
     private Integer indicatorScore;
 

@@ -4,7 +4,7 @@ import org.dows.uim.api.response.JobDescriptionResponse;
 import org.dows.uim.api.response.JobIndicatorResponse;
 
 public interface OrgApi {
-    JobIndicatorResponse getOrgInditor(String jobName);
+    JobIndicatorResponse getOrgIndicatorByJobName(String jobName);
 
-    JobDescriptionResponse getJobDescription(String jobName);
+    JobDescriptionResponse getJobDescriptionByJobName(String jobName);
 }

@@ -22,28 +22,29 @@ import java.util.Objects;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class OrgApiImpl implements OrgApi {
+public class OrgApiBiz implements OrgApi {
     private final OrgJdService orgJdService;
     private final OrgIndicatorService orgIndicatorService;
 
     @Override
-    public JobIndicatorResponse getOrgInditor(String jobName) {
+    public JobIndicatorResponse getOrgIndicatorByJobName(String jobName) {
         JobIndicatorResponse response = new JobIndicatorResponse();
-        OrgJdEntity query = new OrgJdEntity();
-        query.setDescription(jobName);
-        OrgJdEntity orgJdEntity = orgJdService.getOneByEntityId(query);
-        if(Objects.isNull(orgJdEntity) || Objects.isNull(orgJdEntity.getOrgRuleId())){
-            return response;
-        }
 
-        List<OrgIndicatorEntity> indicatorEntities = QueryChain.of(OrgIndicatorEntity.class)
-                .eq(OrgIndicatorEntity::getOrgRuleId, orgJdEntity.getOrgRuleId(), Objects.nonNull(orgJdEntity.getOrgJdId())).list();
-        if(Objects.isNull(indicatorEntities) || indicatorEntities.size() == 0){
+        List<OrgJdEntity> orgJdEntities = QueryChain.of(OrgJdEntity.class)
+                .like(OrgJdEntity::getDescription, jobName, Objects.nonNull(jobName)).list();
+        if(Objects.isNull(orgJdEntities) || orgJdEntities.size() == 0){
             return response;
         }
 
         List<OrgIndicatorResponse> responseList = new ArrayList<>();
-        for(OrgIndicatorEntity item : indicatorEntities){
+        OrgJdEntity itemJd = orgJdEntities.get(0);
+        List<OrgIndicatorEntity> indicatorEntities = QueryChain.of(OrgIndicatorEntity.class)
+                .eq(OrgIndicatorEntity::getOrgRuleId, itemJd.getOrgRuleId(), Objects.nonNull(itemJd.getOrgJdId())).list();
+        if (Objects.isNull(indicatorEntities) || indicatorEntities.size() == 0) {
+            return response;
+        }
+
+        for (OrgIndicatorEntity item : indicatorEntities) {
             OrgIndicatorResponse itemResp = new OrgIndicatorResponse();
             BeanUtils.copyProperties(item, itemResp);
             responseList.add(itemResp);
@@ -55,7 +56,7 @@ public class OrgApiImpl implements OrgApi {
     }
 
     @Override
-    public JobDescriptionResponse getJobDescription(String jobName) {
+    public JobDescriptionResponse getJobDescriptionByJobName(String jobName) {
         JobDescriptionResponse response = new JobDescriptionResponse();
 
         List<OrgJdEntity> orgJdEntityList = QueryChain.of(OrgJdEntity.class)
