@@ -108,8 +108,11 @@ jobs:
           user: ${{ secrets.AS_ACCOUNT_BOLE }}
           pass: ${{ secrets.AS_PASS_BOLE }}
           connect_timeout: 6000s
+          first_ssh:
+            mkdir -p ${{ vars.AS_WORKDIR_BOLE }}
           scp: |
-            ./cicd/webhook.sh => ${{ vars.AS_WORKDIR_BOLE }}
+            ./cicd/cicd.env => ${{ vars.AS_WORKDIR_BOLE }}/
+            ./cicd/webhook.sh => ${{ vars.AS_WORKDIR_BOLE }}/
           #项目地址 分支 触发人 触发邮箱 变更文件 提交信息 提交SHA 状态
           last_ssh: |
             cd ${{ vars.AS_WORKDIR_BOLE }}
