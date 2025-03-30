@@ -120,34 +120,42 @@ jobs:
             ./cicd/webhook.sh => ${{ vars.AS_WORKDIR_BOLE }}/
           #项目地址 分支 触发人 触发邮箱 变更文件 提交信息 提交SHA 状态
           last_ssh: |
-        
+            cd ${{ vars.AS_WORKDIR_BOLE }}
             echo "===== 参数验证 ====="
             echo "脚本路径: ${{ vars.AS_SCRIPT_BOLE }}"
             echo "仓库: ${{ github.repository }}"
-            echo "分支: $GITHUB_REF"
-            echo "操作者: $GITHUB_ACTOR"
-            echo "邮箱: $COMMIT_EMAIL"
+            echo "分支: ${{ github.ref }}"
+            echo "操作者: ${{ github.actor }}"
+            echo "邮箱: ${{ env.COMMIT_EMAIL }}"
             echo "变更文件: ${{ steps.cfl.outputs.changed_files }}"
             echo "提交信息: ${{ steps.cfl.outputs.commit }}"
             echo "提交SHA: ${{ steps.cfl.outputs.commit_id }}"
             echo "工作路径: $GITHUB_WORKSPACE"
             echo "当前路径: $(pwd)"
             echo "--------------------------------"
-            echo "sh "$(pwd)/cicd/webhook.sh" '$GITHUB_REF' '$GITHUB_ACTOR' '$COMMIT_EMAIL' '${{ steps.cfl.outputs.changed_files }}' '${{ steps.cfl.outputs.commit }}' '${{ steps.cfl.outputs.commit_id }}' 'green'"
-      - name: failure notification
-        if: ${{ failure() }}
-        #sshpass -p ${{secrets.AS_PASS_BOLE}} ssh -o StrictHostKeyChecking=no ${{ secrets.AS_ACCOUNT_BOLE }}@${{secrets.AS_HOST_BOLE}} "sh ${{ vars.AS_SCRIPT_BOLE }} $GITHUB_REF $GITHUB_ACTOR '$APP_NAME-prd' '部署失败' '${{ steps.cfl.outputs.changed_files }}' '${{ steps.cfl.outputs.commit }}' 'red'"
-        run: |
-          echo "RUNNER路径: $RUNNER_WORKSPACE"
-          echo "WORKSPACE路径: $GITHUB_WORKSPACE"
-          sh "$RUNNER_WORKSPACE/cicd/webhook.sh" '$GITHUB_REF' '$GITHUB_ACTOR' '$COMMIT_EMAIL' '${{ steps.cfl.outputs.changed_files }}' '${{ steps.cfl.outputs.commit }}' '${{ steps.cfl.outputs.commit_id }}' 'red'
-
-      - name: success notification
-        if: ${{ success() }}
-        #cd ${{ vars.AS_WORKDIR_BOLE }}
-        run: |
-          echo "RUNNER路径: $RUNNER_WORKSPACE"
-          echo "WORKSPACE路径: $GITHUB_WORKSPACE"
-          
-          sshpass -p ${{secrets.AS_PASS_BOLE}} ssh -o StrictHostKeyChecking=no ${{ secrets.AS_ACCOUNT_BOLE }}@${{secrets.AS_HOST_BOLE}} "sh ${{ vars.AS_WORKDIR_BOLE }}/webhook.sh" '$GITHUB_REF' '$GITHUB_ACTOR' '$COMMIT_EMAIL' '${{ steps.cfl.outputs.changed_files }}' '${{ steps.cfl.outputs.commit }}' '${{ steps.cfl.outputs.commit_id }}' 'green'"
+            sh ./webhook.sh \
+              "${{ github.repository }}" \
+              "${{ github.ref }}" \
+              "${{ github.actor }}" \
+              "${{ env.COMMIT_EMAIL }}" \
+              "${{ steps.cfl.outputs.changed_files }}" \
+              "${{ steps.cfl.outputs.commit }}" \
+              "${{ steps.cfl.outputs.commit_id }}" \
+              "green"
+#      - name: failure notification
+#        if: ${{ failure() }}
+#        #sshpass -p ${{secrets.AS_PASS_BOLE}} ssh -o StrictHostKeyChecking=no ${{ secrets.AS_ACCOUNT_BOLE }}@${{secrets.AS_HOST_BOLE}} "sh ${{ vars.AS_SCRIPT_BOLE }} $GITHUB_REF $GITHUB_ACTOR '$APP_NAME-prd' '部署失败' '${{ steps.cfl.outputs.changed_files }}' '${{ steps.cfl.outputs.commit }}' 'red'"
+#        run: |
+#          echo "RUNNER路径: $RUNNER_WORKSPACE"
+#          echo "WORKSPACE路径: $GITHUB_WORKSPACE"
+#          sh "$RUNNER_WORKSPACE/cicd/webhook.sh" '$GITHUB_REF' '$GITHUB_ACTOR' '$COMMIT_EMAIL' '${{ steps.cfl.outputs.changed_files }}' '${{ steps.cfl.outputs.commit }}' '${{ steps.cfl.outputs.commit_id }}' 'red'
+#
+#      - name: success notification
+#        if: ${{ success() }}
+#        #cd ${{ vars.AS_WORKDIR_BOLE }}
+#        run: |
+#          echo "RUNNER路径: $RUNNER_WORKSPACE"
+#          echo "WORKSPACE路径: $GITHUB_WORKSPACE"
+#          echo "当前路径: $(pwd)"
+#          sshpass -p ${{secrets.AS_PASS_BOLE}} ssh -o StrictHostKeyChecking=no ${{ secrets.AS_ACCOUNT_BOLE }}@${{secrets.AS_HOST_BOLE}} "sh ${{ vars.AS_WORKDIR_BOLE }}/webhook.sh" '$GITHUB_REF' '$GITHUB_ACTOR' '$COMMIT_EMAIL' '${{ steps.cfl.outputs.changed_files }}' '${{ steps.cfl.outputs.commit }}' '${{ steps.cfl.outputs.commit_id }}' 'green'"
 
