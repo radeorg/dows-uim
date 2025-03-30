@@ -4,11 +4,9 @@ import com.mybatisflex.core.query.QueryChain;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.uim.api.OrgApi;
-import org.dows.uim.api.response.JobDescriptionResponse;
-import org.dows.uim.api.response.JobIndicatorResponse;
-import org.dows.uim.api.response.OrgIndicatorResponse;
-import org.dows.uim.api.response.OrgJobJDResponse;
+import org.dows.uim.api.response.*;
 import org.dows.uim.entity.OrgIndicatorEntity;
+import org.dows.uim.entity.OrgInfoEntity;
 import org.dows.uim.entity.OrgJdEntity;
 import org.dows.uim.service.OrgIndicatorService;
 import org.dows.uim.service.OrgJdService;
@@ -70,5 +68,10 @@ public class OrgApiImpl implements OrgApi {
         response.setJobList(jobList);
 
         return response;
+    }
+
+    @Override
+    public OrgInfoResponse getOrgInfo(Long orgId) {
+        return QueryChain.of(OrgInfoEntity.class).eq(OrgInfoEntity::getId, orgId).objAs(OrgInfoResponse.class);
     }
 }
