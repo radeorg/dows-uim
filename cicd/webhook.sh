@@ -47,7 +47,7 @@ fi
 changedFileList=$(echo "$CHANGED_FILES" | tr ' ' '\n' | sed 's/^/> - /')
 #打印信息
 echo "变更文件: ${CHANGED_FILES}"
-echo "变更文件: $changedFileList"
+echo "变更文件: ${changedFileList}"
 echo "代码检测: ${SONARQUBE_HOST}/dashboard?branch=${BRANCH_NAME}&id=${SONARQUBE_KEY}"
 echo "参数列表: ${PROJECT_URL} ,${BRANCH_NAME}, ${ACTOR_NAME},${ACTOR_MAIL},${CHANGED_FILES},${COMMIT_MSG},${COMMIT_SHA},${ACTIONS_STATUS}"
 
@@ -56,8 +56,6 @@ project_commit_url="${PROJECT_URL}/-/commit/${COMMIT_SHA}"
 #sonarqube
 sonarqube_branch_url="${SONARQUBE_HOST}/dashboard?branch=${BRANCH_NAME}&id=${SONARQUBE_KEY}"
 
-
-title='应用发布'
 time="$(date "+%Y-%m-%d")"
 times="$(date "+%H:%M:%S")"
 xingqi="$(date "+%A")"
@@ -103,7 +101,7 @@ curl $WEBHOOK_DING_TALK \
            COMMIT-ID: <font color=\"comment\">'"$COMMIT_SHA"'</font>
            提交说明: <font color=\"comment\">'"$COMMIT_MSG"'</font>
            变更文件:
-           <font color=\"comment\">'"$CHANGED_FILES"'</font>"
+           <font color=\"comment\">'"$changedFileList"'</font>"
      }
  }'
 
