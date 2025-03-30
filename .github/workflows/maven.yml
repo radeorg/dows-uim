@@ -100,9 +100,10 @@ jobs:
           repositories: '[{"id":"2290151-snapshot-aLhHBl","url":"${{ secrets.MVN_REPOSITORY }}","releases":{"enabled":"false"},"snapshots":{"enabled":"true","updatePolicy":"always"}}]'
           servers: '[{ "id": "2290151-snapshot-aLhHBl", "username": "${{ secrets.MVN_ACCOUNT }}", "password": "${{ secrets.MVN_PASS }}" }]'
 
-#      - name: deploy with Maven
-#        id: deploy_with_maven
-#        run: mvn -B deploy --file pom.xml
+      - name: deploy with Maven
+        id: deploy_with_maven
+        #run: mvn -B deploy --file pom.xml
+        run: mvn deploy --file pom.xml
 
 
       - name: gen deploy args
@@ -142,7 +143,6 @@ jobs:
             ./cicd/webhook.sh => ${{ vars.AS_WORKDIR_BOLE }}/
           #项目地址 分支 触发人 触发邮箱 变更文件 提交信息 提交SHA 状态
           last_ssh: |
-            echo "===== 参数验证 ====="
             echo "脚本路径: ${{ vars.AS_SCRIPT_BOLE }}"
             echo "仓库: ${{ github.repository }}"
             echo "分支: ${{ github.ref }}"

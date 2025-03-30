@@ -42,9 +42,9 @@ else
 fi
 
 #变更文件换行处理
-changedFileList=$(echo "$CHANGED_FILES" | sed 's/ /\\n/g')
+#changedFileList=$(echo "$CHANGED_FILES" | sed 's/ /\\n/g')
 # 处理变更文件换行显示（兼容含空格文件名）
-#changedFileList=$(echo "$CHANGED_FILES" | tr ' ' '\n' | sed 's/^/> - /')
+changedFileList=$(echo "$CHANGED_FILES" | tr ' ' '\n' | sed 's/^/ - /')
 #打印信息
 echo "变更文件: ${CHANGED_FILES}"
 echo "变更文件: ${changedFileList}"
@@ -100,6 +100,8 @@ curl $WEBHOOK_DING_TALK \
            CPU: <font color=\"comment\">'"$cpu%"'</font>
            COMMIT-ID: <font color=\"comment\">'"$COMMIT_SHA"'</font>
            提交说明: <font color=\"comment\">'"$COMMIT_MSG"'</font>
+           提交链接: <font color=\"comment\">'"$project_commit_url"'</font>
+           代码检测: <font color=\"comment\">'"$sonarqube_branch_url"'</font>
            变更文件:
            <font color=\"comment\">'"$changedFileList"'</font>"
      }
