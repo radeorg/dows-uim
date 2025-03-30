@@ -92,8 +92,8 @@ jobs:
       - name: maven-settings-xml-action
         uses: whelk-io/maven-settings-xml-action@v20
         with:
-          repositories: '[{"id":"rdc-snapshots","url":"${{ secrets.MVN_REPOSITORY }}","releases":{"enabled":"false"},"snapshots":{"enabled":"true","updatePolicy":"always"}}]'
-          servers: '[{ "id": "rdc-snapshots", "username": "${{ secrets.MVN_ACCOUNT }}", "password": "${{ secrets.MVN_PASS }}" }]'
+          repositories: '[{"id":"2290151-snapshot-aLhHBl","url":"${{ secrets.MVN_REPOSITORY }}","releases":{"enabled":"false"},"snapshots":{"enabled":"true","updatePolicy":"always"}}]'
+          servers: '[{ "id": "2290151-snapshot-aLhHBl", "username": "${{ secrets.MVN_ACCOUNT }}", "password": "${{ secrets.MVN_PASS }}" }]'
 
       - name: deploy with Maven
         run: mvn -B deploy --file pom.xml
