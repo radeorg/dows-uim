@@ -31,7 +31,7 @@ public class AccountInstanceController extends BaseController<AccountInstanceSer
     protected void init(HttpServletRequest request, JSONObject requestParams) {
     }
 
-    public Long setAccountInstance(AccountInstanceRequest accountInstance) {
-        return accountApiBiz.setAccountInstance(accountInstance.getAppId(), accountInstance);
+    public Long accountRegister(AccountInstanceRequest accountInstance) {
+        return accountApiBiz.accountRegister(accountInstance);
     }
 }

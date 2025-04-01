@@ -30,11 +30,10 @@ public class AccountApiBiz {
 
     /**
      *
-     * @param appId
      * @param accountInstance
      * @return
      */
-    public Long setAccountInstance(String appId, AccountInstanceRequest accountInstance) {
+    public Long accountRegister(AccountInstanceRequest accountInstance) {
         // 保存账号 实例
         AccountInstanceEntity accountInstanceEntity =
                 BeanUtil.copyProperties(accountInstance, AccountInstanceEntity.class);

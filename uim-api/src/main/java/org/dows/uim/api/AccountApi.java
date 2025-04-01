@@ -83,9 +83,9 @@ public interface AccountApi {
     }
 
 
-    default Long setAccountInstance(String appId, AccountInstanceRequest accountInstance) {
-        throw new UnsupportedOperationException("not class implement");
-    }
+//    default Long setAccountInstance(String appId, AccountInstanceRequest accountInstance) {
+//        throw new UnsupportedOperationException("not class implement");
+//    }
 
 
     default AccountIdentifierResponse getAccountIdentifier(FindAccountIdentifierRequest findAccountIdentifierRequest) {

@@ -18,19 +18,19 @@ import java.util.List;
 public class AccountApiRest implements AccountApi{
     private final AccountApiBiz accountApiBiz;
 
-    @PostMapping("/set/AccountInstance")
-    @Operation(summary = "保存账户实例")
-    public Long setAccountInstance(@RequestBody AccountInstanceRequest accountInstance) {
-        return accountApiBiz.setAccountInstance("appId", accountInstance);
+    @PostMapping("/register")
+    @Operation(summary = "保存注册账户实例")
+    public Long getAccountWithRegister(@RequestBody AccountInstanceRequest accountInstance) {
+        return accountApiBiz.accountRegister(accountInstance);
     }
 
-    @GetMapping("/get/RoleIds")
+    @GetMapping("/roles")
     @Operation(summary = "通过账户实例获取角色ID列表")
     public List<Long> getAllRoleIds(@RequestParam String appId, @RequestParam Long accountInstanceId){
         return accountApiBiz.getAllRoleIds(appId, accountInstanceId);
     }
 
-    @GetMapping("/get/ById")
+    @GetMapping("/info")
     @Operation(summary = "通过账户标识符获取账户实例")
     public AccountInstanceResponse getAccountInstanceByIdentifier(@RequestParam String appId, @RequestParam String accountIdentifier) {
         return accountApiBiz.getAccountInstanceByIdentifier(appId, accountIdentifier);
