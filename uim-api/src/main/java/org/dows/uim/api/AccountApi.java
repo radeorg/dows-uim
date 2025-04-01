@@ -30,7 +30,12 @@ public interface AccountApi {
      * @param identifier
      * @return
      */
-    default AccountInstanceResponse getAccountInstanceId(String appId, String identifier) {
+    default AccountInstanceResponse getAccountInstanceByIdentifier(String appId, String identifier) {
+        throw new UnsupportedOperationException("not class implement");
+    }
+
+
+    default AccountInstanceResponse getAccountInstanceById(Long accountInstanceId) {
         throw new UnsupportedOperationException("not class implement");
     }
 
@@ -83,17 +88,7 @@ public interface AccountApi {
     }
 
 
-    default AccountInstanceResponse getAccountInstanceByAccountName(String appId, String accountName) {
-        throw new UnsupportedOperationException("not class implement");
-    }
-
-
     default AccountIdentifierResponse getAccountIdentifier(FindAccountIdentifierRequest findAccountIdentifierRequest) {
-        throw new UnsupportedOperationException("not class implement");
-    }
-
-
-    default AccountInstanceResponse getAccountInstanceById(Long accountIdentifier) {
         throw new UnsupportedOperationException("not class implement");
     }
 

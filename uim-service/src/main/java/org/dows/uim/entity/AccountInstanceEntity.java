@@ -101,6 +101,13 @@ public class AccountInstanceEntity extends BaseEntity<AccountInstanceEntity> {
     /**
      * 乐观锁, 默认: 0
      */
+    @Schema(description = "超级账号")
+    @Column(value = "super_account")
+    private Boolean superAccount;
+
+    /**
+     * 乐观锁, 默认: 0
+     */
     @Schema(description = "乐观锁, 默认: 0")
     @Column(value = "ver")
     private Integer ver;

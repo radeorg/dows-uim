@@ -18,12 +18,6 @@ import java.util.List;
 public class AccountApiRest implements AccountApi{
     private final AccountApiBiz accountApiBiz;
 
-    @GetMapping("/get/AccountInstance")
-    @Operation(summary = "通过账户信息获取账户实例")
-    public AccountInstanceResponse getAccountInstanceByAccountName(@RequestParam String appId, @RequestParam String accountName){
-        return accountApiBiz.getAccountInstanceByAccountName(appId, accountName);
-    }
-
     @PostMapping("/set/AccountInstance")
     @Operation(summary = "保存账户实例")
     public Long setAccountInstance(@RequestBody AccountInstanceRequest accountInstance) {
@@ -38,8 +32,8 @@ public class AccountApiRest implements AccountApi{
 
     @GetMapping("/get/ById")
     @Operation(summary = "通过账户标识符获取账户实例")
-    public AccountInstanceResponse getAccountInstanceById(@RequestParam String appId, @RequestParam String accountIdentifier) {
-        return accountApiBiz.getAccountInstanceById(appId, accountIdentifier);
+    public AccountInstanceResponse getAccountInstanceByIdentifier(@RequestParam String appId, @RequestParam String accountIdentifier) {
+        return accountApiBiz.getAccountInstanceByIdentifier(appId, accountIdentifier);
     }
 }
 

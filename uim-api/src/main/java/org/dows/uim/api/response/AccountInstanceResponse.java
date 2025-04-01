@@ -6,6 +6,6 @@ import lombok.Data;
 public class AccountInstanceResponse {
     private boolean superAccount;
     private String password;
-    private String accountName;
+    private String identifier;
     private Long accountInstanceId;
 }

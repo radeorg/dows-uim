@@ -68,7 +68,7 @@ public class AccountApiBiz {
         }
 
         BeanUtil.copyProperties(accountInstanceEntity, response);
-        response.setAccountName(accountInstanceEntity.getIdentifier());
+        response.setIdentifier(accountInstanceEntity.getIdentifier());
         response.setSuperAccount(true);
 
         return response;
@@ -106,8 +106,8 @@ public class AccountApiBiz {
      * @param accountIdentifier
      * @return
      */
-    public AccountInstanceResponse getAccountInstanceById(String appId, String accountIdentifier) {
-        AccountInstanceResponse response = new AccountInstanceResponse();
+    public AccountInstanceResponse getAccountInstanceByIdentifier(String appId, String accountIdentifier) {
+        AccountInstanceResponse response = null;
 
         List<AccountIdentifierEntity> accountIdentifierEntityList = QueryChain.of(AccountIdentifierEntity.class)
                 .eq(AccountIdentifierEntity::getAccountIdentifierId, accountIdentifier, Objects.nonNull(accountIdentifier))
@@ -123,12 +123,11 @@ public class AccountApiBiz {
         if(Objects.isNull(accountInstanceEntity)){
             return response;
         }
-
-        BeanUtil.copyProperties(accountInstanceEntity, response);
-        response.setAccountName(accountInstanceEntity.getIdentifier());
-        response.setSuperAccount(true);
-
-        return response;
+        return  BeanUtil.copyProperties(accountInstanceEntity, AccountInstanceResponse.class);
+        //BeanUtil.copyProperties(accountInstanceEntity, response);
+        //response.setIdentifier(accountInstanceEntity.getIdentifier());
+        //response.setSuperAccount(true);
+        //return response;
     }
 
     public AccountOrgIdsResponse getOrgIdsByAccountId(String appId, Long accountInstanceId, boolean check) {

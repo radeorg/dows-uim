@@ -15,13 +15,14 @@
         <result column="app_id" jdbcType="VARCHAR" property="appId"/>
         <result column="operator_id" jdbcType="BIGINT" property="operatorId"/>
         <result column="ver" jdbcType="INTEGER" property="ver"/>
+        <result column="super_account" jdbcType="TINYINT" property="superAccount"/>
         <result column="deleted" jdbcType="TINYINT" property="deleted"/>
         <result column="ts" jdbcType="TIMESTAMP" property="ts"/>
     </resultMap>
     <sql id="Base_Column_List">
         `account_instance_id`
         , `identifier`, `password`, `zone_no`, `cellphone`, `avator`, `referrals_no`, `source`,
-        `app_id`, `operator_id`, `ver`, `deleted`, `ts`
+        `app_id`, `operator_id`, `ver`, `super_account`, `deleted`, `ts`
     </sql>
 
 </mapper>
