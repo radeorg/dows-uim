@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.rade.crud.BaseController;
 import org.dows.rade.web.RadeController;
-import org.dows.uim.api.AccountApi;
 import org.dows.uim.api.request.AccountInstanceRequest;
 import org.dows.uim.biz.AccountApiBiz;
 import org.dows.uim.entity.AccountInstanceEntity;
@@ -25,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RadeController(api = {"add", "delete", "update", "page", "info"})
 @RequestMapping("/accountInstance")
 @Tag(name = "账号实例表控制层")
-public class AccountInstanceController extends BaseController<AccountInstanceService, AccountInstanceEntity> implements AccountApi {
+public class AccountInstanceController extends BaseController<AccountInstanceService, AccountInstanceEntity>  {
 
     private final AccountApiBiz accountApiBiz;
     @Override
