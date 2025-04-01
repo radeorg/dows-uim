@@ -53,7 +53,7 @@ public class AccountApiBiz {
         List<AccountIdentifierEntity> accountIdentifierEntityList = QueryChain.of(AccountIdentifierEntity.class)
                 .eq(AccountIdentifierEntity::getIdentifier, accountName, Objects.nonNull(accountName))
                 .eq(AccountIdentifierEntity::getAppId, appId, Objects.nonNull(appId)).list();
-        if(Objects.isNull(accountIdentifierEntityList) || accountIdentifierEntityList.size() == 0){
+        if(Objects.isNull(accountIdentifierEntityList) || accountIdentifierEntityList.isEmpty()){
             return response;
         }
 
@@ -90,7 +90,7 @@ public class AccountApiBiz {
         List<AccountRoleEntity> accountRoleEntityList = QueryChain.of(AccountRoleEntity.class)
                 .eq(AccountRoleEntity::getAppId, appId, Objects.nonNull(appId))
                 .eq(AccountRoleEntity::getAccountInstanceId, accountInstanceId, Objects.nonNull(accountInstanceId)).list();
-        if(Objects.isNull(accountRoleEntityList) || accountRoleEntityList.size() == 0){
+        if(Objects.isNull(accountRoleEntityList) || accountRoleEntityList.isEmpty()){
             return roleList;
         }
         for(AccountRoleEntity item : accountRoleEntityList){
@@ -106,27 +106,22 @@ public class AccountApiBiz {
      * @return
      */
     public AccountInstanceResponse getAccountInstanceByIdentifier(String appId, String accountIdentifier) {
-        AccountInstanceResponse response = null;
 
         List<AccountIdentifierEntity> accountIdentifierEntityList = QueryChain.of(AccountIdentifierEntity.class)
-                .eq(AccountIdentifierEntity::getAccountIdentifierId, accountIdentifier, Objects.nonNull(accountIdentifier))
+                .eq(AccountIdentifierEntity::getIdentifier, accountIdentifier, Objects.nonNull(accountIdentifier))
                 .eq(AccountIdentifierEntity::getAppId, appId, Objects.nonNull(appId)).list();
-        if(Objects.isNull(accountIdentifierEntityList) || accountIdentifierEntityList.size() == 0){
-            return response;
+        if(Objects.isNull(accountIdentifierEntityList) || accountIdentifierEntityList.isEmpty()){
+            return null;
         }
-        Long accountInstanceId = accountIdentifierEntityList.get(0).getAccountInstanceId();
 
+        Long accountInstanceId = accountIdentifierEntityList.get(0).getAccountInstanceId();
         AccountInstanceEntity accountInstanceEntity = QueryChain.of(AccountInstanceEntity.class)
                 .eq(AccountInstanceEntity::getAccountInstanceId, accountInstanceId, Objects.nonNull(accountInstanceId))
                 .eq(AccountInstanceEntity::getAppId, appId, Objects.nonNull(appId)).one();
         if(Objects.isNull(accountInstanceEntity)){
-            return response;
+            return null;
         }
         return  BeanUtil.copyProperties(accountInstanceEntity, AccountInstanceResponse.class);
-        //BeanUtil.copyProperties(accountInstanceEntity, response);
-        //response.setIdentifier(accountInstanceEntity.getIdentifier());
-        //response.setSuperAccount(true);
-        //return response;
     }
 
     public AccountOrgIdsResponse getOrgIdsByAccountId(String appId, Long accountInstanceId, boolean check) {

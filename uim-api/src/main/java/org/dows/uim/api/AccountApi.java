@@ -14,11 +14,10 @@ public interface AccountApi {
     /**
      * 注册即创建
      *
-     * @param appId
      * @param accountInstanceRequest
      * @return
      */
-    default Long getAccountWithRegister(String appId, AccountInstanceRequest accountInstanceRequest) {
+    default Long getAccountWithRegister(AccountInstanceRequest accountInstanceRequest) {
         throw new UnsupportedOperationException("not class implement");
     }
 
