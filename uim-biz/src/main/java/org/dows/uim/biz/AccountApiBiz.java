@@ -43,6 +43,8 @@ public class AccountApiBiz {
         AccountIdentifierEntity accountIdentifierEntity = new AccountIdentifierEntity();
         accountIdentifierEntity.setAccountInstanceId(accountInstanceId);
         accountIdentifierEntity.setIdentifier(accountInstance.getIdentifier());
+        // fix #2023-04-09 账号标识类型
+        accountIdentifierEntity.setType(accountInstance.getIdentifierType());
         accountIdentifierService.save(accountIdentifierEntity);
         return accountInstanceId;
     }
