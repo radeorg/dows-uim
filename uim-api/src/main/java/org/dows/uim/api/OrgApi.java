@@ -4,7 +4,12 @@ import org.dows.uim.api.response.JobDescriptionResponse;
 import org.dows.uim.api.response.JobIndicatorResponse;
 
 public interface OrgApi {
-    JobIndicatorResponse getOrgIndicatorByJobName(String jobName);
+    default JobIndicatorResponse getOrgIndicatorByJobName(String jobName)
+    {
+        throw new UnsupportedOperationException("not class implement");
+    }
 
-    JobDescriptionResponse getJobDescriptionByJobName(String jobName);
+    default JobDescriptionResponse getJobDescriptionByJobName(String jobName) {
+        throw new UnsupportedOperationException("not class implement");
+    }
 }
