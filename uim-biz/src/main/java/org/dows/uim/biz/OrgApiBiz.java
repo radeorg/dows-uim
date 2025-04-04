@@ -3,7 +3,6 @@ package org.dows.uim.biz;
 import com.mybatisflex.core.query.QueryChain;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dows.uim.api.OrgApi;
 import org.dows.uim.api.response.JobDescriptionResponse;
 import org.dows.uim.api.response.JobIndicatorResponse;
 import org.dows.uim.api.response.OrgIndicatorResponse;
@@ -22,11 +21,10 @@ import java.util.Objects;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class OrgApiBiz implements OrgApi {
+public class OrgApiBiz {
     private final OrgJdService orgJdService;
     private final OrgIndicatorService orgIndicatorService;
 
-    @Override
     public JobIndicatorResponse getOrgIndicatorByJobName(String jobName) {
         JobIndicatorResponse response = new JobIndicatorResponse();
         List<OrgJdEntity> orgJdEntities = QueryChain.of(OrgJdEntity.class)
@@ -60,7 +58,6 @@ public class OrgApiBiz implements OrgApi {
         return response;
     }
 
-    @Override
     public JobDescriptionResponse getJobDescriptionByJobName(String jobName) {
         JobDescriptionResponse response = new JobDescriptionResponse();
 
