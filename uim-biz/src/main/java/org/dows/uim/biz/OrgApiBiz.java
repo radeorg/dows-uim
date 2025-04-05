@@ -26,31 +26,48 @@ public class OrgApiBiz {
     private final OrgIndicatorService orgIndicatorService;
 
     public JobIndicatorResponse getOrgIndicatorByJobName(String jobName) {
+        Long jdId = null;
         JobIndicatorResponse response = new JobIndicatorResponse();
         List<OrgJdEntity> orgJdEntities = QueryChain.of(OrgJdEntity.class)
+                .like(OrgJdEntity::getJdName, jobName, Objects.nonNull(jobName)).list();
+        if(Objects.nonNull(orgJdEntities) && orgJdEntities.size() > 0){
+            jdId = orgJdEntities.get(0).getOrgRuleId();
+        }
+
+        //加载默认值指标查询
+        Long jdDefaultId = null;
+        jobName = "##";
+        orgJdEntities = QueryChain.of(OrgJdEntity.class)
                 .like(OrgJdEntity::getDescription, jobName, Objects.nonNull(jobName)).list();
-        if(Objects.isNull(orgJdEntities) || orgJdEntities.size() == 0){
-            //如果找不到，通过默认值查询
-            jobName = "##";
-            orgJdEntities = QueryChain.of(OrgJdEntity.class)
-                    .like(OrgJdEntity::getDescription, jobName, Objects.nonNull(jobName)).list();
-            if(Objects.isNull(orgJdEntities) || orgJdEntities.size() == 0) {
-                return response;
-            }
+        if(Objects.nonNull(orgJdEntities) && orgJdEntities.size() > 0) {
+            jdDefaultId = orgJdEntities.get(0).getOrgRuleId();
         }
 
         List<OrgIndicatorResponse> responseList = new ArrayList<>();
-        OrgJdEntity itemJd = orgJdEntities.get(0);
-        List<OrgIndicatorEntity> indicatorEntities = QueryChain.of(OrgIndicatorEntity.class)
-                .eq(OrgIndicatorEntity::getOrgRuleId, itemJd.getOrgRuleId(), Objects.nonNull(itemJd.getOrgJdId())).list();
-        if (Objects.isNull(indicatorEntities) || indicatorEntities.size() == 0) {
-            return response;
+        if(Objects.nonNull(jdId)) {
+            OrgJdEntity itemJd = orgJdEntities.get(0);
+            List<OrgIndicatorEntity> indicatorEntities = QueryChain.of(OrgIndicatorEntity.class)
+                    .eq(OrgIndicatorEntity::getOrgRuleId, jdId).list();
+            if (Objects.nonNull(indicatorEntities)) {
+                for (OrgIndicatorEntity item : indicatorEntities) {
+                    OrgIndicatorResponse itemResp = new OrgIndicatorResponse();
+                    BeanUtils.copyProperties(item, itemResp);
+                    responseList.add(itemResp);
+                }
+            }
         }
 
-        for (OrgIndicatorEntity item : indicatorEntities) {
-            OrgIndicatorResponse itemResp = new OrgIndicatorResponse();
-            BeanUtils.copyProperties(item, itemResp);
-            responseList.add(itemResp);
+        if(Objects.nonNull(jdDefaultId)) {
+            OrgJdEntity itemJd = orgJdEntities.get(0);
+            List<OrgIndicatorEntity> indicatorEntities = QueryChain.of(OrgIndicatorEntity.class)
+                    .eq(OrgIndicatorEntity::getOrgRuleId, jdDefaultId).list();
+            if (Objects.nonNull(indicatorEntities)) {
+                for (OrgIndicatorEntity item : indicatorEntities) {
+                    OrgIndicatorResponse itemResp = new OrgIndicatorResponse();
+                    BeanUtils.copyProperties(item, itemResp);
+                    responseList.add(itemResp);
+                }
+            }
         }
 
         response.setIndicatorList(responseList);
@@ -62,7 +79,7 @@ public class OrgApiBiz {
         JobDescriptionResponse response = new JobDescriptionResponse();
 
         List<OrgJdEntity> orgJdEntityList = QueryChain.of(OrgJdEntity.class)
-                .like(OrgJdEntity::getDescription, jobName, Objects.nonNull(jobName)).list();
+                .like(OrgJdEntity::getJdName, jobName, Objects.nonNull(jobName)).list();
         List<OrgJobJDResponse> jobList = new ArrayList<>();
         for(OrgJdEntity item : orgJdEntityList){
             OrgJobJDResponse jdItem = new OrgJobJDResponse();
