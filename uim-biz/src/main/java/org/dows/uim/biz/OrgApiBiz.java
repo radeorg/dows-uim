@@ -48,14 +48,12 @@ public class OrgApiBiz {
             OrgJdEntity itemJd = orgJdEntities.get(0);
             List<OrgIndicatorEntity> indicatorEntities = QueryChain.of(OrgIndicatorEntity.class)
                     .eq(OrgIndicatorEntity::getOrgRuleId, jdId).list();
-            if (Objects.isNull(indicatorEntities) || indicatorEntities.size() == 0) {
-                return response;
-            }
-
-            for (OrgIndicatorEntity item : indicatorEntities) {
-                OrgIndicatorResponse itemResp = new OrgIndicatorResponse();
-                BeanUtils.copyProperties(item, itemResp);
-                responseList.add(itemResp);
+            if (Objects.nonNull(indicatorEntities)) {
+                for (OrgIndicatorEntity item : indicatorEntities) {
+                    OrgIndicatorResponse itemResp = new OrgIndicatorResponse();
+                    BeanUtils.copyProperties(item, itemResp);
+                    responseList.add(itemResp);
+                }
             }
         }
 
@@ -63,14 +61,12 @@ public class OrgApiBiz {
             OrgJdEntity itemJd = orgJdEntities.get(0);
             List<OrgIndicatorEntity> indicatorEntities = QueryChain.of(OrgIndicatorEntity.class)
                     .eq(OrgIndicatorEntity::getOrgRuleId, jdDefaultId).list();
-            if (Objects.isNull(indicatorEntities) || indicatorEntities.size() == 0) {
-                return response;
-            }
-
-            for (OrgIndicatorEntity item : indicatorEntities) {
-                OrgIndicatorResponse itemResp = new OrgIndicatorResponse();
-                BeanUtils.copyProperties(item, itemResp);
-                responseList.add(itemResp);
+            if (Objects.nonNull(indicatorEntities)) {
+                for (OrgIndicatorEntity item : indicatorEntities) {
+                    OrgIndicatorResponse itemResp = new OrgIndicatorResponse();
+                    BeanUtils.copyProperties(item, itemResp);
+                    responseList.add(itemResp);
+                }
             }
         }
 
