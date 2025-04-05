@@ -60,9 +60,9 @@ MARKDOWN_MSG="### $PROJECT_NAME $STATE\n
 - [查看提交详情]($COMMIT_URL)\n
 - [查看代码检测报告]($SONARQUBE_URL)\n\n
 **📌 触发信息**\n
+- 触发仓库：$TRIGGER_REPOSITORY\n
 - 触发分支：$TRIGGER_BRANCH\n
-- 触发URL：$TRIGGER_REPOSITORY\n
-- 是否触发：<span style=\"color:red;\">**$IS_TRIGGER**</span>\n
+- 是否触发：**$IS_TRIGGER**\n
 **📂 变更文件**\n
 $changedFileList\n
 ---"
