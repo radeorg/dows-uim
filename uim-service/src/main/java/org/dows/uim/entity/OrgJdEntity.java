@@ -11,6 +11,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.dows.rade.crud.BaseEntity;
+import org.dromara.autotable.annotation.ColumnType;
+import org.dromara.autotable.annotation.mysql.MysqlTypeConstant;
 
 import java.util.Date;
 
@@ -45,8 +47,16 @@ public class OrgJdEntity extends BaseEntity<OrgJdEntity> {
     /**
      * 岗位描述
      */
+    @Schema(description = "岗位名称")
+    @Column(value = "jd_name")
+    private String jdName;
+
+    /**
+     * 岗位描述
+     */
     @Schema(description = "岗位描述")
     @Column(value = "description")
+    @ColumnType(MysqlTypeConstant.TEXT)
     private String description;
 
     /**

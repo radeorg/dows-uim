@@ -11,6 +11,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.dows.rade.crud.BaseEntity;
+import org.dromara.autotable.annotation.ColumnType;
+import org.dromara.autotable.annotation.mysql.MysqlTypeConstant;
 
 import java.util.Date;
 
@@ -54,6 +56,7 @@ public class OrgRuleEntity extends BaseEntity<OrgRuleEntity> {
      */
     @Schema(description = "规则描述")
     @Column(value = "rule_description")
+    @ColumnType(MysqlTypeConstant.TEXT)
     private String ruleDescription;
 
     /**
