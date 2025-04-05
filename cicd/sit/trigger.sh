@@ -1,5 +1,4 @@
 #!/bin/bash
-
 echo "当前路径: $(pwd)"
 # 加载环境变量
 source ./cicd.env && source ./webhook.env || { echo "加载环境变量失败"; exit 1; }

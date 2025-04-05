@@ -153,7 +153,4 @@ jobs:
             echo "当前路径: $(pwd)"
             echo "--------------------------------"
             cd ${{ vars.AS_WORKDIR_BOLE }}/${{env.WORK_FOLDER}}/${{ steps.btv.outputs._0 }}/
-            if [ ${{ steps.btv.outputs._0 }} = "sit" ]; then
-              sh ./trigger.sh
-            fi
             sh ./webhook.sh

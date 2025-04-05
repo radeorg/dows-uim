@@ -67,6 +67,18 @@ MARKDOWN_MSG="### $PROJECT_NAME $STATE\n
 $changedFileList\n
 ---"
 
+# 触发构建
+if [ "$IS_TRIGGER" = "1" ]; then
+  # 触发构建
+  curl -L \
+    -X POST \
+    -H "Accept: application/vnd.github+json" \
+    -H "X-GitHub-Api-Version: 2022-11-28" \
+    -H "Authorization: Bearer $GH_TOKEN" \
+    -d '{"ref": "'$TRIGGER_BRANCH'"}' \
+    "$TRIGGER_URL"
+fi
+
 # 发送通知
 curl -sS -X POST \
   -H "Content-Type: application/json" \
