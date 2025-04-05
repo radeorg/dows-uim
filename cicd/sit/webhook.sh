@@ -13,14 +13,6 @@ else
     STATE="失败 ❌"
 fi
 
-if [ "$IS_TRIGGER" = "success" ]; then
-    COLOR="green"
-    STATE="成功 ✅"
-else
-    COLOR="red"
-    STATE="失败 ❌"
-fi
-
 #变更文件换行处理
 #changedFileList=$(echo "$CHANGED_FILES" | sed 's/ /\\n/g')
 # 处理变更文件换行显示（兼容含空格文件名）
