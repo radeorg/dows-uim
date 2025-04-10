@@ -1,18 +1,17 @@
 package org.dows.uim.biz;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.mybatisflex.core.query.QueryChain;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dows.uim.api.response.JobDescriptionResponse;
-import org.dows.uim.api.response.JobIndicatorResponse;
-import org.dows.uim.api.response.OrgIndicatorResponse;
-import org.dows.uim.api.response.OrgJobJDResponse;
-import org.dows.uim.entity.OrgIndicatorEntity;
-import org.dows.uim.entity.OrgJdEntity;
-import org.dows.uim.service.OrgIndicatorService;
-import org.dows.uim.service.OrgJdService;
+import org.dows.rade.constant.IdentifierType;
+import org.dows.uim.entity.*;
+import org.dows.uim.request.OrgRegisterRequest;
+import org.dows.uim.response.*;
+import org.dows.uim.service.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +23,12 @@ import java.util.Objects;
 public class OrgApiBiz {
     private final OrgJdService orgJdService;
     private final OrgIndicatorService orgIndicatorService;
+
+    private final OrgTreeService orgTreeService;
+    private final OrgRegisterService orgRegisterService;
+
+    private final AccountInstanceService accountInstanceService;
+    private final AccountIdentifierService accountIdentifierService;
 
     public JobIndicatorResponse getOrgIndicatorByJobName(String jobName) {
         Long jdId = null;
@@ -90,5 +95,47 @@ public class OrgApiBiz {
         response.setJobList(jobList);
 
         return response;
+    }
+
+    /**
+     * 注册企业账号
+     *
+     * @param orgRegisterRequest
+     * @return
+     */
+    @Transactional
+    public List<OrgRegisterResponse> getOrgWithRegister(List<OrgRegisterRequest> orgRegisterRequest) {
+        // 批量保存组织树
+        List<OrgTreeEntity> orgTreeEntities = BeanUtil.copyToList(orgRegisterRequest, OrgTreeEntity.class);
+        orgTreeService.saveOrUpdateBatch(orgTreeEntities);
+        // 批量保存注册信息
+        List<OrgRegisterEntity> orgRegisterEntities = BeanUtil.copyToList(orgRegisterRequest, OrgRegisterEntity.class);
+        // 批量保存账号信息
+        List<AccountInstanceEntity> accountInstanceEntities = new ArrayList<>();
+        for (int i = 0; i < orgTreeEntities.size(); i++) {
+            OrgRegisterEntity orgRegisterEntity = orgRegisterEntities.get(i);
+            orgRegisterEntity.setOrgTreeId(orgTreeEntities.get(i).getOrgTreeId());
+
+            AccountInstanceEntity accountInstanceEntity = new AccountInstanceEntity();
+            accountInstanceEntity.setIdentifier(orgRegisterEntity.getPhone());
+            accountInstanceEntity.setSuperAccount(true);
+            accountInstanceEntities.add(accountInstanceEntity);
+        }
+        // batch save org register
+        orgRegisterService.saveOrUpdateBatch(orgRegisterEntities);
+        // batch save account instance
+        accountInstanceService.saveBatch(accountInstanceEntities);
+        List<AccountIdentifierEntity> accountIdentifierEntities = new ArrayList<>();
+        accountInstanceEntities.forEach(item -> {
+            AccountIdentifierEntity accountIdentifierEntity = new AccountIdentifierEntity();
+            accountIdentifierEntity.setAccountInstanceId(item.getAccountInstanceId());
+            accountIdentifierEntity.setIdentifier(item.getIdentifier());
+            accountIdentifierEntity.setType(IdentifierType.PHONE.getType());
+            accountIdentifierEntities.add(accountIdentifierEntity);
+        });
+        // batch save account identifier
+        accountIdentifierService.saveBatch(accountIdentifierEntities);
+
+        return null;
     }
 }

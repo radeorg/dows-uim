@@ -1,4 +1,4 @@
-package org.dows.uim.api.request;
+package org.dows.uim.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -21,7 +21,7 @@ public class AccountInstanceRequest {
     private String zoneNo;
 
     @Schema(description = "手机号")
-    private String cellphone;
+    private String phone;
 
     @Schema(description = "头像")
     private String avator;

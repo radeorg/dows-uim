@@ -1,4 +1,4 @@
-package org.dows.uim.api.response;
+package org.dows.uim.response;
 
 import lombok.Data;
 

@@ -68,7 +68,7 @@ public class OrgTreeEntity extends BaseEntity<OrgTreeEntity> {
      */
     @Schema(description = "组织头像")
     @Column(value = "org_avator")
-    private String orgAvator;
+    private String orgAvatar;
 
     /**
      * ID路径

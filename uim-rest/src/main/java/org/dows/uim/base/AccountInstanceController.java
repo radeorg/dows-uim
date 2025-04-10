@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.rade.crud.BaseController;
 import org.dows.rade.web.RadeController;
-import org.dows.uim.api.request.AccountInstanceRequest;
+import org.dows.uim.request.AccountInstanceRequest;
 import org.dows.uim.biz.AccountApiBiz;
 import org.dows.uim.entity.AccountInstanceEntity;
 import org.dows.uim.service.AccountInstanceService;

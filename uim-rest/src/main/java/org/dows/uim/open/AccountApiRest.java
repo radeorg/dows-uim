@@ -4,8 +4,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.dows.uim.api.AccountApi;
-import org.dows.uim.api.request.AccountInstanceRequest;
-import org.dows.uim.api.response.AccountInstanceResponse;
+import org.dows.uim.request.AccountInstanceRequest;
+import org.dows.uim.response.AccountInstanceResponse;
 import org.dows.uim.biz.AccountApiBiz;
 import org.springframework.web.bind.annotation.*;
 

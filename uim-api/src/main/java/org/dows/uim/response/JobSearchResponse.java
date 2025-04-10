@@ -1,4 +1,4 @@
-package org.dows.uim.api.response;
+package org.dows.uim.response;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.Data;

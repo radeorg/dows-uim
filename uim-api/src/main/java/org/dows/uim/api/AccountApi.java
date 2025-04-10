@@ -1,11 +1,11 @@
 package org.dows.uim.api;
 
-import org.dows.uim.api.request.AccountInstanceRequest;
-import org.dows.uim.api.request.FindAccountIdentifierRequest;
-import org.dows.uim.api.response.AccountIdentifierResponse;
-import org.dows.uim.api.response.AccountInstanceResponse;
-import org.dows.uim.api.response.AccountOrgIdsResponse;
-import org.dows.uim.api.response.AccountRoleRelationResponse;
+import org.dows.uim.request.AccountInstanceRequest;
+import org.dows.uim.request.FindAccountIdentifierRequest;
+import org.dows.uim.response.AccountIdentifierResponse;
+import org.dows.uim.response.AccountInstanceResponse;
+import org.dows.uim.response.AccountOrgIdsResponse;
+import org.dows.uim.response.AccountRoleRelationResponse;
 
 import java.util.List;
 

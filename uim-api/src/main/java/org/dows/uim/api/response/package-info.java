@@ -1,1 +1,0 @@
-package org.dows.uim.api.response;

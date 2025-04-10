@@ -3,7 +3,7 @@ package org.dows.uim.biz;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.uim.api.UserApi;
-import org.dows.uim.api.request.UserInfoRequest;
+import org.dows.uim.request.UserInfoRequest;
 import org.dows.uim.entity.UserInstanceEntity;
 import org.dows.uim.service.UserInstanceService;
 import org.springframework.beans.BeanUtils;

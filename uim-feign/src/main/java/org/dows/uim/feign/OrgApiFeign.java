@@ -1,8 +1,8 @@
 package org.dows.uim.feign;
 
 import io.swagger.v3.oas.annotations.Operation;
-import org.dows.uim.api.response.JobDescriptionResponse;
-import org.dows.uim.api.response.JobIndicatorResponse;
+import org.dows.uim.response.JobDescriptionResponse;
+import org.dows.uim.response.JobIndicatorResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
