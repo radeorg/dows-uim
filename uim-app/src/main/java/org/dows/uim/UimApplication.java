@@ -2,7 +2,7 @@ package org.dows.uim;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dows.rade.init.AppInstance;
-import org.dows.rade.util.PathUtils;
+import org.dows.rade.util.PathUtil;
 import org.dromara.autotable.springboot.EnableAutoTable;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.SpringApplication;
@@ -61,7 +61,7 @@ public class UimApplication  implements AppInstance {
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
             javaPathList.forEach(javaPath -> {
                 try {
-                    classLoader.loadClass(PathUtils.getClassName(javaPath));
+                    classLoader.loadClass(PathUtil.getClassName(javaPath));
                 } catch (ClassNotFoundException e) {
 //                    log.error("loadClassErr {}", javaPath, e);
                 }
