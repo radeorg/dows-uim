@@ -108,7 +108,7 @@ public class AccountHandler {
         // 保存组织成员信息
         OrgRegisterEntity superAccount = orgRegisterService.getOne(QueryWrapper.create()
                 .eq(OrgRegisterEntity::getAccountInstanceId, ""));
-
+        
         Long orgRootId = superAccount.getOrgRootId();
         List<OrgTreeEntity> orgTreeEntities = new ArrayList<>();
         List<OrgNodeEntity> orgNodeEntities = new ArrayList<>();
