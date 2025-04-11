@@ -4,14 +4,15 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.dows.uim.api.OrgApi;
+import org.dows.uim.biz.AccountApiBiz;
 import org.dows.uim.biz.OrgApiBiz;
+import org.dows.uim.request.AddOrgAccountRequest;
 import org.dows.uim.request.OrgRegisterRequest;
+import org.dows.uim.response.AddOrgAccountResponse;
 import org.dows.uim.response.JobDescriptionResponse;
 import org.dows.uim.response.JobIndicatorResponse;
 import org.dows.uim.response.OrgRegisterResponse;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,8 +20,9 @@ import java.util.List;
 @RequestMapping("/open/org")
 @Tag(name = "组织管理接口", description = "组织管理接口")
 @RequiredArgsConstructor
-public class OrgApiRest implements OrgApi {
+public class OrgApiRest implements OrgApi, OrgAccountApi {
     private final OrgApiBiz orgApiBiz;
+    private final AccountApiBiz accountApiBiz;
 
 
     @Operation(summary = "通过岗位名称获取指标")
@@ -36,10 +38,14 @@ public class OrgApiRest implements OrgApi {
 
     @Operation(summary = "注册企业账号")
     @Override
-    public List<OrgRegisterResponse> getOrgWithRegister(List<OrgRegisterRequest> orgRegisterRequest) {
+    public List<OrgRegisterResponse> getOrgWithRegister(@RequestBody List<OrgRegisterRequest> orgRegisterRequest) {
         return orgApiBiz.getOrgWithRegister(orgRegisterRequest);
     }
 
+    @Operation(summary = "增加企业账号[招聘官,企业管理员,企业用户...]")
+    public List<AddOrgAccountResponse> saveOrgAccount(@RequestBody List<AddOrgAccountRequest> addOrgAccountRequests) {
+        return accountApiBiz.saveOrgAccount(addOrgAccountRequests);
+    }
 
 }
 

@@ -5,6 +5,7 @@ import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.KeyType;
 import com.mybatisflex.annotation.Table;
 import com.mybatisflex.core.keygen.KeyGenerators;
+import com.tangzc.mybatisflex.autotable.annotation.ColumnDefine;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -68,14 +69,24 @@ public class AccountTypeEntity extends BaseEntity<AccountTypeEntity> {
      */
     @Schema(description = "类型名称[代理商,商户]来自字典表")
     @Column(value = "type_name")
+    @ColumnDefine(comment = "类型名称[代理商,商户]来自字典表")
     private String typeName;
 
     /**
      * 类型值(来自字典表)
      */
     @Schema(description = "类型值(来自字典表)")
-    @Column(value = "type_value")
-    private Integer typeValue;
+    @Column(value = "reference_type")
+    @ColumnDefine(comment = "类型值(来自字典表)")
+    private Integer referenceType;
+
+    /**
+     * 类型值(来自字典表)
+     */
+    @Schema(description = "账号类型[1:hr,2:求职者...]")
+    @Column(value = "account_type")
+    @ColumnDefine(comment = "账号类型[1:hr,2:求职者...]")
+    private Integer accountType;
 
     /**
      * 乐观锁, 默认: 0

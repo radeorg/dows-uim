@@ -25,6 +25,8 @@ public class OrgApiBiz {
     private final OrgIndicatorService orgIndicatorService;
 
     private final OrgTreeService orgTreeService;
+    private final OrgNodeService orgNodeService;
+
     private final OrgRegisterService orgRegisterService;
 
     private final AccountInstanceService accountInstanceService;
@@ -117,25 +119,48 @@ public class OrgApiBiz {
             orgRegisterEntity.setOrgTreeId(orgTreeEntities.get(i).getOrgTreeId());
 
             AccountInstanceEntity accountInstanceEntity = new AccountInstanceEntity();
-            accountInstanceEntity.setIdentifier(orgRegisterEntity.getPhone());
+            accountInstanceEntity.setIdentifier(orgRegisterEntity.getTelephone());
             accountInstanceEntity.setSuperAccount(true);
             accountInstanceEntities.add(accountInstanceEntity);
         }
-        // batch save org register
-        orgRegisterService.saveOrUpdateBatch(orgRegisterEntities);
         // batch save account instance
         accountInstanceService.saveBatch(accountInstanceEntities);
+
         List<AccountIdentifierEntity> accountIdentifierEntities = new ArrayList<>();
-        accountInstanceEntities.forEach(item -> {
+        for (int i = 0; i < accountInstanceEntities.size(); i++) {
+            AccountInstanceEntity accountInstanceEntity = accountInstanceEntities.get(i);
+            // create account identifier for phone
             AccountIdentifierEntity accountIdentifierEntity = new AccountIdentifierEntity();
-            accountIdentifierEntity.setAccountInstanceId(item.getAccountInstanceId());
-            accountIdentifierEntity.setIdentifier(item.getIdentifier());
+            accountIdentifierEntity.setAccountInstanceId(accountInstanceEntity.getAccountInstanceId());
+            accountIdentifierEntity.setIdentifier(accountInstanceEntity.getIdentifier());
             accountIdentifierEntity.setType(IdentifierType.PHONE.getType());
             accountIdentifierEntities.add(accountIdentifierEntity);
-        });
+            // create account identifier for email
+            accountIdentifierEntity = new AccountIdentifierEntity();
+            accountIdentifierEntity.setAccountInstanceId(accountInstanceEntity.getAccountInstanceId());
+            accountIdentifierEntity.setIdentifier(orgRegisterRequest.get(i).getEmail());
+            accountIdentifierEntity.setType(IdentifierType.EMAIL.getType());
+            accountIdentifierEntities.add(accountIdentifierEntity);
+            // shell account identifier for org register
+            orgRegisterEntities.get(i).setAccountInstanceId(accountInstanceEntity.getAccountInstanceId());
+        }
         // batch save account identifier
         accountIdentifierService.saveBatch(accountIdentifierEntities);
 
-        return null;
+        // batch save org register
+        orgRegisterService.saveOrUpdateBatch(orgRegisterEntities);
+
+        // 将当前账号关联组织节点
+        List<OrgNodeEntity> orgNodeEntities = new ArrayList<>();
+        for (int i = 0; i < orgRegisterEntities.size(); i++) {
+            OrgNodeEntity orgNodeEntity = new OrgNodeEntity();
+            orgNodeEntity.setOrgRootId(orgTreeEntities.get(i).getOrgTreeId());
+            orgNodeEntity.setOrgTreeId(orgTreeEntities.get(i).getOrgTreeId());
+            orgNodeEntity.setAccountInstanceId(accountInstanceEntities.get(i).getAccountInstanceId());
+            orgNodeEntities.add(orgNodeEntity);
+        }
+        // batch save org node
+        orgNodeService.saveBatch(orgNodeEntities);
+        return BeanUtil.copyToList(orgRegisterEntities, OrgRegisterResponse.class);
     }
 }

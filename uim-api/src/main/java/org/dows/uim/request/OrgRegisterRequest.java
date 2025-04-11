@@ -18,11 +18,11 @@ public class OrgRegisterRequest {
     @Schema(description = "组织树ID")
     private Long orgTreeId;
 
-    /**
-     * 操作者ID
-     */
-    @Schema(description = "操作者ID")
-    private Long operatorId;
+//    /**
+//     * 操作者ID
+//     */
+//    @Schema(description = "操作者ID")
+//    private Long operatorId;
 
     /**
      * 社会统一信用代码

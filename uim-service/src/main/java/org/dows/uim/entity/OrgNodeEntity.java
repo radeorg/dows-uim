@@ -5,6 +5,7 @@ import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.KeyType;
 import com.mybatisflex.annotation.Table;
 import com.mybatisflex.core.keygen.KeyGenerators;
+import com.tangzc.mybatisflex.autotable.annotation.ColumnDefine;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,13 +34,21 @@ public class OrgNodeEntity extends BaseEntity<OrgNodeEntity> {
      */
     @Schema(description = "组织节点ID")
     @Id(keyType = KeyType.Generator, value = KeyGenerators.snowFlakeId)
+    @ColumnDefine(comment = "组织节点ID")
     private Long orgNodeId;
-
+    /**
+     * 组织树ID
+     */
+    @Schema(description = "组织树根ID")
+    @Column(value = "org_root_id")
+    @ColumnDefine(comment = "组织树根ID")
+    private Long orgRootId;
     /**
      * 组织树ID
      */
     @Schema(description = "组织树ID")
     @Column(value = "org_tree_id")
+    @ColumnDefine(comment = "组织树ID")
     private Long orgTreeId;
 
     /**
@@ -47,6 +56,7 @@ public class OrgNodeEntity extends BaseEntity<OrgNodeEntity> {
      */
     @Schema(description = "账号实例ID")
     @Column(value = "account_instance_id")
+    @ColumnDefine(comment = "账号实例ID")
     private Long accountInstanceId;
 
     /**
@@ -54,6 +64,7 @@ public class OrgNodeEntity extends BaseEntity<OrgNodeEntity> {
      */
     @Schema(description = "用户ID")
     @Column(value = "user_instance_id")
+    @ColumnDefine(comment = "用户ID")
     private Long userInstanceId;
 
     /**
@@ -61,6 +72,7 @@ public class OrgNodeEntity extends BaseEntity<OrgNodeEntity> {
      */
     @Schema(description = "组别名")
     @Column(value = "alias_name")
+    @ColumnDefine(comment = "组别名")
     private String aliasName;
 
     /**
@@ -68,6 +80,7 @@ public class OrgNodeEntity extends BaseEntity<OrgNodeEntity> {
      */
     @Schema(description = "应用ID")
     @Column(value = "app_id")
+    @ColumnDefine(comment = "应用ID")
     private String appId;
 
     /**

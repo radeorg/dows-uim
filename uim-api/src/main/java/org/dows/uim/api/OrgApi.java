@@ -5,6 +5,7 @@ import org.dows.uim.response.JobDescriptionResponse;
 import org.dows.uim.response.JobIndicatorResponse;
 import org.dows.uim.response.OrgRegisterResponse;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 
@@ -27,7 +28,7 @@ public interface OrgApi {
      * @param orgRegisterRequest
      * @return
      */
-    @GetMapping("v1/uim/org/register")
+    @PostMapping("v1/uim/org/register")
     default List<OrgRegisterResponse> getOrgWithRegister(List<OrgRegisterRequest> orgRegisterRequest) {
         throw new UnsupportedOperationException("not class implement");
     }

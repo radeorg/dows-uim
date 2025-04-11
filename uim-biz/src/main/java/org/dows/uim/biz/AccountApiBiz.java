@@ -4,15 +4,14 @@ import cn.hutool.core.bean.BeanUtil;
 import com.mybatisflex.core.query.QueryChain;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dows.uim.request.AccountInstanceRequest;
-import org.dows.uim.request.FindAccountIdentifierRequest;
-import org.dows.uim.response.AccountIdentifierResponse;
-import org.dows.uim.response.AccountInstanceResponse;
-import org.dows.uim.response.AccountOrgIdsResponse;
-import org.dows.uim.response.AccountRoleRelationResponse;
 import org.dows.uim.entity.AccountIdentifierEntity;
 import org.dows.uim.entity.AccountInstanceEntity;
 import org.dows.uim.entity.AccountRoleEntity;
+import org.dows.uim.handler.AccountHandler;
+import org.dows.uim.request.AccountInstanceRequest;
+import org.dows.uim.request.AddOrgAccountRequest;
+import org.dows.uim.request.FindAccountIdentifierRequest;
+import org.dows.uim.response.*;
 import org.dows.uim.service.AccountIdentifierService;
 import org.dows.uim.service.AccountInstanceService;
 import org.springframework.stereotype.Component;
@@ -27,6 +26,8 @@ import java.util.Objects;
 public class AccountApiBiz {
     private final AccountInstanceService accountInstanceService;
     private final AccountIdentifierService accountIdentifierService;
+
+    private final AccountHandler accountHandler;
 
     /**
      *
@@ -137,5 +138,12 @@ public class AccountApiBiz {
         List<AccountRoleRelationResponse> response = new ArrayList<>();
 
         return List.of();
+    }
+
+    public List<AddOrgAccountResponse> saveOrgAccount(List<AddOrgAccountRequest> addOrgAccountRequests) {
+
+
+        accountHandler.saveOrgAccount(addOrgAccountRequests);
+        return null;
     }
 }
