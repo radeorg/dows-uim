@@ -38,6 +38,15 @@ public class OrgRegisterEntity extends BaseEntity<OrgRegisterEntity> {
     @ColumnDefine(comment = "组织登记ID")
     private Long orgRegisterId;
 
+
+    /**
+     * 组织树ID
+     */
+    @Schema(description = "组织树根节点ID")
+    @Column(value = "org_root_id")
+    @ColumnDefine(comment = "组织树根节点ID")
+    private Long orgRootId;
+
     /**
      * 组织树ID
      */

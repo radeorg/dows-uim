@@ -6,10 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.rade.constant.IdentifierType;
 import org.dows.uim.constant.AccountType;
-import org.dows.uim.entity.AccountIdentifierEntity;
-import org.dows.uim.entity.AccountInstanceEntity;
-import org.dows.uim.entity.AccountTypeEntity;
-import org.dows.uim.entity.OrgRegisterEntity;
+import org.dows.uim.entity.*;
 import org.dows.uim.request.AccountInstanceRequest;
 import org.dows.uim.request.AddOrgAccountRequest;
 import org.dows.uim.service.*;
@@ -29,6 +26,7 @@ public class AccountHandler {
 
     private final OrgNodeService orgNodeService;
     private final OrgRegisterService orgRegisterService;
+    private final OrgTreeService orgTreeService;
 
     public Long addAccount(AccountInstanceRequest accountInstance) {
         // 保存账号 实例
@@ -111,6 +109,24 @@ public class AccountHandler {
         OrgRegisterEntity superAccount = orgRegisterService.getOne(QueryWrapper.create()
                 .eq(OrgRegisterEntity::getAccountInstanceId, ""));
 
+        Long orgRootId = superAccount.getOrgRootId();
+        List<OrgTreeEntity> orgTreeEntities = new ArrayList<>();
+        List<OrgNodeEntity> orgNodeEntities = new ArrayList<>();
+        for (int i = 0; i < addOrgAccountRequests.size(); i++) {
+            OrgTreeEntity childOrgTreeEntity = new OrgTreeEntity();
+            childOrgTreeEntity.setPid(orgRootId);
+            childOrgTreeEntity.setOrgName(addOrgAccountRequests.get(i).getOrgName());
+            orgTreeEntities.add(childOrgTreeEntity);
+
+            OrgNodeEntity orgNodeEntity = new OrgNodeEntity();
+            orgNodeEntity.setOrgRootId(orgRootId);
+            orgNodeEntity.setOrgTreeId(childOrgTreeEntity.getOrgTreeId());
+            orgNodeEntity.setAccountInstanceId(accountInstanceEntities.get(i).getAccountInstanceId());
+            orgNodeEntities.add(orgNodeEntity);
+        }
+//        orgTreeService
+        orgTreeService.saveBatch(orgTreeEntities);
+        orgNodeService.saveBatch(orgNodeEntities);
 
     }
 }
