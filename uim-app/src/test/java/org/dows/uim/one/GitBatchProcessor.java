@@ -8,6 +8,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.PushResult;
+import org.eclipse.jgit.transport.RefSpec;
 import org.eclipse.jgit.transport.RemoteRefUpdate;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
@@ -235,6 +236,7 @@ public class GitBatchProcessor {
     private static void pushToGitHub(Git git, String branchName) throws GitAPIException {
         PushCommand pushCommand = git.push()
                 .setRemote("origin")
+                .setRefSpecs(new RefSpec(String.format("refs/heads/%s:refs/heads/%s", branchName, branchName)))
                 .add(branchName)
                 .setForce(false); // 谨慎使用强制推送
         
