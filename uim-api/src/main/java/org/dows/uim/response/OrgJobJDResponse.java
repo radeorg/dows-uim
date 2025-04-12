@@ -18,11 +18,26 @@ public class OrgJobJDResponse  {
     @Schema(description = "岗位描述ID")
     private Long orgJdId;
 
+    @Schema(description = "组织树rootID")
+    private Long orgRootId;
+
     @Schema(description = "组织树ID")
     private Long orgTreeId;
 
+    @Schema(description = "岗位规则ID")
+    private Long orgRuleId;
+
+    @Schema(description = "操作者ID")
+    private Long operatorId;
+
+    @Schema(description = "岗位名称+岗位编号")
+    private String jdName;
+
     @Schema(description = "岗位描述")
     private String description;
+
+    @Schema(description = "状态[1:下架，2:上架]")
+    private Integer state;
 
     @Schema(description = "发布渠道集合")
     private String channels;
