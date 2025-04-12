@@ -1,8 +1,6 @@
 package org.dows.uim.one;
 
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.MergeResult;
-import org.eclipse.jgit.api.Status;
+import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
@@ -228,6 +226,15 @@ public class GitBatchProcessor {
     private static void pushToGitHub(Git git, String branchName) throws GitAPIException {
         String absolutePath = git.getRepository().getDirectory().getParent();
         System.out.println("projectDir: " + absolutePath);
+
+        // 执行 git pull
+        PullCommand pullCommand = git.pull();
+        PullResult pullResult = pullCommand.call();
+        if (pullResult.isSuccessful()) {
+            System.out.println("拉取成功");
+        } else {
+            System.err.println("拉取失败: " + pullResult.getMergeResult().getMergeStatus());
+        }
         try {
             // 执行 git pull
             ProcessBuilder pullProcessBuilder = new ProcessBuilder("git", "pull");
