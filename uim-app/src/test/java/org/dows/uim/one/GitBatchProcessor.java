@@ -229,7 +229,7 @@ public class GitBatchProcessor {
     }
 
     private static void pushToGitHub(Git git, String branchName) throws GitAPIException {
-        String absolutePath = git.getRepository().getDirectory().getAbsolutePath();
+        String absolutePath = git.getRepository().getDirectory().getParent();
         System.out.println("projectDir: " + absolutePath);
 
         /*PushCommand pushCommand = git.push()
