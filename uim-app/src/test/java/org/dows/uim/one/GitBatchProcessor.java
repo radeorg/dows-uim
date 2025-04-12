@@ -2,14 +2,10 @@ package org.dows.uim.one;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.MergeResult;
-import org.eclipse.jgit.api.PushCommand;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
-import org.eclipse.jgit.transport.PushResult;
-import org.eclipse.jgit.transport.RemoteRefUpdate;
-import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -233,7 +229,10 @@ public class GitBatchProcessor {
     }
 
     private static void pushToGitHub(Git git, String branchName) throws GitAPIException {
-        PushCommand pushCommand = git.push()
+        String absolutePath = git.getRepository().getDirectory().getAbsolutePath();
+        System.out.println("projectDir: " + absolutePath);
+
+        /*PushCommand pushCommand = git.push()
                 .setRemote("origin")
                 //.setRefSpecs(new RefSpec(String.format("refs/heads/%s:refs/heads/%s", branchName, branchName)))
                 .add(branchName)
@@ -256,7 +255,7 @@ public class GitBatchProcessor {
         } catch (Exception e) {
             System.out.println("推送失败: " + e.getMessage());
             throw e;
-        }
+        }*/
     }
 
     private static void checkoutBranch(Git git, String branchName) throws GitAPIException {
