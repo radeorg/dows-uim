@@ -33,6 +33,7 @@ public class GitBatchProcessor {
     private static final String GITHUB_USERNAME = "lait.zhang@gmail.com";
     private static final String GITHUB_PASSWORD = "githubz123!";
     private static final String SSH_PRIVATE_KEY_PATH = System.getProperty("user.home") + "/.ssh/id_ecdsa";
+    private static final String SSH_PUBLIC_KEY_PATH = System.getProperty("user.home") + "/.ssh/id_ecdsa.pub";
     private static final String SSH_PASSPHRASE = null; // 如果没有密码短语，设为 null 或空字符串
 
     static {
@@ -50,10 +51,8 @@ public class GitBatchProcessor {
                 try {
                     // 添加 SSH 私钥
                     byte[] privateKey = Files.readAllBytes(new File(SSH_PRIVATE_KEY_PATH).toPath());
-                    jsch.addIdentity("github-ssh-key", 
-                                    privateKey, 
-                                    null, 
-                                    SSH_PASSPHRASE != null ? SSH_PASSPHRASE.getBytes() : null);
+                    byte[] publicKey = Files.readAllBytes(new File(SSH_PUBLIC_KEY_PATH).toPath());
+                    jsch.addIdentity("github-ssh-key", privateKey, publicKey, SSH_PASSPHRASE != null ? SSH_PASSPHRASE.getBytes() : null);
                 } catch (IOException e) {
                     throw new JSchException("无法读取 SSH 私钥文件: " + SSH_PRIVATE_KEY_PATH, e);
                 }
