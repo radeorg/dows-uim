@@ -12,15 +12,19 @@ import java.util.List;
 public interface OrgApi {
 
     @GetMapping("/v1/uim/job/indicator/info")
-    default JobIndicatorResponse getOrgIndicatorByJobName(String jobName) {
+    default JobIndicatorResponse getOrgIndicatorByJobName(Long orgRootId, String jobName) {
         throw new UnsupportedOperationException("not class implement");
     }
 
     @GetMapping("/v1/uim/job/info")
-    default JobDescriptionResponse getJobDescriptionByJobName(String jobName) {
+    default JobDescriptionResponse getJobDescriptionByJobName(Long orgRootId, String jobName) {
         throw new UnsupportedOperationException("not class implement");
     }
 
+    @GetMapping("/v1/uim/job/indicator/infobyid")
+    default JobIndicatorResponse getOrgIndicatorById(Long orgRootId, Long orgRuleId) {
+        throw new UnsupportedOperationException("not class implement");
+    }
 
     /**
      * 注册企业账号

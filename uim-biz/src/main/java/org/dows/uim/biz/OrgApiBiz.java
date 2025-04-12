@@ -5,7 +5,6 @@ import com.mybatisflex.core.query.QueryChain;
 import com.mybatisflex.core.query.QueryWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dows.rade.constant.IdentifierType;
 import org.dows.uim.entity.*;
 import org.dows.uim.request.OrgRegisterRequest;
 import org.dows.uim.response.*;
@@ -33,10 +32,54 @@ public class OrgApiBiz {
     private final AccountInstanceService accountInstanceService;
     private final AccountIdentifierService accountIdentifierService;
 
-    public JobIndicatorResponse getOrgIndicatorByJobName(String jobName) {
+    public JobIndicatorResponse getOrgIndicatorByIndicatorId(Long orgRootId, Long orgRuleId) {
+        JobIndicatorResponse response = new JobIndicatorResponse();
+        Long jdId = orgRuleId;
+
+        //加载默认值指标查询
+        Long jdDefaultId = null;
+        String jobName = "##";
+        List<OrgJdEntity>  orgJdEntities = QueryChain.of(OrgJdEntity.class)
+                .like(OrgJdEntity::getDescription, jobName, Objects.nonNull(jobName)).list();
+        if(Objects.nonNull(orgJdEntities) && orgJdEntities.size() > 0) {
+            jdDefaultId = orgJdEntities.get(0).getOrgRuleId();
+        }
+
+        List<OrgIndicatorResponse> responseList = new ArrayList<>();
+        if(Objects.nonNull(jdId)) {
+            List<OrgIndicatorEntity> indicatorEntities = QueryChain.of(OrgIndicatorEntity.class)
+                    .eq(OrgIndicatorEntity::getOrgRuleId, jdId).list();
+            if (Objects.nonNull(indicatorEntities)) {
+                for (OrgIndicatorEntity item : indicatorEntities) {
+                    OrgIndicatorResponse itemResp = new OrgIndicatorResponse();
+                    BeanUtils.copyProperties(item, itemResp);
+                    responseList.add(itemResp);
+                }
+            }
+        }
+
+        if(Objects.nonNull(jdDefaultId)) {
+            List<OrgIndicatorEntity> indicatorEntities = QueryChain.of(OrgIndicatorEntity.class)
+                    .eq(OrgIndicatorEntity::getOrgRuleId, jdDefaultId).list();
+            if (Objects.nonNull(indicatorEntities)) {
+                for (OrgIndicatorEntity item : indicatorEntities) {
+                    OrgIndicatorResponse itemResp = new OrgIndicatorResponse();
+                    BeanUtils.copyProperties(item, itemResp);
+                    responseList.add(itemResp);
+                }
+            }
+        }
+
+        response.setIndicatorList(responseList);
+
+        return response;
+    }
+
+    public JobIndicatorResponse getOrgIndicatorByJobName(Long orgRootId, String jobName) {
         Long jdId = null;
         JobIndicatorResponse response = new JobIndicatorResponse();
         List<OrgJdEntity> orgJdEntities = QueryChain.of(OrgJdEntity.class)
+                .eq(OrgJdEntity::getOrgTreeId, orgRootId, Objects.nonNull(orgRootId))
                 .like(OrgJdEntity::getJdName, jobName, Objects.nonNull(jobName)).list();
         if(Objects.nonNull(orgJdEntities) && orgJdEntities.size() > 0){
             jdId = orgJdEntities.get(0).getOrgRuleId();
@@ -83,10 +126,11 @@ public class OrgApiBiz {
         return response;
     }
 
-    public JobDescriptionResponse getJobDescriptionByJobName(String jobName) {
+    public JobDescriptionResponse getJobDescriptionByJobName(Long orgRootId, String jobName) {
         JobDescriptionResponse response = new JobDescriptionResponse();
 
         List<OrgJdEntity> orgJdEntityList = QueryChain.of(OrgJdEntity.class)
+                .eq(OrgJdEntity::getOrgTreeId, orgRootId, Objects.nonNull(orgRootId))
                 .like(OrgJdEntity::getJdName, jobName, Objects.nonNull(jobName)).list();
         List<OrgJobJDResponse> jobList = new ArrayList<>();
         for(OrgJdEntity item : orgJdEntityList){
@@ -117,11 +161,11 @@ public class OrgApiBiz {
         List<AccountInstanceEntity> accountInstanceEntities = new ArrayList<>();
         for (int i = 0; i < orgTreeEntities.size(); i++) {
             OrgRegisterEntity orgRegisterEntity = orgRegisterEntities.get(i);
-            orgRegisterEntity.setOrgTreeId(orgTreeEntities.get(i).getOrgTreeId());
+//            orgRegisterEntity.setOrgTreeId(orgTreeEntities.get(i).getOrgTreeId());
 
             AccountInstanceEntity accountInstanceEntity = new AccountInstanceEntity();
-            accountInstanceEntity.setIdentifier(orgRegisterEntity.getTelephone());
-            accountInstanceEntity.setSuperAccount(true);
+//            accountInstanceEntity.setIdentifier(orgRegisterEntity.getTelephone());
+            accountInstanceEntity.setSuperAccount(0);
             accountInstanceEntities.add(accountInstanceEntity);
         }
         // batch save account instance
@@ -133,14 +177,14 @@ public class OrgApiBiz {
             // create account identifier for phone
             AccountIdentifierEntity accountIdentifierEntity = new AccountIdentifierEntity();
             accountIdentifierEntity.setAccountInstanceId(accountInstanceEntity.getAccountInstanceId());
-            accountIdentifierEntity.setIdentifier(accountInstanceEntity.getIdentifier());
-            accountIdentifierEntity.setType(IdentifierType.PHONE.getType());
+//            accountIdentifierEntity.setIdentifier(accountInstanceEntity.getIdentifier());
+//            accountIdentifierEntity.setType(IdentifierType.PHONE.getType());
             accountIdentifierEntities.add(accountIdentifierEntity);
             // create account identifier for email
             accountIdentifierEntity = new AccountIdentifierEntity();
             accountIdentifierEntity.setAccountInstanceId(accountInstanceEntity.getAccountInstanceId());
             accountIdentifierEntity.setIdentifier(orgRegisterRequest.get(i).getEmail());
-            accountIdentifierEntity.setType(IdentifierType.EMAIL.getType());
+//            accountIdentifierEntity.setType(IdentifierType.EMAIL.getType());
             accountIdentifierEntities.add(accountIdentifierEntity);
             // shell account identifier for org register
             orgRegisterEntities.get(i).setAccountInstanceId(accountInstanceEntity.getAccountInstanceId());
@@ -168,7 +212,7 @@ public class OrgApiBiz {
     public OrgRegisterResponse getOrgInfo(OrgRegisterRequest orgRegisterRequest) {
         OrgRegisterEntity one = orgRegisterService.getOne(QueryWrapper.create()
                 .eq(OrgRegisterEntity::getEmail, orgRegisterRequest.getEmail(), Objects.nonNull(orgRegisterRequest.getEmail()))
-                .eq(OrgRegisterEntity::getTelephone, orgRegisterRequest.getPhone(), Objects.nonNull(orgRegisterRequest.getPhone()))
+//                .eq(OrgRegisterEntity::getTelephone, orgRegisterRequest.getPhone(), Objects.nonNull(orgRegisterRequest.getPhone()))
                 .eq(OrgRegisterEntity::getCreditNo, orgRegisterRequest.getCreditNo(), Objects.nonNull(orgRegisterRequest.getCreditNo()))
         );
         return BeanUtil.copyProperties(one, OrgRegisterResponse.class);
