@@ -63,6 +63,19 @@ public class OrgIndicatorEntity extends BaseEntity<OrgIndicatorEntity> {
     @Column(value = "indicator_code")
     private String indicatorCode;
 
+
+    @Schema(description = "指标关键字")
+    @Column(value = "indicator_keyword")
+    private String indicatorKeyword;
+
+    @Schema(description = "指标别名")
+    @Column(value = "indicator_alias")
+    private String indicatorAlias;
+
+    @Schema(description = "指标别名1")
+    @Column(value = "indicator_alias1")
+    private String indicatorAlias1;
+
     /**
      * 数据类型
      */
