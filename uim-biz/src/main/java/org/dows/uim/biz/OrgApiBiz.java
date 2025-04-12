@@ -213,7 +213,7 @@ public class OrgApiBiz {
     public OrgRegisterResponse getOrgInfo(OrgRegisterRequest orgRegisterRequest) {
         OrgRegisterEntity one = orgRegisterService.getOne(QueryWrapper.create()
                 .eq(OrgRegisterEntity::getEmail, orgRegisterRequest.getEmail(), Objects.nonNull(orgRegisterRequest.getEmail()))
-                .eq(OrgRegisterEntity::getTelephone, orgRegisterRequest.getPhone(), Objects.nonNull(orgRegisterRequest.getPhone()))
+                .eq(OrgRegisterEntity::getTelephone, orgRegisterRequest.getTelephone(), Objects.nonNull(orgRegisterRequest.getTelephone()))
                 .eq(OrgRegisterEntity::getCreditNo, orgRegisterRequest.getCreditNo(), Objects.nonNull(orgRegisterRequest.getCreditNo()))
         );
         return BeanUtil.copyProperties(one, OrgRegisterResponse.class);

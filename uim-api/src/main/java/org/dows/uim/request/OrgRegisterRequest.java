@@ -64,7 +64,7 @@ public class OrgRegisterRequest {
      * 联系电话
      */
     @Schema(description = "联系电话")
-    private String phone;
+    private String telephone;
 
     /**
      * 联系人
