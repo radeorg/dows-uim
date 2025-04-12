@@ -52,7 +52,7 @@ public class AccountApiBiz {
         accountIdentifierEntity.setAccountInstanceId(accountInstanceId);
         accountIdentifierEntity.setIdentifier(accountInstance.getIdentifier());
         // fix #2023-04-09 账号标识类型
-        accountIdentifierEntity.setType(accountInstance.getIdentifierType());
+        accountIdentifierEntity.setIdentifierType(accountInstance.getIdentifierType());
         accountIdentifierEntity.setAppId(accountInstance.getAppId());
         accountIdentifierService.save(accountIdentifierEntity);
         return accountInstanceId;
@@ -78,7 +78,7 @@ public class AccountApiBiz {
         }
 
         BeanUtil.copyProperties(accountInstanceEntity, response);
-        response.setIdentifier(accountInstanceEntity.getIdentifier());
+        response.setIdentifier(accountInstanceEntity.getTelephone());
         response.setSuperAccount(true);
 
         return response;

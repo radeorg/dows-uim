@@ -117,11 +117,11 @@ public class OrgApiBiz {
         List<AccountInstanceEntity> accountInstanceEntities = new ArrayList<>();
         for (int i = 0; i < orgTreeEntities.size(); i++) {
             OrgRegisterEntity orgRegisterEntity = orgRegisterEntities.get(i);
-            orgRegisterEntity.setOrgTreeId(orgTreeEntities.get(i).getOrgTreeId());
+            orgRegisterEntity.setOrgRootId(orgTreeEntities.get(i).getOrgTreeId());
 
             AccountInstanceEntity accountInstanceEntity = new AccountInstanceEntity();
-            accountInstanceEntity.setIdentifier(orgRegisterEntity.getTelephone());
-            accountInstanceEntity.setSuperAccount(true);
+            accountInstanceEntity.setTelephone(orgRegisterEntity.getTelephone());
+            accountInstanceEntity.setSuperAccount(0);
             accountInstanceEntities.add(accountInstanceEntity);
         }
         // batch save account instance
@@ -133,14 +133,14 @@ public class OrgApiBiz {
             // create account identifier for phone
             AccountIdentifierEntity accountIdentifierEntity = new AccountIdentifierEntity();
             accountIdentifierEntity.setAccountInstanceId(accountInstanceEntity.getAccountInstanceId());
-            accountIdentifierEntity.setIdentifier(accountInstanceEntity.getIdentifier());
-            accountIdentifierEntity.setType(IdentifierType.PHONE.getType());
+            accountIdentifierEntity.setIdentifier(accountInstanceEntity.getTelephone());
+            accountIdentifierEntity.setIdentifierType(IdentifierType.PHONE.getType());
             accountIdentifierEntities.add(accountIdentifierEntity);
             // create account identifier for email
             accountIdentifierEntity = new AccountIdentifierEntity();
             accountIdentifierEntity.setAccountInstanceId(accountInstanceEntity.getAccountInstanceId());
             accountIdentifierEntity.setIdentifier(orgRegisterRequest.get(i).getEmail());
-            accountIdentifierEntity.setType(IdentifierType.EMAIL.getType());
+            accountIdentifierEntity.setIdentifierType(IdentifierType.EMAIL.getType());
             accountIdentifierEntities.add(accountIdentifierEntity);
             // shell account identifier for org register
             orgRegisterEntities.get(i).setAccountInstanceId(accountInstanceEntity.getAccountInstanceId());

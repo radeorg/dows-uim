@@ -13,7 +13,7 @@
         <result column="logo" jdbcType="VARCHAR" property="logo"/>
         <result column="introduction" jdbcType="VARCHAR" property="introduction"/>
         <result column="email" jdbcType="VARCHAR" property="email"/>
-        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="telephone" jdbcType="VARCHAR" property="telephone"/>
         <result column="contacts" jdbcType="VARCHAR" property="contacts"/>
         <result column="app_id" jdbcType="VARCHAR" property="appId"/>
         <result column="ver" jdbcType="INTEGER" property="ver"/>

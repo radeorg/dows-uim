@@ -95,8 +95,8 @@ public class OrgRegisterEntity extends BaseEntity<OrgRegisterEntity> {
      * 联系电话
      */
     @Schema(description = "联系电话")
-    @Column(value = "phone")
-    private String phone;
+    @Column(value = "telephone")
+    private String telephone;
 
     /**
      * 联系人
