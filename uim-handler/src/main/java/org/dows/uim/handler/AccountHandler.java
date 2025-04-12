@@ -39,7 +39,7 @@ public class AccountHandler {
         accountIdentifierEntity.setAccountInstanceId(accountInstanceId);
         accountIdentifierEntity.setIdentifier(accountInstance.getIdentifier());
         // fix #2023-04-09 账号标识类型
-        accountIdentifierEntity.setType(accountInstance.getIdentifierType());
+        accountIdentifierEntity.setIdentifierType(accountInstance.getIdentifierType());
         accountIdentifierEntity.setAppId(accountInstance.getAppId());
         accountIdentifierService.save(accountIdentifierEntity);
         return accountInstanceId;
@@ -70,16 +70,16 @@ public class AccountHandler {
         List<AccountInstanceEntity> accountInstanceEntities = new ArrayList<>();
         addOrgAccountRequests.forEach(addOrgAccountRequest -> {
             AccountInstanceEntity accountInstanceEntity = new AccountInstanceEntity();
-            accountInstanceEntity.setIdentifier(addOrgAccountRequest.getAccountName());
+            //accountInstanceEntity.setIdentifier(addOrgAccountRequest.getAccountName());
             accountInstanceEntity.setPassword(addOrgAccountRequest.getPassword());
             accountInstanceEntity.setZoneNo(addOrgAccountRequest.getZoneNo());
-            accountInstanceEntity.setCellphone(addOrgAccountRequest.getPhone());
+            accountInstanceEntity.setTelephone(addOrgAccountRequest.getPhone());
             /*accountInstanceEntity.setAvator("");
             accountInstanceEntity.setReferralsNo("");
             accountInstanceEntity.setSource("");
             accountInstanceEntity.setAppId("");
             accountInstanceEntity.setOperatorId(1L);*/
-            accountInstanceEntity.setSuperAccount(true);
+            accountInstanceEntity.setSuperAccount(0);
             accountInstanceEntities.add(accountInstanceEntity);
         });
         // 批量保存账号实例
@@ -90,8 +90,8 @@ public class AccountHandler {
             // 保存账号 标识
             AccountIdentifierEntity accountIdentifierEntity = new AccountIdentifierEntity();
             accountIdentifierEntity.setAccountInstanceId(accountInstanceEntity.getAccountInstanceId());
-            accountIdentifierEntity.setIdentifier(accountInstanceEntity.getCellphone());
-            accountIdentifierEntity.setType(IdentifierType.PHONE.getType());
+            accountIdentifierEntity.setIdentifier(accountInstanceEntity.getTelephone());
+            accountIdentifierEntity.setIdentifierType(IdentifierType.PHONE.getType());
             // 保存账号类型
             AccountTypeEntity accountTypeEntity = new AccountTypeEntity();
             accountTypeEntity.setAccountInstanceId(accountInstanceEntity.getAccountInstanceId());

@@ -7,8 +7,8 @@
         <id column="account_instance_id" jdbcType="BIGINT" property="accountInstanceId"/>
         <result column="password" jdbcType="VARCHAR" property="password"/>
         <result column="zone_no" jdbcType="VARCHAR" property="zoneNo"/>
-        <result column="cellphone" jdbcType="VARCHAR" property="cellphone"/>
-        <result column="avator" jdbcType="VARCHAR" property="avator"/>
+        <result column="telephone" jdbcType="VARCHAR" property="telephone"/>
+        <result column="avatar" jdbcType="VARCHAR" property="avatar"/>
         <result column="referrals_no" jdbcType="VARCHAR" property="referralsNo"/>
         <result column="source" jdbcType="VARCHAR" property="source"/>
         <result column="app_id" jdbcType="VARCHAR" property="appId"/>

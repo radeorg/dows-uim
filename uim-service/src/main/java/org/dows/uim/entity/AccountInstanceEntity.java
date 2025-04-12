@@ -53,15 +53,15 @@ public class AccountInstanceEntity extends BaseEntity<AccountInstanceEntity> {
      * 手机号
      */
     @Schema(description = "手机号")
-    @Column(value = "cellphone")
-    private String cellphone;
+    @Column(value = "telephone")
+    private String telephone;
 
     /**
      * 头像
      */
     @Schema(description = "头像")
-    @Column(value = "avator")
-    private String avator;
+    @Column(value = "avatar")
+    private String avatar;
 
     /**
      * 推荐码
