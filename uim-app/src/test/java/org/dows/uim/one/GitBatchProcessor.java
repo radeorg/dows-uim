@@ -1,11 +1,21 @@
-package org.dows.uim;
+package org.dows.uim.one;
 
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.MergeResult;
+import org.eclipse.jgit.api.PushCommand;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.eclipse.jgit.transport.PushResult;
+import org.eclipse.jgit.transport.RemoteRefUpdate;
+import org.eclipse.jgit.transport.SshSessionFactory;
+import org.eclipse.jgit.transport.ssh.jsch.JschConfigSessionFactory;
+import org.eclipse.jgit.transport.ssh.jsch.OpenSshConfig;
+import org.eclipse.jgit.util.FS;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -24,6 +34,39 @@ public class GitBatchProcessor {
 
     private static final Pattern NUMBERED_FILE_PATTERN = Pattern.compile("^\\d+\\.txt$");
     private static final int DEFAULT_DELAY_SECONDS = 300;
+    
+    // 配置您的 GitHub 凭据或 SSH 密钥信息
+    private static final String GITHUB_USERNAME = "geeker-lait";
+    private static final String GITHUB_PASSWORD = "your_github_password_or_token";
+    private static final String SSH_PRIVATE_KEY_PATH = System.getProperty("user.home") + "/.ssh/id_ecdsa";
+    private static final String SSH_PASSPHRASE = ""; // 如果没有密码短语，设为 null 或空字符串
+
+    static {
+        // 初始化 SSH 会话工厂
+        SshSessionFactory.setInstance(new JschConfigSessionFactory() {
+            @Override
+            protected void configure(OpenSshConfig.Host host, Session session) {
+                // 配置 SSH 参数
+                session.setConfig("StrictHostKeyChecking", "no");
+            }
+
+            @Override
+            protected JSch createDefaultJSch(FS fs) throws JSchException {
+                JSch jsch = super.createDefaultJSch(fs);
+                try {
+                    // 添加 SSH 私钥
+                    byte[] privateKey = Files.readAllBytes(new File(SSH_PRIVATE_KEY_PATH).toPath());
+                    jsch.addIdentity("github-ssh-key", 
+                                    privateKey, 
+                                    null, 
+                                    SSH_PASSPHRASE != null ? SSH_PASSPHRASE.getBytes() : null);
+                } catch (IOException e) {
+                    throw new JSchException("无法读取 SSH 私钥文件: " + SSH_PRIVATE_KEY_PATH, e);
+                }
+                return jsch;
+            }
+        });
+    }
 
     public static void main(String[] args) {
         String rootDir = "D:/workspaces/java/projects/rade"; // 修改为您的实际目录
@@ -31,7 +74,6 @@ public class GitBatchProcessor {
     }
 
     private static void processProjects(File rootDir) {
-        // 获取所有包含数字.txt文件的Git项目目录
         List<ProjectInfo> projects = findGitProjectsWithNumberedFiles(rootDir);
 
         if (projects.isEmpty()) {
@@ -43,7 +85,6 @@ public class GitBatchProcessor {
         projects.forEach(p -> System.out.println(p.getOrder() + ". " + p.getProjectDir().getName() +
                 " (等待: " + p.getDelaySeconds() + "秒)"));
 
-        // 按顺序处理每个项目
         for (ProjectInfo project : projects) {
             System.out.println("\n=====================================");
             System.out.println("正在处理项目[" + project.getOrder() + "]: " + project.getProjectDir().getName());
@@ -77,15 +118,13 @@ public class GitBatchProcessor {
 
     private static List<ProjectInfo> findGitProjectsWithNumberedFiles(File rootDir) {
         try {
-            return Files.walk(rootDir.toPath(), 1)  // 只查看一级子目录
+            return Files.walk(rootDir.toPath(), 1)
                     .filter(path -> {
                         File dir = path.toFile();
-                        // 必须是目录且包含.git子目录
                         return dir.isDirectory() && new File(dir, ".git").exists();
                     })
                     .flatMap(projectDir -> {
                         try {
-                            // 查找该目录下的数字.txt文件
                             return Files.list(projectDir)
                                     .filter(file -> NUMBERED_FILE_PATTERN.matcher(file.getFileName().toString()).matches())
                                     .map(file -> {
@@ -187,14 +226,41 @@ public class GitBatchProcessor {
                     .setCommit(true)
                     .setMessage("自动合并: 从 " + sourceBranch + " 合并到 " + targetBranch)
                     .call();
+            
             if (mergeResult.getMergeStatus().isSuccessful()) {
                 System.out.println("合并成功，推送更改...");
-                git.push().call();
+                pushToGitHub(git, targetBranch);
             } else {
                 System.out.println("合并失败，状态: " + mergeResult.getMergeStatus());
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private static void pushToGitHub(Git git, String branchName) throws GitAPIException {
+        PushCommand pushCommand = git.push()
+                .setRemote("origin")
+                .add(branchName)
+                .setForce(false); // 谨慎使用强制推送
+        
+        // 如果使用 HTTPS 而非 SSH，需要设置凭据
+        // pushCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(GITHUB_USERNAME, GITHUB_PASSWORD));
+        
+        try {
+            Iterable<PushResult> results = pushCommand.call();
+            for (PushResult result : results) {
+                for (RemoteRefUpdate update : result.getRemoteUpdates()) {
+                    System.out.println("推送状态: " + update.getStatus());
+                    if (update.getStatus() != RemoteRefUpdate.Status.OK) {
+                        System.out.println("推送失败原因: " + update.getMessage());
+                    }
+                }
+            }
+            System.out.println("推送成功完成");
+        } catch (Exception e) {
+            System.out.println("推送失败: " + e.getMessage());
+            throw e;
         }
     }
 
