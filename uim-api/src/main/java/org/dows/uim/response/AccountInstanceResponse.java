@@ -8,4 +8,6 @@ public class AccountInstanceResponse {
     private String password;
     private String identifier;
     private Long accountInstanceId;
+    private String nickname;
+    private String telephone;
 }

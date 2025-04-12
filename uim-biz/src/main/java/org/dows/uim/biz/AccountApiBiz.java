@@ -132,7 +132,9 @@ public class AccountApiBiz {
         if(Objects.isNull(accountInstanceEntity)){
             return null;
         }
-        return  BeanUtil.copyProperties(accountInstanceEntity, AccountInstanceResponse.class);
+        AccountInstanceResponse accountInstanceResponse = BeanUtil.copyProperties(accountInstanceEntity, AccountInstanceResponse.class);
+        accountInstanceResponse.setIdentifier(accountIdentifier);
+        return  accountInstanceResponse;
     }
 
     public AccountOrgIdsResponse getOrgIdsByAccountId(String appId, Long accountInstanceId, boolean check) {
