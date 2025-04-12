@@ -5,6 +5,7 @@ import com.mybatisflex.core.query.QueryChain;
 import com.mybatisflex.core.query.QueryWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.dows.rade.constant.IdentifierType;
 import org.dows.uim.entity.*;
 import org.dows.uim.request.OrgRegisterRequest;
 import org.dows.uim.response.*;
