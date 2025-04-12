@@ -1,9 +1,18 @@
 package org.dows.uim.one;
 
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
 import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.eclipse.jgit.transport.PushResult;
+import org.eclipse.jgit.transport.RemoteRefUpdate;
+import org.eclipse.jgit.transport.SshSessionFactory;
+import org.eclipse.jgit.transport.ssh.jsch.JschConfigSessionFactory;
+import org.eclipse.jgit.transport.ssh.jsch.OpenSshConfig;
+import org.eclipse.jgit.util.FS;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -24,9 +33,9 @@ public class GitBatchProcessor {
     private static final String GITHUB_USERNAME = "lait.zhang@gmail.com";
     private static final String GITHUB_PASSWORD = "githubz123!";
     private static final String SSH_PRIVATE_KEY_PATH = System.getProperty("user.home") + "/.ssh/id_ecdsa";
-    private static final String SSH_PASSPHRASE = ""; // 如果没有密码短语，设为 null 或空字符串
+    private static final String SSH_PASSPHRASE = null; // 如果没有密码短语，设为 null 或空字符串
 
-    /*static {
+    static {
         // 初始化 SSH 会话工厂
         SshSessionFactory.setInstance(new JschConfigSessionFactory() {
             @Override
@@ -51,7 +60,7 @@ public class GitBatchProcessor {
                 return jsch;
             }
         });
-    }*/
+    }
 
     public static void main(String[] args) {
         String rootDir = "D:/workspaces/java/projects/rade"; // 修改为您的实际目录
@@ -168,9 +177,11 @@ public class GitBatchProcessor {
             System.out.println("目标分支不存在: " + targetBranch);
             return;
         }
-
+        // 提交修改
         commitChanges(git);
+        // 将当前分支合并到目标分支,然后执行：先pull,再merge,最后push
         switchAndMerge(git, currentBranch, targetBranch);
+        // 切换回原始分支
         checkoutBranch(git, currentBranch);
     }
 
@@ -204,6 +215,15 @@ public class GitBatchProcessor {
         System.out.println("切换到目标分支 " + targetBranch + "...");
         checkoutBranch(git, targetBranch);
 
+        // 执行 git pull
+        PullCommand pullCommand = git.pull();
+        PullResult pullResult = pullCommand.call();
+        if (pullResult.isSuccessful()) {
+            System.out.println("拉取成功");
+        } else {
+            System.err.println("拉取失败: " + pullResult.getMergeResult().getMergeStatus());
+        }
+
         System.out.println("合并 " + sourceBranch + " 到 " + targetBranch + "...");
         try {
             MergeResult mergeResult = git.merge()
@@ -227,35 +247,16 @@ public class GitBatchProcessor {
         String absolutePath = git.getRepository().getDirectory().getParent();
         System.out.println("projectDir: " + absolutePath);
 
-        // 执行 git pull
-        PullCommand pullCommand = git.pull();
-        PullResult pullResult = pullCommand.call();
-        if (pullResult.isSuccessful()) {
-            System.out.println("拉取成功");
-        } else {
-            System.err.println("拉取失败: " + pullResult.getMergeResult().getMergeStatus());
-        }
-        try {
-            // 执行 git pull
-            ProcessBuilder pullProcessBuilder = new ProcessBuilder("git", "pull");
-            Process pullProcess = pullProcessBuilder.start();
-            printProcessOutput(pullProcess);
 
-            // 执行 git push
-            ProcessBuilder pushProcessBuilder = new ProcessBuilder("git", "push");
-            Process pushProcess = pushProcessBuilder.start();
-            printProcessOutput(pushProcess);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        /*PushCommand pushCommand = git.push()
+        // 执行 git push
+        PushCommand pushCommand = git.push()
                 .setRemote("origin")
                 //.setRefSpecs(new RefSpec(String.format("refs/heads/%s:refs/heads/%s", branchName, branchName)))
                 .add(branchName)
                 .setForce(false); // 谨慎使用强制推送
         
         // 如果使用 HTTPS 而非 SSH，需要设置凭据
-        pushCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(GITHUB_USERNAME, GITHUB_PASSWORD));
+        //pushCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(GITHUB_USERNAME, GITHUB_PASSWORD));
         
         try {
             Iterable<PushResult> results = pushCommand.call();
@@ -271,7 +272,8 @@ public class GitBatchProcessor {
         } catch (Exception e) {
             System.out.println("推送失败: " + e.getMessage());
             throw e;
-        }*/
+        }
+
     }
     private static void printProcessOutput(Process process) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
