@@ -288,6 +288,7 @@ public class GitBatchProcessor {
         }
     }
     private static void checkoutBranch(Git git, String branchName) throws GitAPIException {
+        System.out.println("切换到分支 " + branchName + "...");
         git.checkout()
                 .setName(branchName)
                 .call();
