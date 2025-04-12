@@ -41,7 +41,7 @@ public class OrgApiBiz {
         Long jdDefaultId = null;
         String jobName = "##";
         List<OrgJdEntity>  orgJdEntities = QueryChain.of(OrgJdEntity.class)
-                .like(OrgJdEntity::getDescription, jobName, Objects.nonNull(jobName)).list();
+                .like(OrgJdEntity::getJdName, jobName, Objects.nonNull(jobName)).list();
         if(Objects.nonNull(orgJdEntities) && orgJdEntities.size() > 0) {
             jdDefaultId = orgJdEntities.get(0).getOrgRuleId();
         }
@@ -80,7 +80,7 @@ public class OrgApiBiz {
         Long jdId = null;
         JobIndicatorResponse response = new JobIndicatorResponse();
         List<OrgJdEntity> orgJdEntities = QueryChain.of(OrgJdEntity.class)
-                .eq(OrgJdEntity::getOrgTreeId, orgRootId, Objects.nonNull(orgRootId))
+                .eq(OrgJdEntity::getOrgRootId, orgRootId, Objects.nonNull(orgRootId))
                 .like(OrgJdEntity::getJdName, jobName, Objects.nonNull(jobName)).list();
         if(Objects.nonNull(orgJdEntities) && orgJdEntities.size() > 0){
             jdId = orgJdEntities.get(0).getOrgRuleId();
@@ -131,7 +131,7 @@ public class OrgApiBiz {
         JobDescriptionResponse response = new JobDescriptionResponse();
 
         List<OrgJdEntity> orgJdEntityList = QueryChain.of(OrgJdEntity.class)
-                .eq(OrgJdEntity::getOrgTreeId, orgRootId, Objects.nonNull(orgRootId))
+                .eq(OrgJdEntity::getOrgRootId, orgRootId, Objects.nonNull(orgRootId))
                 .like(OrgJdEntity::getJdName, jobName, Objects.nonNull(jobName)).list();
         List<OrgJobJDResponse> jobList = new ArrayList<>();
         for(OrgJdEntity item : orgJdEntityList){
