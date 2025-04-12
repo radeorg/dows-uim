@@ -7,7 +7,6 @@
         <id column="org_role_id" jdbcType="BIGINT" property="orgRoleId"/>
         <result column="org_tree_id" jdbcType="BIGINT" property="orgTreeId"/>
         <result column="rbac_role_id" jdbcType="BIGINT" property="rbacRoleId"/>
-        <result column="population" jdbcType="INTEGER" property="population"/>
         <result column="operator_id" jdbcType="BIGINT" property="operatorId"/>
         <result column="ver" jdbcType="INTEGER" property="ver"/>
         <result column="app_id" jdbcType="VARCHAR" property="appId"/>
@@ -15,8 +14,7 @@
         <result column="ts" jdbcType="DATE" property="ts"/>
     </resultMap>
     <sql id="Base_Column_List">
-        `org_role_id`
-        , `org_tree_id`, `rbac_role_id`, `population`, `operator_id`, `ver`, `app_id`, `deleted`, `ts`
+        `org_role_id`, `org_tree_id`, `rbac_role_id`, `operator_id`, `ver`, `app_id`, `deleted`, `ts`
     </sql>
 
 </mapper>

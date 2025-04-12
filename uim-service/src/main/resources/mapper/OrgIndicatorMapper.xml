@@ -6,8 +6,11 @@
     <resultMap id="BaseResultMap" type="org.dows.uim.entity.OrgIndicatorEntity">
         <id column="org_indicator_id" jdbcType="BIGINT" property="orgIndicatorId"/>
         <result column="org_action_id" jdbcType="BIGINT" property="orgActionId"/>
+        <result column="org_rule_id" jdbcType="BIGINT" property="orgRuleId"/>
         <result column="indicator_name" jdbcType="VARCHAR" property="indicatorName"/>
-        <result column="indicator_keyword" jdbcType="VARCHAR" property="indicatorKeyword"/>
+        <result column="indicator_code" jdbcType="VARCHAR" property="indicatorCode"/>
+        <result column="data_type" jdbcType="VARCHAR" property="dataType"/>
+        <result column="condition" jdbcType="VARCHAR" property="condition"/>
         <result column="indicator_score" jdbcType="INTEGER" property="indicatorScore"/>
         <result column="match_score" jdbcType="INTEGER" property="matchScore"/>
         <result column="enabled" jdbcType="TINYINT" property="enabled"/>
@@ -16,9 +19,8 @@
         <result column="ts" jdbcType="TIMESTAMP" property="ts"/>
     </resultMap>
     <sql id="Base_Column_List">
-        `org_indicator_id`
-        , `org_action_id`, `indicator_name`, `indicator_keyword`, `indicator_score`, `match_score`,
-        `enabled`, `operator_id`, `app_id`, `ts`
+        `org_indicator_id`, `org_action_id`, `org_rule_id`, `indicator_name`, `indicator_code`, `data_type`,
+        `condition`, `indicator_score`, `match_score`, `enabled`, `operator_id`, `app_id`, `ts`
     </sql>
 
 </mapper>

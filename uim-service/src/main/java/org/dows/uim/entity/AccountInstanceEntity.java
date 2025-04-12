@@ -36,13 +36,6 @@ public class AccountInstanceEntity extends BaseEntity<AccountInstanceEntity> {
     private Long accountInstanceId;
 
     /**
-     * 账号标识符
-     */
-    @Schema(description = "账号标识符")
-    @Column(value = "identifier")
-    private String identifier;
-
-    /**
      * 密码
      */
     @Schema(description = "密码")
@@ -50,9 +43,9 @@ public class AccountInstanceEntity extends BaseEntity<AccountInstanceEntity> {
     private String password;
 
     /**
-     * 区域编码(+86，+11...)
+     * 区域编码
      */
-    @Schema(description = "区域编码(+86，+11...)")
+    @Schema(description = "区域编码")
     @Column(value = "zone_no")
     private String zoneNo;
 
@@ -78,9 +71,9 @@ public class AccountInstanceEntity extends BaseEntity<AccountInstanceEntity> {
     private String referralsNo;
 
     /**
-     * 来源(来源渠道推广时标记用)
+     * 来源
      */
-    @Schema(description = "来源(来源渠道推广时标记用)")
+    @Schema(description = "来源")
     @Column(value = "source")
     private String source;
 
@@ -99,24 +92,24 @@ public class AccountInstanceEntity extends BaseEntity<AccountInstanceEntity> {
     private Long operatorId;
 
     /**
-     * 乐观锁, 默认: 0
+     * 乐观锁，默认为0
      */
-    @Schema(description = "超级账号")
-    @Column(value = "super_account")
-    private Boolean superAccount;
-
-    /**
-     * 乐观锁, 默认: 0
-     */
-    @Schema(description = "乐观锁, 默认: 0")
+    @Schema(description = "乐观锁，默认为0")
     @Column(value = "ver")
     private Integer ver;
 
     /**
-     * 逻辑删除  0未删除  1 删除
+     * 超级账号
      */
-    @Schema(description = "逻辑删除  0未删除  1 删除")
-    @Column(value = "deleted")
+    @Schema(description = "超级账号")
+    @Column(value = "super_account")
+    private Integer superAccount;
+
+    /**
+     * 逻辑删除，0未删除，1删除
+     */
+    @Schema(description = "逻辑删除，0未删除，1删除")
+    @Column(value = "deleted", isLogicDelete = true)
     private Integer deleted;
 
     /**

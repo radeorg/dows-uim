@@ -36,6 +36,13 @@ public class AccountRelationEntity extends BaseEntity<AccountRelationEntity> {
     private Long accountRelationId;
 
     /**
+     * 父节点ID
+     */
+    @Schema(description = "父节点ID")
+    @Column(value = "pid")
+    private Long pid;
+
+    /**
      * 账号推荐人ID
      */
     @Schema(description = "账号推荐人ID")
@@ -57,9 +64,44 @@ public class AccountRelationEntity extends BaseEntity<AccountRelationEntity> {
     private Long operatorId;
 
     /**
-     * 乐观锁, 默认: 0
+     * 组
      */
-    @Schema(description = "乐观锁, 默认: 0")
+    @Schema(description = "组")
+    @Column(value = "group")
+    private Integer group;
+
+    /**
+     * 深度
+     */
+    @Schema(description = "深度")
+    @Column(value = "deep")
+    private Integer deep;
+
+    /**
+     * 顺序
+     */
+    @Schema(description = "顺序")
+    @Column(value = "seq")
+    private Integer seq;
+
+    /**
+     * seq 向量
+     */
+    @Schema(description = "seq 向量")
+    @Column(value = "vectors")
+    private String vectors;
+
+    /**
+     * 父节点顺序
+     */
+    @Schema(description = "父节点顺序")
+    @Column(value = "id_path")
+    private String idPath;
+
+    /**
+     * 乐观锁，默认为0
+     */
+    @Schema(description = "乐观锁，默认为0")
     @Column(value = "ver")
     private Integer ver;
 
@@ -71,10 +113,10 @@ public class AccountRelationEntity extends BaseEntity<AccountRelationEntity> {
     private String appId;
 
     /**
-     * 逻辑删除  0未删除  1 删除
+     * 逻辑删除，0未删除，1删除
      */
-    @Schema(description = "逻辑删除  0未删除  1 删除")
-    @Column(value = "deleted")
+    @Schema(description = "逻辑删除，0未删除，1删除")
+    @Column(value = "deleted", isLogicDelete = true)
     private Integer deleted;
 
     /**

@@ -68,7 +68,7 @@ public class OrgTreeEntity extends BaseEntity<OrgTreeEntity> {
      */
     @Schema(description = "组织头像")
     @Column(value = "org_avator")
-    private String orgAvatar;
+    private String orgAvator;
 
     /**
      * ID路径
@@ -92,6 +92,13 @@ public class OrgTreeEntity extends BaseEntity<OrgTreeEntity> {
     private String appId;
 
     /**
+     * 层级
+     */
+    @Schema(description = "层级")
+    @Column(value = "level")
+    private Integer level;
+
+    /**
      * 版本
      */
     @Schema(description = "版本")
@@ -99,10 +106,10 @@ public class OrgTreeEntity extends BaseEntity<OrgTreeEntity> {
     private Integer ver;
 
     /**
-     * 逻辑删除  0未删除  1 删除
+     * 逻辑删除，0未删除，1删除
      */
-    @Schema(description = "逻辑删除  0未删除  1 删除")
-    @Column(value = "deleted")
+    @Schema(description = "逻辑删除，0未删除，1删除")
+    @Column(value = "deleted", isLogicDelete = true)
     private Integer deleted;
 
     /**

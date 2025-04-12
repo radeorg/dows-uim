@@ -16,8 +16,4 @@ import org.springframework.stereotype.Service;
 @Service
 public class AccountIdentifierServiceImpl extends BaseServiceImpl<AccountIdentifierMapper, AccountIdentifierEntity> implements AccountIdentifierService {
 
-    @Override
-    public void ddd() {
-        this.mapper.ddd();
-    }
 }

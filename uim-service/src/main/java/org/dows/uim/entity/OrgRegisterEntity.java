@@ -1,12 +1,10 @@
 package org.dows.uim.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mybatisflex.annotation.Column;
 import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.KeyType;
 import com.mybatisflex.annotation.Table;
 import com.mybatisflex.core.keygen.KeyGenerators;
-import com.tangzc.mybatisflex.autotable.annotation.ColumnDefine;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,34 +33,20 @@ public class OrgRegisterEntity extends BaseEntity<OrgRegisterEntity> {
      */
     @Schema(description = "组织登记ID")
     @Id(keyType = KeyType.Generator, value = KeyGenerators.snowFlakeId)
-    @ColumnDefine(comment = "组织登记ID")
     private Long orgRegisterId;
 
-
     /**
-     * 组织树ID
+     * 组织树ID[组织rootId]
      */
-    @Schema(description = "组织树根节点ID")
+    @Schema(description = "组织树ID[组织rootId]")
     @Column(value = "org_root_id")
-    @ColumnDefine(comment = "组织树根节点ID")
     private Long orgRootId;
 
     /**
-     * 组织树ID
+     * 账号实例ID
      */
-    @Schema(description = "组织树ID")
-    @Column(value = "org_tree_id")
-    @ColumnDefine(comment = "组织树ID")
-    private Long orgTreeId;
-
-    /**
-     * 操作者ID
-     */
-    /*@Schema(description = "操作者ID")
-    @Column(value = "operator_id")
-    @ColumnDefine(comment = "操作者ID")
-    private Long operatorId;*/
-    @JsonIgnore
+    @Schema(description = "账号实例ID")
+    @Column(value = "account_instance_id")
     private Long accountInstanceId;
 
     /**
@@ -70,7 +54,6 @@ public class OrgRegisterEntity extends BaseEntity<OrgRegisterEntity> {
      */
     @Schema(description = "社会统一信用代码")
     @Column(value = "credit_no")
-    @ColumnDefine(comment = "社会统一信用代码")
     private String creditNo;
 
     /**
@@ -78,7 +61,6 @@ public class OrgRegisterEntity extends BaseEntity<OrgRegisterEntity> {
      */
     @Schema(description = "组织地址")
     @Column(value = "org_address")
-    @ColumnDefine(comment = "组织地址")
     private String orgAddress;
 
     /**
@@ -86,7 +68,6 @@ public class OrgRegisterEntity extends BaseEntity<OrgRegisterEntity> {
      */
     @Schema(description = "公司规模")
     @Column(value = "member_scale")
-    @ColumnDefine(comment = "公司规模")
     private String memberScale;
 
     /**
@@ -94,7 +75,6 @@ public class OrgRegisterEntity extends BaseEntity<OrgRegisterEntity> {
      */
     @Schema(description = "组织logo")
     @Column(value = "logo")
-    @ColumnDefine(comment = "组织logo")
     private String logo;
 
     /**
@@ -102,7 +82,6 @@ public class OrgRegisterEntity extends BaseEntity<OrgRegisterEntity> {
      */
     @Schema(description = "企业简介")
     @Column(value = "introduction")
-    @ColumnDefine(comment = "企业简介")
     private String introduction;
 
     /**
@@ -110,7 +89,6 @@ public class OrgRegisterEntity extends BaseEntity<OrgRegisterEntity> {
      */
     @Schema(description = "企业邮箱")
     @Column(value = "email")
-    @ColumnDefine(comment = "企业邮箱")
     private String email;
 
     /**
@@ -118,15 +96,13 @@ public class OrgRegisterEntity extends BaseEntity<OrgRegisterEntity> {
      */
     @Schema(description = "联系电话")
     @Column(value = "phone")
-    @ColumnDefine(comment = "联系电话")
-    private String telephone;
+    private String phone;
 
     /**
      * 联系人
      */
     @Schema(description = "联系人")
     @Column(value = "contacts")
-    @ColumnDefine(comment = "联系人")
     private String contacts;
 
     /**
@@ -134,7 +110,6 @@ public class OrgRegisterEntity extends BaseEntity<OrgRegisterEntity> {
      */
     @Schema(description = "应用ID")
     @Column(value = "app_id")
-    @ColumnDefine(comment = "应用ID")
     private String appId;
 
     /**
@@ -148,7 +123,7 @@ public class OrgRegisterEntity extends BaseEntity<OrgRegisterEntity> {
      * 逻辑删除，0未删除，1删除
      */
     @Schema(description = "逻辑删除，0未删除，1删除")
-    @Column(value = "deleted")
+    @Column(value = "deleted", isLogicDelete = true)
     private Integer deleted;
 
     /**

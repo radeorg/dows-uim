@@ -46,6 +46,7 @@ public class OrgIndicatorEntity extends BaseEntity<OrgIndicatorEntity> {
      * 岗位规则ID
      */
     @Schema(description = "岗位规则ID")
+    @Column(value = "org_rule_id")
     private Long orgRuleId;
 
     /**
@@ -56,20 +57,25 @@ public class OrgIndicatorEntity extends BaseEntity<OrgIndicatorEntity> {
     private String indicatorName;
 
     /**
-     * 指标关键字
+     * 指标英文名
      */
-    @Schema(description = "指标关键字")
-    @Column(value = "indicator_keyword")
-    private String indicatorKeyword;
-
+    @Schema(description = "指标英文名")
+    @Column(value = "indicator_code")
+    private String indicatorCode;
 
     /**
-     * 指标别名
+     * 数据类型
      */
-    @Schema(description = "指标别名")
-    @Column(value = "indicator_Alias1")
-    private String indicatorAlias1;
+    @Schema(description = "数据类型")
+    @Column(value = "data_type")
+    private String dataType;
 
+    /**
+     * 逻辑表达式>,<,=，equals,contain
+     */
+    @Schema(description = "逻辑表达式>,<,=，equals,contain")
+    @Column(value = "condition")
+    private String condition;
 
     /**
      * 指标分值

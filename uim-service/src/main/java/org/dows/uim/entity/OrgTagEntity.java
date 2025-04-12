@@ -15,7 +15,7 @@ import org.dows.rade.crud.BaseEntity;
 import java.util.Date;
 
 /**
- * 岗位知识表 实体类。
+ * 组织标签表 实体类。
  *
  * @author lait.zhang@gmail.com
  * @since 1.0
@@ -24,16 +24,16 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(name = "岗位知识表")
-@Table(value = "org_knowledge")
-public class OrgKnowledgeEntity extends BaseEntity<OrgKnowledgeEntity> {
+@Schema(name = "组织标签表")
+@Table(value = "org_tag")
+public class OrgTagEntity extends BaseEntity<OrgTagEntity> {
 
     /**
-     * 岗位知识ID
+     * 组织标签ID
      */
-    @Schema(description = "岗位知识ID")
+    @Schema(description = "组织标签ID")
     @Id(keyType = KeyType.Generator, value = KeyGenerators.snowFlakeId)
-    private Long orgKnowledgeId;
+    private Long orgTagId;
 
     /**
      * 组织树ID
@@ -43,11 +43,18 @@ public class OrgKnowledgeEntity extends BaseEntity<OrgKnowledgeEntity> {
     private Long orgTreeId;
 
     /**
-     * 岗位规则ID
+     * 标签名
      */
-    @Schema(description = "岗位规则ID")
-    @Column(value = "org_rule_id")
-    private Long orgRuleId;
+    @Schema(description = "标签名")
+    @Column(value = "tag_name")
+    private String tagName;
+
+    /**
+     * 标签颜色
+     */
+    @Schema(description = "标签颜色")
+    @Column(value = "tag_color")
+    private String tagColor;
 
     /**
      * 操作者ID
@@ -55,27 +62,6 @@ public class OrgKnowledgeEntity extends BaseEntity<OrgKnowledgeEntity> {
     @Schema(description = "操作者ID")
     @Column(value = "operator_id")
     private Long operatorId;
-
-    /**
-     * 引用的知识ID
-     */
-    @Schema(description = "引用的知识ID")
-    @Column(value = "reference_id")
-    private Long referenceId;
-
-    /**
-     * 来源表
-     */
-    @Schema(description = "来源表")
-    @Column(value = "reference_table")
-    private String referenceTable;
-
-    /**
-     * 内容资源
-     */
-    @Schema(description = "内容资源")
-    @Column(value = "content_uri")
-    private String contentUri;
 
     /**
      * 应用ID

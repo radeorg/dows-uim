@@ -11,8 +11,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.dows.rade.crud.BaseEntity;
-import org.dromara.autotable.annotation.ColumnType;
-import org.dromara.autotable.annotation.mysql.MysqlTypeConstant;
 
 import java.util.Date;
 
@@ -41,13 +39,34 @@ public class OrgJdEntity extends BaseEntity<OrgJdEntity> {
      * 组织树ID
      */
     @Schema(description = "组织树ID")
+    @Column(value = "org_root_id")
+    private Long orgRootId;
+
+    /**
+     * 组织树ID
+     */
+    @Schema(description = "组织树ID")
     @Column(value = "org_tree_id")
     private Long orgTreeId;
 
     /**
-     * 岗位描述
+     * 岗位规则ID
      */
-    @Schema(description = "岗位名称")
+    @Schema(description = "岗位规则ID")
+    @Column(value = "org_rule_id")
+    private Long orgRuleId;
+
+    /**
+     * 操作者ID
+     */
+    @Schema(description = "操作者ID")
+    @Column(value = "operator_id")
+    private Long operatorId;
+
+    /**
+     * 岗位名称+岗位编号
+     */
+    @Schema(description = "岗位名称+岗位编号")
     @Column(value = "jd_name")
     private String jdName;
 
@@ -56,14 +75,14 @@ public class OrgJdEntity extends BaseEntity<OrgJdEntity> {
      */
     @Schema(description = "岗位描述")
     @Column(value = "description")
-    @ColumnType(MysqlTypeConstant.TEXT)
     private String description;
 
     /**
-     * 岗位规则ID
+     * 状态[1:下架，2:上架]
      */
-    @Schema(description = "岗位规则ID")
-    private Long orgRuleId;
+    @Schema(description = "状态[1:下架，2:上架]")
+    @Column(value = "state")
+    private Integer state;
 
     /**
      * 发布渠道集合

@@ -35,7 +35,10 @@ public class AccountIdentifierEntity extends BaseEntity<AccountIdentifierEntity>
     @Id(keyType = KeyType.Generator, value = KeyGenerators.snowFlakeId)
     private Long accountIdentifierId;
 
-    @Schema(description = "主账号ID")
+    /**
+     * 账号实例ID
+     */
+    @Schema(description = "账号实例ID")
     @Column(value = "account_instance_id")
     private Long accountInstanceId;
 
@@ -57,13 +60,13 @@ public class AccountIdentifierEntity extends BaseEntity<AccountIdentifierEntity>
      * 类型[0:账号,1:手机号,2:邮箱,3:第三方token]
      */
     @Schema(description = "类型[0:账号,1:手机号,2:邮箱,3:第三方token]")
-    @Column(value = "type")
-    private Integer type;
+    @Column(value = "identifier_type")
+    private Integer identifierType;
 
     /**
-     * 乐观锁, 默认: 0
+     * 乐观锁，默认为0
      */
-    @Schema(description = "乐观锁, 默认: 0")
+    @Schema(description = "乐观锁，默认为0")
     @Column(value = "ver")
     private Integer ver;
 
@@ -75,10 +78,10 @@ public class AccountIdentifierEntity extends BaseEntity<AccountIdentifierEntity>
     private String appId;
 
     /**
-     * 逻辑删除  0未删除  1 删除
+     * 逻辑删除，0未删除，1删除
      */
-    @Schema(description = "逻辑删除  0未删除  1 删除")
-    @Column(value = "deleted")
+    @Schema(description = "逻辑删除，0未删除，1删除")
+    @Column(value = "deleted", isLogicDelete = true)
     private Integer deleted;
 
     /**

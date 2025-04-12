@@ -5,7 +5,6 @@ import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.KeyType;
 import com.mybatisflex.annotation.Table;
 import com.mybatisflex.core.keygen.KeyGenerators;
-import com.tangzc.mybatisflex.autotable.annotation.ColumnDefine;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,18 +36,18 @@ public class AccountTypeEntity extends BaseEntity<AccountTypeEntity> {
     private Long accountTypeId;
 
     /**
-     * 操作者ID
-     */
-    @Schema(description = "操作者ID")
-    @Column(value = "operator_id")
-    private Long operatorId;
-
-    /**
      * 账号实例ID
      */
     @Schema(description = "账号实例ID")
     @Column(value = "account_instance_id")
     private Long accountInstanceId;
+
+    /**
+     * 操作者ID
+     */
+    @Schema(description = "操作者ID")
+    @Column(value = "operator_id")
+    private Long operatorId;
 
     /**
      * 用户ID
@@ -58,42 +57,32 @@ public class AccountTypeEntity extends BaseEntity<AccountTypeEntity> {
     private Long userInstanceId;
 
     /**
-     * 引用ID(商户表中的ID)
+     * 引用ID
      */
-    @Schema(description = "引用ID(商户表中的ID)")
+    @Schema(description = "引用ID")
     @Column(value = "reference_id")
     private Long referenceId;
 
     /**
-     * 类型名称[代理商,商户]来自字典表
+     * 账号类型
      */
-    @Schema(description = "类型名称[代理商,商户]来自字典表")
-    @Column(value = "type_name")
-    @ColumnDefine(comment = "类型名称[代理商,商户]来自字典表")
-    private String typeName;
-
-    /**
-     * 类型值(来自字典表)
-     */
-    @Schema(description = "类型值(来自字典表)")
-    @Column(value = "reference_type")
-    @ColumnDefine(comment = "类型值(来自字典表)")
-    private Integer referenceType;
-
-    /**
-     * 类型值(来自字典表)
-     */
-    @Schema(description = "账号类型[1:hr,2:求职者...]")
+    @Schema(description = "账号类型")
     @Column(value = "account_type")
-    @ColumnDefine(comment = "账号类型[1:hr,2:求职者...]")
     private Integer accountType;
 
     /**
-     * 乐观锁, 默认: 0
+     * 引用类型值
      */
-    @Schema(description = "乐观锁, 默认: 0")
-    @Column(value = "ver")
-    private Integer ver;
+    @Schema(description = "引用类型值")
+    @Column(value = "reference_type")
+    private Integer referenceType;
+
+    /**
+     * 类型名称
+     */
+    @Schema(description = "类型名称")
+    @Column(value = "type_name")
+    private String typeName;
 
     /**
      * 应用ID
@@ -103,10 +92,10 @@ public class AccountTypeEntity extends BaseEntity<AccountTypeEntity> {
     private String appId;
 
     /**
-     * 逻辑删除  0未删除  1 删除
+     * 逻辑删除，0未删除，1删除
      */
-    @Schema(description = "逻辑删除  0未删除  1 删除")
-    @Column(value = "deleted")
+    @Schema(description = "逻辑删除，0未删除，1删除")
+    @Column(value = "deleted", isLogicDelete = true)
     private Integer deleted;
 
     /**

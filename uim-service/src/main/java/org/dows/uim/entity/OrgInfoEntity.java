@@ -57,9 +57,65 @@ public class OrgInfoEntity extends BaseEntity<OrgInfoEntity> {
     private Long operatorId;
 
     /**
-     * 乐观锁, 默认: 0
+     * 组织信息JSON
      */
-    @Schema(description = "乐观锁, 默认: 0")
+    @Schema(description = "组织信息JSON")
+    @Column(value = "org_info")
+    private String orgInfo;
+
+    /**
+     * 组织地址
+     */
+    @Schema(description = "组织地址")
+    @Column(value = "org_address")
+    private String orgAddress;
+
+    /**
+     * 组织亮点(Json格式）
+     */
+    @Schema(description = "组织亮点(Json格式）")
+    @Column(value = "feature_json")
+    private String featureJson;
+
+    /**
+     * 人员数量
+     */
+    @Schema(description = "人员数量")
+    @Column(value = "headcount")
+    private Integer headcount;
+
+    /**
+     * 电子邮箱
+     */
+    @Schema(description = "电子邮箱")
+    @Column(value = "email")
+    private String email;
+
+    /**
+     * 审核备注
+     */
+    @Schema(description = "审核备注")
+    @Column(value = "remark")
+    private String remark;
+
+    /**
+     * 审核时间戳
+     */
+    @Schema(description = "审核时间戳")
+    @Column(value = "approve_ts")
+    private Date approveTs;
+
+    /**
+     * 审批状态:1-同意，2-拒绝；
+     */
+    @Schema(description = "审批状态:1-同意，2-拒绝；")
+    @Column(value = "state")
+    private Integer state;
+
+    /**
+     * 乐观锁，默认为0
+     */
+    @Schema(description = "乐观锁，默认为0")
     @Column(value = "ver")
     private Integer ver;
 
@@ -71,10 +127,10 @@ public class OrgInfoEntity extends BaseEntity<OrgInfoEntity> {
     private String appId;
 
     /**
-     * 逻辑删除  0未删除  1 删除
+     * 逻辑删除，0未删除，1删除
      */
-    @Schema(description = "逻辑删除  0未删除  1 删除")
-    @Column(value = "deleted")
+    @Schema(description = "逻辑删除，0未删除，1删除")
+    @Column(value = "deleted", isLogicDelete = true)
     private Integer deleted;
 
     /**

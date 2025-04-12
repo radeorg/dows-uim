@@ -57,9 +57,9 @@ public class AccountRoleEntity extends BaseEntity<AccountRoleEntity> {
     private Long operatorId;
 
     /**
-     * 乐观锁, 默认: 0
+     * 乐观锁，默认为0
      */
-    @Schema(description = "乐观锁, 默认: 0")
+    @Schema(description = "乐观锁，默认为0")
     @Column(value = "ver")
     private Integer ver;
 
@@ -71,10 +71,10 @@ public class AccountRoleEntity extends BaseEntity<AccountRoleEntity> {
     private String appId;
 
     /**
-     * 逻辑删除  0未删除  1 删除
+     * 逻辑删除，0未删除，1删除
      */
-    @Schema(description = "逻辑删除  0未删除  1 删除")
-    @Column(value = "deleted")
+    @Schema(description = "逻辑删除，0未删除，1删除")
+    @Column(value = "deleted", isLogicDelete = true)
     private Integer deleted;
 
     /**

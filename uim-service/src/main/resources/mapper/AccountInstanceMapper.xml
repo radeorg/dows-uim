@@ -5,7 +5,6 @@
 <mapper namespace="org.dows.uim.mapper.AccountInstanceMapper">
     <resultMap id="BaseResultMap" type="org.dows.uim.entity.AccountInstanceEntity">
         <id column="account_instance_id" jdbcType="BIGINT" property="accountInstanceId"/>
-        <result column="identifier" jdbcType="VARCHAR" property="identifier"/>
         <result column="password" jdbcType="VARCHAR" property="password"/>
         <result column="zone_no" jdbcType="VARCHAR" property="zoneNo"/>
         <result column="cellphone" jdbcType="VARCHAR" property="cellphone"/>
@@ -20,9 +19,8 @@
         <result column="ts" jdbcType="TIMESTAMP" property="ts"/>
     </resultMap>
     <sql id="Base_Column_List">
-        `account_instance_id`
-        , `identifier`, `password`, `zone_no`, `cellphone`, `avator`, `referrals_no`, `source`,
-        `app_id`, `operator_id`, `ver`, `super_account`, `deleted`, `ts`
+        `account_instance_id`, `password`, `zone_no`, `cellphone`, `avator`, `referrals_no`, `source`, `app_id`,
+        `operator_id`, `ver`, `super_account`, `deleted`, `ts`
     </sql>
 
 </mapper>

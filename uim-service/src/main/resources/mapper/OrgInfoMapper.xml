@@ -8,14 +8,22 @@
         <result column="org_role_id" jdbcType="BIGINT" property="orgRoleId"/>
         <result column="org_tree_id" jdbcType="BIGINT" property="orgTreeId"/>
         <result column="operator_id" jdbcType="BIGINT" property="operatorId"/>
+        <result column="org_info" jdbcType="VARCHAR" property="orgInfo"/>
+        <result column="org_address" jdbcType="VARCHAR" property="orgAddress"/>
+        <result column="feature_json" jdbcType="VARCHAR" property="featureJson"/>
+        <result column="headcount" jdbcType="INTEGER" property="headcount"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="approve_ts" jdbcType="TIMESTAMP" property="approveTs"/>
+        <result column="state" jdbcType="INTEGER" property="state"/>
         <result column="ver" jdbcType="INTEGER" property="ver"/>
         <result column="app_id" jdbcType="VARCHAR" property="appId"/>
         <result column="deleted" jdbcType="TINYINT" property="deleted"/>
-        <result column="ts" jdbcType="DATE" property="ts"/>
+        <result column="ts" jdbcType="TIMESTAMP" property="ts"/>
     </resultMap>
     <sql id="Base_Column_List">
-        `org_info_id`
-        , `org_role_id`, `org_tree_id`, `operator_id`, `ver`, `app_id`, `deleted`, `ts`
+        `org_info_id`, `org_role_id`, `org_tree_id`, `operator_id`, `org_info`, `org_address`, `feature_json`,
+        `headcount`, `email`, `remark`, `approve_ts`, `state`, `ver`, `app_id`, `deleted`, `ts`
     </sql>
 
 </mapper>

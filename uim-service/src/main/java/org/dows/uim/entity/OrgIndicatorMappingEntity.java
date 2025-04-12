@@ -15,7 +15,7 @@ import org.dows.rade.crud.BaseEntity;
 import java.util.Date;
 
 /**
- * 岗位规则表 实体类。
+ * 指标映射表 实体类。
  *
  * @author lait.zhang@gmail.com
  * @since 1.0
@@ -24,37 +24,44 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(name = "岗位规则表")
-@Table(value = "org_rule")
-public class OrgRuleEntity extends BaseEntity<OrgRuleEntity> {
+@Schema(name = "指标映射表")
+@Table(value = "org_indicator_mapping")
+public class OrgIndicatorMappingEntity extends BaseEntity<OrgIndicatorMappingEntity> {
 
     /**
-     * 岗位规则ID
+     * 指标映射ID
      */
-    @Schema(description = "岗位规则ID")
+    @Schema(description = "指标映射ID")
     @Id(keyType = KeyType.Generator, value = KeyGenerators.snowFlakeId)
-    private Long orgRuleId;
+    private Long orgIndicatorMappingId;
 
     /**
-     * 组织树ID
+     * 岗位指标ID
      */
-    @Schema(description = "组织树ID")
-    @Column(value = "org_tree_id")
-    private Long orgTreeId;
+    @Schema(description = "岗位指标ID")
+    @Column(value = "org_indicator_id")
+    private Long orgIndicatorId;
 
     /**
-     * 规则名称
+     * 通道[deepseek,doubao]
      */
-    @Schema(description = "规则名称")
-    @Column(value = "rule_name")
-    private String ruleName;
+    @Schema(description = "通道[deepseek,doubao]")
+    @Column(value = "ai_channel")
+    private String aiChannel;
 
     /**
-     * 规则描述
+     * 条件表达式
      */
-    @Schema(description = "规则描述")
-    @Column(value = "rule_description")
-    private String ruleDescription;
+    @Schema(description = "条件表达式")
+    @Column(value = "condition_expression")
+    private String conditionExpression;
+
+    /**
+     * 取值表达式
+     */
+    @Schema(description = "取值表达式")
+    @Column(value = "json_path")
+    private String jsonPath;
 
     /**
      * 操作者ID
@@ -62,13 +69,6 @@ public class OrgRuleEntity extends BaseEntity<OrgRuleEntity> {
     @Schema(description = "操作者ID")
     @Column(value = "operator_id")
     private Long operatorId;
-
-    /**
-     * 是否可用0-可用，1-不可用
-     */
-    @Schema(description = "是否可用0-可用，1-不可用")
-    @Column(value = "enabled")
-    private Integer enabled;
 
     /**
      * 应用ID
@@ -83,6 +83,13 @@ public class OrgRuleEntity extends BaseEntity<OrgRuleEntity> {
     @Schema(description = "时间戳")
     @Column(value = "ts")
     private Date ts;
+
+    /**
+     * 逻辑表达式>,<,=，equals,contain
+     */
+    @Schema(description = "逻辑表达式>,<,=，equals,contain")
+    @Column(value = "condition")
+    private String condition;
 
 
 }

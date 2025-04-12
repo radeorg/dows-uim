@@ -15,7 +15,7 @@ import org.dows.rade.crud.BaseEntity;
 import java.util.Date;
 
 /**
- * 组织节点表 实体类。
+ * 组织资源表 实体类。
  *
  * @author lait.zhang@gmail.com
  * @since 1.0
@@ -24,23 +24,16 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(name = "组织节点表")
-@Table(value = "org_node")
-public class OrgNodeEntity extends BaseEntity<OrgNodeEntity> {
+@Schema(name = "组织资源表")
+@Table(value = "org_resource")
+public class OrgResourceEntity extends BaseEntity<OrgResourceEntity> {
 
     /**
-     * 组织节点ID
+     * 组织资源ID
      */
-    @Schema(description = "组织节点ID")
+    @Schema(description = "组织资源ID")
     @Id(keyType = KeyType.Generator, value = KeyGenerators.snowFlakeId)
-    private Long orgNodeId;
-
-    /**
-     * 组织根节点ID
-     */
-    @Schema(description = "组织根节点ID")
-    @Column(value = "org_root_id")
-    private Long orgRootId;
+    private Long orgResourceId;
 
     /**
      * 组织树ID
@@ -64,11 +57,11 @@ public class OrgNodeEntity extends BaseEntity<OrgNodeEntity> {
     private Long userInstanceId;
 
     /**
-     * 组别名
+     * 资源地址
      */
-    @Schema(description = "组别名")
-    @Column(value = "alias_name")
-    private String aliasName;
+    @Schema(description = "资源地址")
+    @Column(value = "resource_url")
+    private String resourceUrl;
 
     /**
      * 应用ID
@@ -78,18 +71,25 @@ public class OrgNodeEntity extends BaseEntity<OrgNodeEntity> {
     private String appId;
 
     /**
+     * 存储通道[local,cos,alioss]
+     */
+    @Schema(description = "存储通道[local,cos,alioss]")
+    @Column(value = "oss_type")
+    private String ossType;
+
+    /**
+     * 资源类型[0:身份证，1：营业执照，2:门头照...]
+     */
+    @Schema(description = "资源类型[0:身份证，1：营业执照，2:门头照...]")
+    @Column(value = "resource_type")
+    private Integer resourceType;
+
+    /**
      * 版本
      */
     @Schema(description = "版本")
     @Column(value = "ver")
     private Integer ver;
-
-    /**
-     * 操作者ID
-     */
-    @Schema(description = "操作者ID")
-    @Column(value = "operator_id")
-    private Long operatorId;
 
     /**
      * 逻辑删除，0未删除，1删除

@@ -5,8 +5,8 @@
 <mapper namespace="org.dows.uim.mapper.OrgRegisterMapper">
     <resultMap id="BaseResultMap" type="org.dows.uim.entity.OrgRegisterEntity">
         <id column="org_register_id" jdbcType="BIGINT" property="orgRegisterId"/>
-        <result column="org_tree_id" jdbcType="BIGINT" property="orgTreeId"/>
-        <result column="operator_id" jdbcType="BIGINT" property="operatorId"/>
+        <result column="org_root_id" jdbcType="BIGINT" property="orgRootId"/>
+        <result column="account_instance_id" jdbcType="BIGINT" property="accountInstanceId"/>
         <result column="credit_no" jdbcType="VARCHAR" property="creditNo"/>
         <result column="org_address" jdbcType="VARCHAR" property="orgAddress"/>
         <result column="member_scale" jdbcType="VARCHAR" property="memberScale"/>
@@ -21,8 +21,7 @@
         <result column="ts" jdbcType="TIMESTAMP" property="ts"/>
     </resultMap>
     <sql id="Base_Column_List">
-        `org_register_id`
-        , `org_tree_id`, `operator_id`, `credit_no`, `org_address`, `member_scale`, `logo`,
+        `org_register_id`, `org_root_id`, `account_instance_id`, `credit_no`, `org_address`, `member_scale`, `logo`,
         `introduction`, `email`, `phone`, `contacts`, `app_id`, `ver`, `deleted`, `ts`
     </sql>
 
