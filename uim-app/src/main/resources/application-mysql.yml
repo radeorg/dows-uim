@@ -32,7 +32,7 @@ spring:
       on-profile: dev
 
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/rade?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2b8
+    url: jdbc:mysql://127.0.0.1:3306/bole?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2b8
     username: root
     password: root
     #driver-class-name: com.mysql.cj.jdbc.Driver
@@ -44,7 +44,7 @@ spring:
       on-profile: sit
 
   datasource:
-    url: jdbc:mysql://115.159.24.40:13306/rade?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2b8
+    url: jdbc:mysql://115.159.24.40:13306/bole?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2b8
     username: root
     password: radeorg123!
 ---
@@ -55,7 +55,7 @@ spring:
       on-profile: prd
 
   datasource:
-    url: jdbc:mysql://192.168.111.103:3306/rade?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2b8
+    url: jdbc:mysql://192.168.111.103:3306/bole?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2b8
     username: rade
     password: rade123!
 
