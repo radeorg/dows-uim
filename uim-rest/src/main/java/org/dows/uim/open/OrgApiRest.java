@@ -29,14 +29,18 @@ public class OrgApiRest implements OrgApi, OrgAccountApi {
 
 
     @Operation(summary = "通过岗位名称获取指标")
-    public JobIndicatorResponse getOrgIndicatorByJobName(@RequestParam String jobName) {
-        return orgApiBiz.getOrgIndicatorByJobName(jobName);
+    public JobIndicatorResponse getOrgIndicatorByJobName(@RequestParam Long orgRootId,@RequestParam String jobName) {
+        return orgApiBiz.getOrgIndicatorByJobName(orgRootId, jobName);
     }
 
+    @Operation(summary = "通过规则ID获取指标")
+    public JobIndicatorResponse getOrgIndicatorById(Long orgRootId, Long orgRuleId) {
+        return orgApiBiz.getOrgIndicatorByIndicatorId(orgRootId, orgRuleId);
+    }
 
     @Operation(summary = "通过岗位名称获取岗位信息")
-    public JobDescriptionResponse getJobDescriptionByJobName(@RequestParam String jobName) {
-        return orgApiBiz.getJobDescriptionByJobName(jobName);
+    public JobDescriptionResponse getJobDescriptionByJobName(@RequestParam Long orgRootId, @RequestParam String jobName) {
+        return orgApiBiz.getJobDescriptionByJobName(orgRootId, jobName);
     }
 
     @Operation(summary = "注册企业账号")
