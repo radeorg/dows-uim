@@ -30,7 +30,7 @@ public class GitBatchProcessor {
     private static final int DEFAULT_DELAY_SECONDS = 300;
     
     // 配置您的 GitHub 凭据或 SSH 密钥信息
-    private static final String GITHUB_USERNAME = "geeker-lait";
+    private static final String GITHUB_USERNAME = "lait.zhang@gmail.com";
     private static final String GITHUB_PASSWORD = "githubz123!";
     private static final String SSH_PRIVATE_KEY_PATH = System.getProperty("user.home") + "/.ssh/id_ecdsa";
     private static final String SSH_PASSPHRASE = ""; // 如果没有密码短语，设为 null 或空字符串
