@@ -1,8 +1,5 @@
 package org.dows.uim.one;
 
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.MergeResult;
 import org.eclipse.jgit.api.PushCommand;
@@ -12,10 +9,7 @@ import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.PushResult;
 import org.eclipse.jgit.transport.RemoteRefUpdate;
-import org.eclipse.jgit.transport.SshSessionFactory;
-import org.eclipse.jgit.transport.ssh.jsch.JschConfigSessionFactory;
-import org.eclipse.jgit.transport.ssh.jsch.OpenSshConfig;
-import org.eclipse.jgit.util.FS;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -37,11 +31,11 @@ public class GitBatchProcessor {
     
     // 配置您的 GitHub 凭据或 SSH 密钥信息
     private static final String GITHUB_USERNAME = "geeker-lait";
-    private static final String GITHUB_PASSWORD = "your_github_password_or_token";
+    private static final String GITHUB_PASSWORD = "githubz123!";
     private static final String SSH_PRIVATE_KEY_PATH = System.getProperty("user.home") + "/.ssh/id_ecdsa";
     private static final String SSH_PASSPHRASE = ""; // 如果没有密码短语，设为 null 或空字符串
 
-    static {
+    /*static {
         // 初始化 SSH 会话工厂
         SshSessionFactory.setInstance(new JschConfigSessionFactory() {
             @Override
@@ -66,7 +60,7 @@ public class GitBatchProcessor {
                 return jsch;
             }
         });
-    }
+    }*/
 
     public static void main(String[] args) {
         String rootDir = "D:/workspaces/java/projects/rade"; // 修改为您的实际目录
@@ -245,7 +239,7 @@ public class GitBatchProcessor {
                 .setForce(false); // 谨慎使用强制推送
         
         // 如果使用 HTTPS 而非 SSH，需要设置凭据
-        // pushCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(GITHUB_USERNAME, GITHUB_PASSWORD));
+        pushCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(GITHUB_USERNAME, GITHUB_PASSWORD));
         
         try {
             Iterable<PushResult> results = pushCommand.call();
