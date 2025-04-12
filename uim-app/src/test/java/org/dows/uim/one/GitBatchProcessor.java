@@ -7,10 +7,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.util.Collections;
 import java.util.Comparator;
@@ -231,7 +228,19 @@ public class GitBatchProcessor {
     private static void pushToGitHub(Git git, String branchName) throws GitAPIException {
         String absolutePath = git.getRepository().getDirectory().getParent();
         System.out.println("projectDir: " + absolutePath);
+        try {
+            // 执行 git pull
+            ProcessBuilder pullProcessBuilder = new ProcessBuilder("git", "pull");
+            Process pullProcess = pullProcessBuilder.start();
+            printProcessOutput(pullProcess);
 
+            // 执行 git push
+            ProcessBuilder pushProcessBuilder = new ProcessBuilder("git", "push");
+            Process pushProcess = pushProcessBuilder.start();
+            printProcessOutput(pushProcess);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         /*PushCommand pushCommand = git.push()
                 .setRemote("origin")
                 //.setRefSpecs(new RefSpec(String.format("refs/heads/%s:refs/heads/%s", branchName, branchName)))
@@ -257,7 +266,19 @@ public class GitBatchProcessor {
             throw e;
         }*/
     }
-
+    private static void printProcessOutput(Process process) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        String line;
+        while ((line = reader.readLine()) != null) {
+            System.out.println(line);
+        }
+        try {
+            int exitCode = process.waitFor();
+            System.out.println("Exit Code: " + exitCode);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
     private static void checkoutBranch(Git git, String branchName) throws GitAPIException {
         git.checkout()
                 .setName(branchName)
