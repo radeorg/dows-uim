@@ -212,13 +212,19 @@ public class GitBatchProcessor {
         System.out.println("切换到目标分支 " + targetBranch + "...");
         checkoutBranch(git, targetBranch);
 
-        // 执行 git pull
-        PullCommand pullCommand = git.pull();
-        PullResult pullResult = pullCommand.call();
-        if (pullResult.isSuccessful()) {
-            System.out.println("拉取成功");
+        // 检查远程分支是否存在
+        boolean remoteBranchExists = remoteBranchExists(git, targetBranch);
+        if (!remoteBranchExists) {
+            System.out.println("远程分支 " + targetBranch + " 不存在，跳过 pull 操作");
         } else {
-            System.err.println("拉取失败: " + pullResult.getMergeResult().getMergeStatus());
+            // 执行 git pull
+            PullCommand pullCommand = git.pull();
+            PullResult pullResult = pullCommand.call();
+            if (pullResult.isSuccessful()) {
+                System.out.println("拉取成功");
+            } else {
+                System.err.println("拉取失败: " + pullResult.getMergeResult().getMergeStatus());
+            }
         }
 
         System.out.println("合并 " + sourceBranch + " 到 " + targetBranch + "...");
@@ -238,6 +244,11 @@ public class GitBatchProcessor {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static boolean remoteBranchExists(Git git, String branchName) throws GitAPIException {
+        return git.lsRemote().call().stream()
+                .anyMatch(ref -> ref.getName().equals("refs/heads/" + branchName));
     }
 
     private static void pushToGitHub(Git git, String branchName) throws GitAPIException {
