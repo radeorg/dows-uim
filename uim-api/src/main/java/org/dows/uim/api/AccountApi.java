@@ -6,6 +6,7 @@ import org.dows.uim.response.AccountIdentifierResponse;
 import org.dows.uim.response.AccountInstanceResponse;
 import org.dows.uim.response.AccountOrgIdsResponse;
 import org.dows.uim.response.AccountRoleRelationResponse;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
 
@@ -21,6 +22,18 @@ public interface AccountApi {
         throw new UnsupportedOperationException("not class implement");
     }
 
+
+    /**
+     * 获取账号类型
+     *
+     * @param accountTypeRequest
+     * @return
+     */
+
+    @GetMapping("/v1/open/account/type/list")
+    default List<AccountTypeResponse> getAccountType(AccountTypeRequest accountTypeRequest) {
+        throw new UnsupportedOperationException("not class implement");
+    }
 
     /**
      * 根据账号标识获取账号实例ID

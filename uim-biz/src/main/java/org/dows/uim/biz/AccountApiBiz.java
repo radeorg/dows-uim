@@ -2,11 +2,15 @@ package org.dows.uim.biz;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.mybatisflex.core.query.QueryChain;
+import com.mybatisflex.core.query.QueryWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.dows.uim.api.AccountTypeRequest;
+import org.dows.uim.api.AccountTypeResponse;
 import org.dows.uim.entity.AccountIdentifierEntity;
 import org.dows.uim.entity.AccountInstanceEntity;
 import org.dows.uim.entity.AccountRoleEntity;
+import org.dows.uim.entity.AccountTypeEntity;
 import org.dows.uim.handler.AccountHandler;
 import org.dows.uim.request.AccountInstanceRequest;
 import org.dows.uim.request.AddOrgAccountRequest;
@@ -14,6 +18,7 @@ import org.dows.uim.request.FindAccountIdentifierRequest;
 import org.dows.uim.response.*;
 import org.dows.uim.service.AccountIdentifierService;
 import org.dows.uim.service.AccountInstanceService;
+import org.dows.uim.service.AccountTypeService;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -26,6 +31,8 @@ import java.util.Objects;
 public class AccountApiBiz {
     private final AccountInstanceService accountInstanceService;
     private final AccountIdentifierService accountIdentifierService;
+    private final AccountTypeService accountTypeService;
+
 
     private final AccountHandler accountHandler;
 
@@ -146,4 +153,17 @@ public class AccountApiBiz {
         accountHandler.saveOrgAccount(addOrgAccountRequests);
         return null;
     }
+
+    /**
+     * 获取账号类型
+     *
+     * @param accountTypeRequest
+     * @return
+     */
+    public List<AccountTypeResponse> getAccountType(AccountTypeRequest accountTypeRequest) {
+        List<AccountTypeEntity> list = accountTypeService.list(QueryWrapper.create()
+                .eq(AccountTypeEntity::getAccountInstanceId, accountTypeRequest.getAccountInstanceId()));
+        return BeanUtil.copyToList(list, AccountTypeResponse.class);
+    }
+
 }

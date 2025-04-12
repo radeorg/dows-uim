@@ -12,7 +12,10 @@ import org.dows.uim.response.AddOrgAccountResponse;
 import org.dows.uim.response.JobDescriptionResponse;
 import org.dows.uim.response.JobIndicatorResponse;
 import org.dows.uim.response.OrgRegisterResponse;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -45,6 +48,11 @@ public class OrgApiRest implements OrgApi, OrgAccountApi {
     @Operation(summary = "增加企业账号[招聘官,企业管理员,企业用户...]")
     public List<AddOrgAccountResponse> saveOrgAccount(@RequestBody List<AddOrgAccountRequest> addOrgAccountRequests) {
         return accountApiBiz.saveOrgAccount(addOrgAccountRequests);
+    }
+
+    @Operation(summary = "通过邮箱获取组织信息")
+    public OrgRegisterResponse getOrgInfo(OrgRegisterRequest orgRegisterRequest) {
+        return orgApiBiz.getOrgInfo(orgRegisterRequest);
     }
 
 }

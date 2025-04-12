@@ -4,9 +4,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.dows.uim.api.AccountApi;
+import org.dows.uim.api.AccountTypeRequest;
+import org.dows.uim.api.AccountTypeResponse;
+import org.dows.uim.biz.AccountApiBiz;
 import org.dows.uim.request.AccountInstanceRequest;
 import org.dows.uim.response.AccountInstanceResponse;
-import org.dows.uim.biz.AccountApiBiz;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,6 +31,11 @@ public class AccountApiRest implements AccountApi{
         return accountApiBiz.getAccountInstanceByIdentifier(appId, accountIdentifier);
     }
 
+    /*@GetMapping("/v1/open/account/type/list")*/
+    @Operation(summary = "保存注册账户实例")
+    public List<AccountTypeResponse> getAccountType(AccountTypeRequest accountTypeRequest) {
+        return accountApiBiz.getAccountType(accountTypeRequest);
+    }
 
     @GetMapping("/v1/open/account/role/list")
     @Operation(summary = "通过账户实例获取角色ID列表")

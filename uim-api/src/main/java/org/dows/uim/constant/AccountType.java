@@ -5,7 +5,9 @@ import lombok.Getter;
 public enum AccountType {
 
     NORMAL(0, "普通账号"),
+
     ORG_RECRUIT_ACCOUNT(1, "ORG招聘账户号"),
+    JOB_HUNTER_ACCOUNT(2, "求职者"),
     ;
 
     @Getter

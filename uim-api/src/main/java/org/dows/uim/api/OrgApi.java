@@ -32,4 +32,16 @@ public interface OrgApi {
     default List<OrgRegisterResponse> getOrgWithRegister(List<OrgRegisterRequest> orgRegisterRequest) {
         throw new UnsupportedOperationException("not class implement");
     }
+
+
+    /**
+     * 注册企业账号
+     *
+     * @param orgRegisterRequest
+     * @return
+     */
+    @GetMapping("v1/uim/org/register/info")
+    default OrgRegisterResponse getOrgInfo(OrgRegisterRequest orgRegisterRequest) {
+        throw new UnsupportedOperationException("not class implement");
+    }
 }
