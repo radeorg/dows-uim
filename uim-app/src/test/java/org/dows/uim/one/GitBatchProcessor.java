@@ -175,7 +175,7 @@ public class GitBatchProcessor {
             return;
         }
         // 提交修改
-        commitChanges(git);
+        commitChangesAndPull(git);
         // 将当前分支合并到目标分支,然后执行：先pull,再merge,最后push
         switchAndMerge(git, currentBranch, targetBranch);
         // 切换回原始分支
@@ -196,7 +196,7 @@ public class GitBatchProcessor {
                 .anyMatch(ref -> ref.getName().equals("refs/heads/" + branchName));
     }
 
-    private static void commitChanges(Git git) throws GitAPIException {
+    private static void commitChangesAndPull(Git git) throws GitAPIException {
         Status status = git.status().call();
 
         if (!status.getAdded().isEmpty() || !status.getChanged().isEmpty() || !status.getModified().isEmpty()) {
@@ -205,6 +205,14 @@ public class GitBatchProcessor {
             git.commit().setMessage("自动提交: 合并前的更改").call();
         } else {
             System.out.println("没有需要提交的更改");
+        }
+        // 执行 git pull
+        PullCommand pullCommand = git.pull();
+        PullResult pullResult = pullCommand.call();
+        if (pullResult.isSuccessful()) {
+            System.out.println("拉取成功");
+        } else {
+            System.err.println("拉取失败: " + pullResult.getMergeResult().getMergeStatus());
         }
     }
 
