@@ -8,7 +8,9 @@ import org.dows.uim.api.AccountTypeRequest;
 import org.dows.uim.api.AccountTypeResponse;
 import org.dows.uim.biz.AccountApiBiz;
 import org.dows.uim.request.AccountInstanceRequest;
+import org.dows.uim.request.BindingAccountRequest;
 import org.dows.uim.response.AccountInstanceResponse;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,6 +33,12 @@ public class AccountApiRest implements AccountApi{
         return accountApiBiz.getAccountInstanceByIdentifier(appId, accountIdentifier);
     }
 
+
+    @Operation(summary = "绑定信息到当前账号")
+    public void bindingAccount(@RequestBody @Validated BindingAccountRequest bindingAccountRequest) {
+        accountApiBiz.bindingAccount(bindingAccountRequest);
+    }
+
     /*@GetMapping("/v1/open/account/type/list")*/
     @Operation(summary = "保存注册账户实例")
     public List<AccountTypeResponse> getAccountType(AccountTypeRequest accountTypeRequest) {
@@ -42,7 +50,6 @@ public class AccountApiRest implements AccountApi{
     public List<Long> getAllRoleIds(@RequestParam String appId, @RequestParam Long accountInstanceId){
         return accountApiBiz.getAllRoleIds(appId, accountInstanceId);
     }
-
 
 }
 

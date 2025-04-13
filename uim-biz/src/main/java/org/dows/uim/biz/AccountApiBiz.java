@@ -5,6 +5,7 @@ import com.mybatisflex.core.query.QueryChain;
 import com.mybatisflex.core.query.QueryWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.dows.rade.constant.IdentifierType;
 import org.dows.uim.api.AccountTypeRequest;
 import org.dows.uim.api.AccountTypeResponse;
 import org.dows.uim.entity.AccountIdentifierEntity;
@@ -14,6 +15,7 @@ import org.dows.uim.entity.AccountTypeEntity;
 import org.dows.uim.handler.AccountHandler;
 import org.dows.uim.request.AccountInstanceRequest;
 import org.dows.uim.request.AddOrgAccountRequest;
+import org.dows.uim.request.BindingAccountRequest;
 import org.dows.uim.request.FindAccountIdentifierRequest;
 import org.dows.uim.response.*;
 import org.dows.uim.service.AccountIdentifierService;
@@ -168,4 +170,32 @@ public class AccountApiBiz {
         return BeanUtil.copyToList(list, AccountTypeResponse.class);
     }
 
+    public void bindingAccount(BindingAccountRequest bindingAccountRequest) {
+
+        Long accountInstanceId = bindingAccountRequest.getAccountInstanceId();
+        AccountInstanceEntity accountInstanceEntity = new AccountInstanceEntity();
+        accountInstanceEntity.setNickname(bindingAccountRequest.getNickname());
+        accountInstanceEntity.setAvatar(bindingAccountRequest.getAvatar());
+        accountInstanceEntity.setTelephone(bindingAccountRequest.getTelephone());
+        accountInstanceEntity.setZoneNo(bindingAccountRequest.getZoneNo());
+        // 构建查询条件
+        QueryWrapper eq = QueryWrapper.create()
+                .eq(AccountInstanceEntity::getAccountInstanceId, accountInstanceId);
+        // 根据查询条件accountId&appId更新账号信息到账号实例
+        accountInstanceService.update(accountInstanceEntity, eq);
+        // 查询账号标识（手机号）是否存在
+        QueryWrapper eq1 = QueryWrapper.create()
+                .eq(AccountIdentifierEntity::getAccountInstanceId, accountInstanceId)
+                .eq(AccountIdentifierEntity::getIdentifierType, IdentifierType.PHONE.getType())
+                .eq(AccountIdentifierEntity::getIdentifier, bindingAccountRequest.getTelephone());
+        AccountIdentifierEntity one = accountIdentifierService.getOne(eq1);
+        if (one == null) {
+            // 保存账号标识
+            accountIdentifierService.save(AccountIdentifierEntity.builder()
+                    .accountInstanceId(accountInstanceId)
+                    .identifier(bindingAccountRequest.getTelephone())
+                    .identifierType(IdentifierType.PHONE.getType())
+                    .build());
+        }
+    }
 }

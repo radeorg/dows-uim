@@ -8,11 +8,21 @@ import org.dows.uim.response.AccountInstanceResponse;
 import org.dows.uim.response.AccountOrgIdsResponse;
 import org.dows.uim.response.AccountRoleRelationResponse;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 
 public interface AccountApi {
 
+
+    /**
+     * 绑定信息到账号
+     * @param bindingAccountRequest
+     */
+    @PostMapping("/v1/open/uim/account/binding")
+    default void bindingAccount(BindingAccountRequest bindingAccountRequest){
+
+    }
     /**
      * 注册即创建
      *
@@ -115,8 +125,6 @@ public interface AccountApi {
         throw new UnsupportedOperationException("not class implement");
     }
 
-    default void bindingAccount(BindingAccountRequest bindingAccountRequest){
 
-    }
 
 }
