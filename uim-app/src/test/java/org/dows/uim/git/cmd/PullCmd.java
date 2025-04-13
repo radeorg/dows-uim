@@ -21,6 +21,12 @@ public class PullCmd implements GitCmd<BaseCmdParam> {
     @Override
     public void execute(Git git, BaseCmdParam param) {
         try {
+            int index = param.getIndex();
+            if (index == 2) {
+                GitUtil.gitCheckout(git,param.getSourceBranch());
+            } else if (index == 5) {
+                GitUtil.gitCheckout(git,param.getTargetBranch());
+            }
             GitUtil.gitPull(git);
         } catch (GitAPIException | IOException e) {
             throw new RuntimeException(e);
