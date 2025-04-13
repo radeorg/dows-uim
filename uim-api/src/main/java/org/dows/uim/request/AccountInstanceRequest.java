@@ -24,7 +24,7 @@ public class AccountInstanceRequest {
     private String phone;
 
     @Schema(description = "头像")
-    private String avator;
+    private String avatar;
 
     @Schema(description = "推荐码")
     private String referralsNo;
