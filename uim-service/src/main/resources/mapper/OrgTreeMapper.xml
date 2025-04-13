@@ -9,7 +9,7 @@
         <result column="operator_id" jdbcType="BIGINT" property="operatorId"/>
         <result column="org_name" jdbcType="VARCHAR" property="orgName"/>
         <result column="org_code" jdbcType="VARCHAR" property="orgCode"/>
-        <result column="org_avator" jdbcType="VARCHAR" property="orgAvator"/>
+        <result column="org_avatar" jdbcType="VARCHAR" property="orgAvatar"/>
         <result column="id_path" jdbcType="VARCHAR" property="idPath"/>
         <result column="name_path" jdbcType="VARCHAR" property="namePath"/>
         <result column="app_id" jdbcType="VARCHAR" property="appId"/>
@@ -19,7 +19,7 @@
         <result column="ts" jdbcType="TIMESTAMP" property="ts"/>
     </resultMap>
     <sql id="Base_Column_List">
-        `org_tree_id`, `pid`, `operator_id`, `org_name`, `org_code`, `org_avator`, `id_path`, `name_path`, `app_id`,
+        `org_tree_id`, `pid`, `operator_id`, `org_name`, `org_code`, `org_avatar`, `id_path`, `name_path`, `app_id`,
         `level`, `ver`, `deleted`, `ts`
     </sql>
 
