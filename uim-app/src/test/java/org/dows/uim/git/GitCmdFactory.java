@@ -16,7 +16,7 @@ public class GitCmdFactory {
     //all:0,commit:1,pull:2,push:3,checkout:4,pull:5,merge:6,push:7,checkout:8
     public final static int[] ALL_CMD = new int[]{1, 2, 3, 4, 5, 6, 7, 8};
 
-    static {
+    private static void init() {
         CheckoutCmd checkoutCmd = new CheckoutCmd();
         CommitCmd commitCmd = new CommitCmd();
         MergeCmd mergeCmd = new MergeCmd();
@@ -33,6 +33,9 @@ public class GitCmdFactory {
     }
 
     public static GitCmd getGitCmd(Integer cmd) {
+        if (gitCmdMap.isEmpty()) {
+            init();
+        }
         return gitCmdMap.get(cmd);
     }
 }
