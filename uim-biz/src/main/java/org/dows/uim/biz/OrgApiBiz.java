@@ -1,13 +1,17 @@
 package org.dows.uim.biz;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import com.mybatisflex.core.query.QueryChain;
 import com.mybatisflex.core.query.QueryWrapper;
+import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.UnavailableException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.rade.constant.IdentifierType;
 import org.dows.uim.entity.*;
-import org.dows.uim.request.OrgRegisterRequest;
+import org.dows.uim.request.*;
 import org.dows.uim.response.*;
 import org.dows.uim.service.*;
 import org.springframework.beans.BeanUtils;
@@ -15,6 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -217,5 +222,117 @@ public class OrgApiBiz {
                 .eq(OrgRegisterEntity::getCreditNo, orgRegisterRequest.getCreditNo(), Objects.nonNull(orgRegisterRequest.getCreditNo()))
         );
         return BeanUtil.copyProperties(one, OrgRegisterResponse.class);
+    }
+
+    @Operation(summary = "保存JD信息")
+    @Transactional
+     public OrgJobJDResponse saveOrgJdInfo(OrgJdSaveRequest orgJdSaveRequest) throws UnavailableException {
+        OrgJdEntity objEntity = new OrgJdEntity();
+
+        if(Objects.isNull(orgJdSaveRequest.getOrgRootId())){
+            throw new UnavailableException("orgRootId 必填");
+        }
+
+        BeanUtils.copyProperties(orgJdSaveRequest, objEntity, OrgJdEntity.class);
+        objEntity.setTs(new Date());
+        objEntity.setOrgTreeId(orgJdSaveRequest.getOrgJdRequirements().getHrAccountInstanceId());
+        objEntity.saveOrUpdate();
+        orgJdSaveRequest.setOrgJdId(objEntity.getOrgJdId());
+
+        OrgRuleSaveRequest objEntity1 = new OrgRuleSaveRequest();
+        OrgJdRequirements orgJdRequirements = orgJdSaveRequest.getOrgJdRequirements();
+        if(Objects.nonNull(orgJdRequirements)){
+            objEntity1.setRuleDescription(JSON.toJSONString(orgJdRequirements));
+        }
+        objEntity1.setOrgRuleId(objEntity.getOrgRuleId());
+        objEntity1.setRuleName(objEntity.getJdName());
+        objEntity1.setOrgTreeId(objEntity.getOrgTreeId());
+        objEntity1.setAppId(objEntity.getAppId());
+        objEntity1.setOperatorId(objEntity1.getOperatorId());
+        objEntity.setTs(new Date());
+        saveOrgRule(objEntity1);
+
+        return (OrgJobJDResponse)orgJdSaveRequest;
+    }
+
+    @Operation(summary = "获取JD列表")
+    public OrgJdListResponse getJdList(OrgJdQueryRequest orgJdQueryRequest) throws UnavailableException {
+        OrgJdListResponse response = new OrgJdListResponse();
+
+        if(Objects.isNull(orgJdQueryRequest.getOrgRootId())){
+            throw new UnavailableException("orgRootId 必填");
+        }
+
+        List<OrgJdEntity> orgJdEntityList = QueryChain.of(OrgJdEntity.class)
+                .eq(OrgJdEntity::getOrgRootId, orgJdQueryRequest.getOrgRootId(), Objects.nonNull(orgJdQueryRequest.getOrgRootId()))
+                .eq(OrgJdEntity::getOrgTreeId, orgJdQueryRequest.getOrgTreeId(), Objects.nonNull(orgJdQueryRequest.getOrgTreeId()))
+                .eq(OrgJdEntity::getOrgJdId, orgJdQueryRequest.getOrgJdId(), Objects.nonNull(orgJdQueryRequest.getOrgJdId()))
+                .like(OrgJdEntity::getJdName, orgJdQueryRequest.getJdName(), Objects.nonNull(orgJdQueryRequest.getJdName())).list();
+        List<OrgJobJDDetailResponse> jdList = new ArrayList<>();
+
+        for(OrgJdEntity item : orgJdEntityList){
+            OrgJobJDDetailResponse jdDetailResponse = new OrgJobJDDetailResponse();
+            BeanUtils.copyProperties(item, jdDetailResponse);
+            OrgRuleEntity orgRuleEntity = QueryChain.of(OrgRuleEntity.class)
+                    .eq(OrgRuleEntity::getOrgRuleId, item.getOrgRuleId(), Objects.nonNull(item.getOrgRuleId())).limit(1).one();
+            if(Objects.nonNull(orgRuleEntity) && Objects.nonNull(orgRuleEntity.getRuleDescription())){
+                OrgJdRequirements orgJdRequirements =
+                JSONObject.parseObject(orgRuleEntity.getRuleDescription(),OrgJdRequirements.class);
+                jdDetailResponse.setOrgJdRequirements(orgJdRequirements);
+            }
+            jdList.add(jdDetailResponse);
+        }
+
+        response.setJdList(jdList);
+
+        return response;
+    }
+
+    @Operation(summary = "保存岗位规则")
+    public OrgRuleResponse saveOrgRule(OrgRuleSaveRequest orgRuleSaveRequest) {
+        OrgRuleResponse response = new OrgRuleResponse();
+        OrgRuleEntity objEntity = new OrgRuleEntity();
+        BeanUtils.copyProperties(orgRuleSaveRequest, objEntity, OrgRuleEntity.class);
+        objEntity.setTs(new Date());
+        objEntity.saveOrUpdate();
+        orgRuleSaveRequest.setOrgRuleId(objEntity.getOrgRuleId());
+
+        BeanUtils.copyProperties(objEntity, response);
+        return response;
+    }
+
+    @Operation(summary = "保存岗位动作")
+    public OrgActionResponse saveOrgRuleAction(OrgActionSaveRequest orgActionSaveRequest) {
+        OrgActionResponse response = new OrgActionResponse();
+        OrgActionEntity objEntity = new OrgActionEntity();
+        BeanUtils.copyProperties(orgActionSaveRequest, objEntity, OrgActionEntity.class);
+        objEntity.setTs(new Date());
+        objEntity.saveOrUpdate();
+        orgActionSaveRequest.setOrgActionId(objEntity.getOrgActionId());
+
+        BeanUtils.copyProperties(objEntity, response);
+        return response;
+    }
+
+    @Operation(summary = "保存岗位指标")
+    @Transactional
+    public JobIndicatorResponse saveOrgRuleIndicator(List<OrgIndicatorSaveRequest> orgIndicatorSaveRequestList) {
+        JobIndicatorResponse response = new JobIndicatorResponse();
+        List<OrgIndicatorResponse> responseList = new ArrayList<>();
+        if(Objects.nonNull(orgIndicatorSaveRequestList)) {
+            for (OrgIndicatorSaveRequest itemEntity : orgIndicatorSaveRequestList) {
+                OrgIndicatorEntity objEntity = new OrgIndicatorEntity();
+                BeanUtils.copyProperties(itemEntity, objEntity, OrgIndicatorEntity.class);
+                objEntity.setTs(new Date());
+                objEntity.saveOrUpdate();
+                itemEntity.setOrgIndicatorId(objEntity.getOrgIndicatorId());
+                OrgIndicatorResponse orgIndicatorResponse = new OrgIndicatorResponse();
+                BeanUtils.copyProperties(itemEntity, orgIndicatorResponse);
+                responseList.add(orgIndicatorResponse);
+            }
+        }
+        
+        response.setIndicatorList(responseList);
+        return response;
     }
 }
