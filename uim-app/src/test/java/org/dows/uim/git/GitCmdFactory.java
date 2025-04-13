@@ -1,9 +1,6 @@
 package org.dows.uim.git;
 
-import org.dows.uim.git.cmd.CheckoutCmd;
-import org.dows.uim.git.cmd.CommitCmd;
-import org.dows.uim.git.cmd.MergeCmd;
-import org.dows.uim.git.cmd.PushCmd;
+import org.dows.uim.git.cmd.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +17,7 @@ public class GitCmdFactory {
         CheckoutCmd checkoutCmd = new CheckoutCmd();
         CommitCmd commitCmd = new CommitCmd();
         MergeCmd mergeCmd = new MergeCmd();
-        PushCmd pullCmd = new PushCmd();
+        PullCmd pullCmd = new PullCmd();
         PushCmd pushCmd = new PushCmd();
         List<GitCmd<?>> gitCmds = List.of(checkoutCmd, commitCmd, mergeCmd, pullCmd, pushCmd);
 
