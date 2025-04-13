@@ -1,6 +1,7 @@
 package org.dows.uim.api;
 
 import org.dows.uim.request.AccountInstanceRequest;
+import org.dows.uim.request.BindingAccountRequest;
 import org.dows.uim.request.FindAccountIdentifierRequest;
 import org.dows.uim.response.AccountIdentifierResponse;
 import org.dows.uim.response.AccountInstanceResponse;
@@ -112,6 +113,10 @@ public interface AccountApi {
 
     default List<AccountRoleRelationResponse> getRoleByAccountInstanceId(List<Long> principals, String appId) {
         throw new UnsupportedOperationException("not class implement");
+    }
+
+    default void bindingAccount(BindingAccountRequest bindingAccountRequest){
+
     }
 
 }
