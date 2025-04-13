@@ -102,7 +102,6 @@ public class OrgApiBiz {
 
         List<OrgIndicatorResponse> responseList = new ArrayList<>();
         if(Objects.nonNull(jdId)) {
-            OrgJdEntity itemJd = orgJdEntities.get(0);
             List<OrgIndicatorEntity> indicatorEntities = QueryChain.of(OrgIndicatorEntity.class)
                     .eq(OrgIndicatorEntity::getOrgRuleId, jdId).list();
             if (Objects.nonNull(indicatorEntities)) {
@@ -115,7 +114,6 @@ public class OrgApiBiz {
         }
 
         if(Objects.nonNull(jdDefaultId)) {
-            OrgJdEntity itemJd = orgJdEntities.get(0);
             List<OrgIndicatorEntity> indicatorEntities = QueryChain.of(OrgIndicatorEntity.class)
                     .eq(OrgIndicatorEntity::getOrgRuleId, jdDefaultId).list();
             if (Objects.nonNull(indicatorEntities)) {
@@ -317,11 +315,11 @@ public class OrgApiBiz {
 
     @Operation(summary = "保存岗位指标")
     @Transactional
-    public JobIndicatorResponse saveOrgRuleIndicator(List<OrgIndicatorSaveRequest> orgIndicatorSaveRequestList) {
+    public JobIndicatorResponse saveOrgRuleIndicator(OrgIndicatorListSaveRequest orgIndicatorListSaveRequest) {
         JobIndicatorResponse response = new JobIndicatorResponse();
         List<OrgIndicatorResponse> responseList = new ArrayList<>();
-        if(Objects.nonNull(orgIndicatorSaveRequestList)) {
-            for (OrgIndicatorSaveRequest itemEntity : orgIndicatorSaveRequestList) {
+        if(Objects.nonNull(orgIndicatorListSaveRequest) && Objects.nonNull(orgIndicatorListSaveRequest.getIndicatorList())) {
+            for (OrgIndicatorSaveRequest itemEntity : orgIndicatorListSaveRequest.getIndicatorList()) {
                 OrgIndicatorEntity objEntity = new OrgIndicatorEntity();
                 BeanUtils.copyProperties(itemEntity, objEntity, OrgIndicatorEntity.class);
                 objEntity.setTs(new Date());

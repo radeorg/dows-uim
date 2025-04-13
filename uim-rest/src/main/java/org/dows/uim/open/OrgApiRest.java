@@ -56,8 +56,8 @@ public class OrgApiRest implements OrgApi, OrgAccountApi {
     }
 
     @Operation(summary = "保存岗位指标")
-    public JobIndicatorResponse saveOrgRuleIndicator(@RequestBody List<OrgIndicatorSaveRequest> orgIndicatorSaveRequestList) {
-        return orgApiBiz.saveOrgRuleIndicator(orgIndicatorSaveRequestList);
+    public JobIndicatorResponse saveOrgRuleIndicator(@RequestBody OrgIndicatorListSaveRequest orgIndicatorListSaveRequest) {
+        return orgApiBiz.saveOrgRuleIndicator(orgIndicatorListSaveRequest);
     }
 
     @Operation(summary = "通过岗位名称获取岗位信息")

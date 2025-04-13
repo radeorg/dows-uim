@@ -46,7 +46,7 @@ public interface OrgApi {
     }
 
     @PostMapping("/v1/uim/ruleindicator/save/info")
-    default JobIndicatorResponse saveOrgRuleIndicator(List<OrgIndicatorSaveRequest> orgIndicatorSaveRequestList) {
+    default JobIndicatorResponse saveOrgRuleIndicator(OrgIndicatorListSaveRequest orgIndicatorListSaveRequest) {
         throw new UnsupportedOperationException("not class implement");
     }
 
