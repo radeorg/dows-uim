@@ -24,7 +24,7 @@ public class GitProcessor {
         // all:0,commit:1,pull:2,push:3,checkout:4,pull:5,merge:6,push:7,checkout:8
         // 12 1234  567
         //processProjects(projectDir, 1234, 1, 2);
-        processProjects(projectDir, 0, 1, 2);
+        processProjects(projectDir, 0);
     }
 
     private static void processProjects(File rootDir, int commond, int... index) {
