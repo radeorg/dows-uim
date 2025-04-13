@@ -110,6 +110,7 @@ public class GitProcessor {
         BaseCmdParam baseCmdParam = new BaseCmdParam();
         baseCmdParam.setSourceBranch(currentBranch);
         baseCmdParam.setTargetBranch(targetBranch);
+        //commit:1,pull:2,push:3,checkout:4,pull:5,merge:6,push:7,checkout:8
         for (int i : intArray) {
             GitCmd<BaseCmdParam> gitCmd = GitCmdFactory.getGitCmd(i);
             baseCmdParam.setIndex(i);
