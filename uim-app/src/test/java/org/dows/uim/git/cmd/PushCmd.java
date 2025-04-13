@@ -26,7 +26,6 @@ public class PushCmd implements GitCmd<BaseCmdParam> {
             } else if (index == 7) {
                 GitUtil.gitPush(git,param.getTargetBranch());
             }
-            GitUtil.gitPush(git, param.getTargetBranch());
         } catch (GitAPIException e) {
             throw new RuntimeException(e);
         }
