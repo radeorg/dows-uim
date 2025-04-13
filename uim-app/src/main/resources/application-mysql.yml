@@ -10,7 +10,7 @@ spring:
       # 连接池保持的最小空闲连接数
       minimum-idle: 50
       # 获取连接的最大等待时间（毫秒）
-      connectionTimeout: 6000
+      connectionTimeout: 60000
       # 连接在空闲状态下的最大存活时间（毫秒）
       idleTimeout: 300000
       # 连接的最大存活时间（毫秒）
@@ -30,11 +30,11 @@ spring:
   config:
     activate:
       on-profile: dev
-
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/bole?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2b8
-    username: root
-    password: root
+    url: jdbc:mysql://115.159.24.40:13306/bole?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2b8
+    username: encrypted$HnOB7XSpPC5NvdV5HYhzAQ==
+    password: encrypted$jwBBPVuexU/i22za5nVxCg==
+
     #driver-class-name: com.mysql.cj.jdbc.Driver
 ---
 #开发环境
