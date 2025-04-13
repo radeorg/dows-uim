@@ -102,7 +102,6 @@ public class OrgApiBiz {
 
         List<OrgIndicatorResponse> responseList = new ArrayList<>();
         if(Objects.nonNull(jdId)) {
-            OrgJdEntity itemJd = orgJdEntities.get(0);
             List<OrgIndicatorEntity> indicatorEntities = QueryChain.of(OrgIndicatorEntity.class)
                     .eq(OrgIndicatorEntity::getOrgRuleId, jdId).list();
             if (Objects.nonNull(indicatorEntities)) {
@@ -115,7 +114,6 @@ public class OrgApiBiz {
         }
 
         if(Objects.nonNull(jdDefaultId)) {
-            OrgJdEntity itemJd = orgJdEntities.get(0);
             List<OrgIndicatorEntity> indicatorEntities = QueryChain.of(OrgIndicatorEntity.class)
                     .eq(OrgIndicatorEntity::getOrgRuleId, jdDefaultId).list();
             if (Objects.nonNull(indicatorEntities)) {
@@ -233,24 +231,25 @@ public class OrgApiBiz {
             throw new UnavailableException("orgRootId 必填");
         }
 
-        BeanUtils.copyProperties(orgJdSaveRequest, objEntity, OrgJdEntity.class);
-        objEntity.setTs(new Date());
-        objEntity.setOrgTreeId(orgJdSaveRequest.getOrgJdRequirements().getHrAccountInstanceId());
-        objEntity.saveOrUpdate();
-        orgJdSaveRequest.setOrgJdId(objEntity.getOrgJdId());
-
         OrgRuleSaveRequest objEntity1 = new OrgRuleSaveRequest();
         OrgJdRequirements orgJdRequirements = orgJdSaveRequest.getOrgJdRequirements();
         if(Objects.nonNull(orgJdRequirements)){
             objEntity1.setRuleDescription(JSON.toJSONString(orgJdRequirements));
         }
-        objEntity1.setOrgRuleId(objEntity.getOrgRuleId());
-        objEntity1.setRuleName(objEntity.getJdName());
-        objEntity1.setOrgTreeId(objEntity.getOrgTreeId());
-        objEntity1.setAppId(objEntity.getAppId());
-        objEntity1.setOperatorId(objEntity1.getOperatorId());
+        objEntity1.setOrgRuleId(orgJdSaveRequest.getOrgRuleId());
+        objEntity1.setRuleName(orgJdSaveRequest.getJdName());
+        objEntity1.setOrgTreeId(orgJdSaveRequest.getOrgTreeId());
+        objEntity1.setAppId(orgJdSaveRequest.getAppId());
+        objEntity1.setOperatorId(orgJdSaveRequest.getOperatorId());
+        objEntity1.setTs(new Date());
+        OrgRuleResponse response = saveOrgRule(objEntity1);
+
+        BeanUtils.copyProperties(orgJdSaveRequest, objEntity, OrgJdEntity.class);
         objEntity.setTs(new Date());
-        saveOrgRule(objEntity1);
+        objEntity.setOrgTreeId(orgJdSaveRequest.getOrgJdRequirements().getHrAccountInstanceId());
+        objEntity.setOrgRuleId(response.getOrgRuleId());
+        objEntity.saveOrUpdate();
+        orgJdSaveRequest.setOrgJdId(objEntity.getOrgJdId());
 
         return (OrgJobJDResponse)orgJdSaveRequest;
     }
@@ -316,11 +315,11 @@ public class OrgApiBiz {
 
     @Operation(summary = "保存岗位指标")
     @Transactional
-    public JobIndicatorResponse saveOrgRuleIndicator(List<OrgIndicatorSaveRequest> orgIndicatorSaveRequestList) {
+    public JobIndicatorResponse saveOrgRuleIndicator(OrgIndicatorListSaveRequest orgIndicatorListSaveRequest) {
         JobIndicatorResponse response = new JobIndicatorResponse();
         List<OrgIndicatorResponse> responseList = new ArrayList<>();
-        if(Objects.nonNull(orgIndicatorSaveRequestList)) {
-            for (OrgIndicatorSaveRequest itemEntity : orgIndicatorSaveRequestList) {
+        if(Objects.nonNull(orgIndicatorListSaveRequest) && Objects.nonNull(orgIndicatorListSaveRequest.getIndicatorList())) {
+            for (OrgIndicatorSaveRequest itemEntity : orgIndicatorListSaveRequest.getIndicatorList()) {
                 OrgIndicatorEntity objEntity = new OrgIndicatorEntity();
                 BeanUtils.copyProperties(itemEntity, objEntity, OrgIndicatorEntity.class);
                 objEntity.setTs(new Date());

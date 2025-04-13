@@ -19,9 +19,9 @@ spring:
 auto-table:
   show-banner: false
   # 启用自动维护表功能
-  enable: true
+  enable: false
   # 自动删除名称不匹配的索引
-  autoDropIndex: true
+  autoDropIndex: false
   # 建表的时候，父类的字段排序是在子类后面还是前面
   superInsertPosition: before
   # 模型包路径
@@ -31,6 +31,25 @@ auto-table:
 rade:
   # 初始化数据
   initData: true
+
+
+---
+#开发环境
+spring:
+  config:
+    activate:
+      on-profile: sit
+#AutoTable配置，根据实体类自动生成表
+auto-table:
+  show-banner: false
+  # 启用自动维护表功能
+  enable: false
+  # 自动删除名称不匹配的索引
+  autoDropIndex: false
+  # 建表的时候，父类的字段排序是在子类后面还是前面
+  superInsertPosition: before
+  # 模型包路径
+  model-package: org.dows.*.entity.*
 
 ---
 #开发环境
@@ -42,9 +61,9 @@ spring:
 auto-table:
   show-banner: false
   # 启用自动维护表功能
-  enable: true
+  enable: false
   # 自动删除名称不匹配的索引
-  autoDropIndex: true
+  autoDropIndex: false
   # 建表的时候，父类的字段排序是在子类后面还是前面
   superInsertPosition: before
   # 模型包路径
