@@ -27,7 +27,6 @@ public class PullCmd implements GitCmd<BaseCmdParam> {
             } else if (index == 5) {
                 GitUtil.gitPull(git);
             }
-            GitUtil.gitPull(git);
         } catch (GitAPIException | IOException e) {
             throw new RuntimeException(e);
         }
