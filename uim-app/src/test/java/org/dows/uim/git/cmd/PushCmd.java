@@ -22,9 +22,9 @@ public class PushCmd implements GitCmd<BaseCmdParam> {
         try {
             int index = param.getIndex();
             if (index == 3) {
-                GitUtil.gitCheckout(git,param.getSourceBranch());
+                GitUtil.gitPush(git,param.getSourceBranch());
             } else if (index == 7) {
-                GitUtil.gitCheckout(git,param.getTargetBranch());
+                GitUtil.gitPush(git,param.getTargetBranch());
             }
             GitUtil.gitPush(git, param.getTargetBranch());
         } catch (GitAPIException e) {

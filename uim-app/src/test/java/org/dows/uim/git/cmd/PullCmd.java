@@ -23,9 +23,9 @@ public class PullCmd implements GitCmd<BaseCmdParam> {
         try {
             int index = param.getIndex();
             if (index == 2) {
-                GitUtil.gitCheckout(git,param.getSourceBranch());
+                GitUtil.gitPull(git);
             } else if (index == 5) {
-                GitUtil.gitCheckout(git,param.getTargetBranch());
+                GitUtil.gitPull(git);
             }
             GitUtil.gitPull(git);
         } catch (GitAPIException | IOException e) {
