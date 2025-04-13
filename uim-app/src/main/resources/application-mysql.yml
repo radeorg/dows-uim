@@ -45,8 +45,8 @@ spring:
 
   datasource:
     url: jdbc:mysql://115.159.24.40:13306/bole?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2b8
-    username: root
-    password: radeorg123!
+    username: encrypted$HnOB7XSpPC5NvdV5HYhzAQ==
+    password: encrypted$jwBBPVuexU/i22za5nVxCg==
 ---
 #开发环境
 spring:
@@ -55,7 +55,7 @@ spring:
       on-profile: prd
 
   datasource:
-    url: jdbc:mysql://192.168.111.103:3306/bole?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2b8
+    url: jdbc:mysql://192.168.111.103:3306/rade?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2b8
     username: rade
     password: rade123!
 
