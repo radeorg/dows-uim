@@ -35,9 +35,13 @@ public class AccountInstanceEntity extends BaseEntity<AccountInstanceEntity> {
     @Id(keyType = KeyType.Generator, value = KeyGenerators.snowFlakeId)
     private Long accountInstanceId;
 
+    /**
+     * 昵称
+     */
     @Schema(description = "昵称")
     @Column(value = "nickname")
     private String nickname;
+
     /**
      * 密码
      */
@@ -121,6 +125,12 @@ public class AccountInstanceEntity extends BaseEntity<AccountInstanceEntity> {
     @Schema(description = "时间戳")
     @Column(value = "ts")
     private Date ts;
+
+    @Column(value = "ut")
+    private Date ut;
+
+    @Column(value = "owner_id")
+    private Long ownerId;
 
 
 }

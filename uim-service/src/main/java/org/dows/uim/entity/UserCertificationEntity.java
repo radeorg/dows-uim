@@ -15,7 +15,7 @@ import org.dows.rade.crud.BaseEntity;
 import java.util.Date;
 
 /**
- * 组织邮箱表 实体类。
+ * 用户证书表 实体类。
  *
  * @author lait.zhang@gmail.com
  * @since 1.0
@@ -24,51 +24,44 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(name = "组织邮箱表")
-@Table(value = "org_email")
-public class OrgEmailEntity extends BaseEntity<OrgEmailEntity> {
+@Schema(name = "用户证书表")
+@Table(value = "user_certification")
+public class UserCertificationEntity extends BaseEntity<UserCertificationEntity> {
 
     /**
-     * 组织邮箱ID
+     * 用户证书ID
      */
-    @Schema(description = "组织邮箱ID")
+    @Schema(description = "用户证书ID")
     @Id(keyType = KeyType.Generator, value = KeyGenerators.snowFlakeId)
-    private Long orgEmailId;
+    private Long userCertificationId;
 
     /**
-     * 组织树ID[组织rootId]
+     * 操作者ID
      */
-    @Schema(description = "组织树ID[组织rootId]")
-    @Column(value = "org_root_id")
-    private Long orgRootId;
+    @Schema(description = "操作者ID")
+    @Column(value = "operator_id")
+    private Long operatorId;
 
     /**
-     * 组织树ID
+     * 用户实例ID
      */
-    @Schema(description = "组织树ID")
-    @Column(value = "org_tree_id")
-    private Long orgTreeId;
+    @Schema(description = "用户实例ID")
+    @Column(value = "user_instance_id")
+    private Long userInstanceId;
 
     /**
-     * 企业邮箱
+     * 证书名称
      */
-    @Schema(description = "企业邮箱")
-    @Column(value = "email")
-    private String email;
+    @Schema(description = "证书名称")
+    @Column(value = "cert_name")
+    private String certName;
 
     /**
-     * JSON配置
+     * 证书编号
      */
-    @Schema(description = "JSON配置")
-    @Column(value = "config_json")
-    private String configJson;
-
-    /**
-     * 描述
-     */
-    @Schema(description = "描述")
-    @Column(value = "description")
-    private String description;
+    @Schema(description = "证书编号")
+    @Column(value = "cert_no")
+    private String certNo;
 
     /**
      * 应用ID
@@ -78,18 +71,25 @@ public class OrgEmailEntity extends BaseEntity<OrgEmailEntity> {
     private String appId;
 
     /**
-     * 邮箱类型[收件，发件,...]
+     * 永久性标识：0-否，1-是
      */
-    @Schema(description = "邮箱类型[收件，发件,...]")
-    @Column(value = "email_type")
-    private Integer emailType;
+    @Schema(description = "永久性标识：0-否，1-是")
+    @Column(value = "perminent")
+    private Integer perminent;
 
     /**
-     * 版本
+     * 证书获取日期
      */
-    @Schema(description = "版本")
-    @Column(value = "ver")
-    private Integer ver;
+    @Schema(description = "证书获取日期")
+    @Column(value = "award_date")
+    private Date awardDate;
+
+    /**
+     * 证书有效日期
+     */
+    @Schema(description = "证书有效日期")
+    @Column(value = "expiry_date")
+    private Date expiryDate;
 
     /**
      * 逻辑删除，0未删除，1删除

@@ -85,9 +85,9 @@ public class UserContactEntity extends BaseEntity<UserContactEntity> {
     private Integer state;
 
     /**
-     * 乐观锁, 默认: 0
+     * 乐观锁，默认为0
      */
-    @Schema(description = "乐观锁, 默认: 0")
+    @Schema(description = "乐观锁，默认为0")
     @Column(value = "ver")
     private Integer ver;
 
@@ -99,10 +99,10 @@ public class UserContactEntity extends BaseEntity<UserContactEntity> {
     private Long operatorId;
 
     /**
-     * 逻辑删除  0未删除  1 删除
+     * 逻辑删除，0未删除，1删除
      */
-    @Schema(description = "逻辑删除  0未删除  1 删除")
-    @Column(value = "deleted")
+    @Schema(description = "逻辑删除，0未删除，1删除")
+    @Column(value = "deleted", isLogicDelete = true)
     private Integer deleted;
 
     /**
@@ -111,6 +111,12 @@ public class UserContactEntity extends BaseEntity<UserContactEntity> {
     @Schema(description = "时间戳")
     @Column(value = "ts")
     private Date ts;
+
+    @Column(value = "ut")
+    private Date ut;
+
+    @Column(value = "owner_id")
+    private Long ownerId;
 
 
 }

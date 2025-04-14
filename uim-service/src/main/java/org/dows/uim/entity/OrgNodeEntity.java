@@ -105,5 +105,11 @@ public class OrgNodeEntity extends BaseEntity<OrgNodeEntity> {
     @Column(value = "ts")
     private Date ts;
 
+    @Column(value = "ut")
+    private Date ut;
+
+    @Column(value = "owner_id")
+    private Long ownerId;
+
 
 }

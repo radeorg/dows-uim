@@ -11,8 +11,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.dows.rade.crud.BaseEntity;
-import org.dromara.autotable.annotation.AutoColumn;
-import org.dromara.autotable.annotation.mysql.MysqlTypeConstant;
 
 import java.util.Date;
 
@@ -58,7 +56,10 @@ public class OrgJdEntity extends BaseEntity<OrgJdEntity> {
     @Column(value = "org_rule_id")
     private Long orgRuleId;
 
-    @Schema(description = "人事账号实例ID")
+    /**
+     * 人事账号ID
+     */
+    @Schema(description = "人事账号ID")
     @Column(value = "owner_id")
     private Long ownerId;
 
@@ -81,7 +82,6 @@ public class OrgJdEntity extends BaseEntity<OrgJdEntity> {
      */
     @Schema(description = "岗位描述")
     @Column(value = "description")
-    @AutoColumn(comment = "岗位描述", type = MysqlTypeConstant.TEXT)
     private String description;
 
     /**
@@ -111,6 +111,9 @@ public class OrgJdEntity extends BaseEntity<OrgJdEntity> {
     @Schema(description = "时间戳")
     @Column(value = "ts")
     private Date ts;
+
+    @Column(value = "ut")
+    private Date ut;
 
 
 }

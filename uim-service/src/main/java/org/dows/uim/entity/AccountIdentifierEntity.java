@@ -91,5 +91,11 @@ public class AccountIdentifierEntity extends BaseEntity<AccountIdentifierEntity>
     @Column(value = "ts")
     private Date ts;
 
+    @Column(value = "ut")
+    private Date ut;
+
+    @Column(value = "owner_id")
+    private Long ownerId;
+
 
 }

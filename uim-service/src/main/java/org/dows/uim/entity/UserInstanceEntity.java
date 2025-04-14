@@ -78,9 +78,9 @@ public class UserInstanceEntity extends BaseEntity<UserInstanceEntity> {
     private String appId;
 
     /**
-     * 乐观锁, 默认: 0
+     * 乐观锁，默认为0
      */
-    @Schema(description = "乐观锁, 默认: 0")
+    @Schema(description = "乐观锁，默认为0")
     @Column(value = "ver")
     private Integer ver;
 
@@ -90,6 +90,12 @@ public class UserInstanceEntity extends BaseEntity<UserInstanceEntity> {
     @Schema(description = "时间戳")
     @Column(value = "ts")
     private Date ts;
+
+    @Column(value = "ut")
+    private Date ut;
+
+    @Column(value = "owner_id")
+    private Long ownerId;
 
 
 }

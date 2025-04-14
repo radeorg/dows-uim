@@ -57,24 +57,32 @@ public class OrgIndicatorEntity extends BaseEntity<OrgIndicatorEntity> {
     private String indicatorName;
 
     /**
+     * 指标关键字
+     */
+    @Schema(description = "指标关键字")
+    @Column(value = "indicator_keyword")
+    private String indicatorKeyword;
+
+    /**
+     * 指标别称
+     */
+    @Schema(description = "指标别称")
+    @Column(value = "indicator_alias1")
+    private String indicatorAlias1;
+
+    /**
+     * 指标别称
+     */
+    @Schema(description = "指标别称")
+    @Column(value = "indicator_alias")
+    private String indicatorAlias;
+
+    /**
      * 指标英文名
      */
     @Schema(description = "指标英文名")
     @Column(value = "indicator_code")
     private String indicatorCode;
-
-
-    @Schema(description = "指标关键字")
-    @Column(value = "indicator_keyword")
-    private String indicatorKeyword;
-
-    @Schema(description = "指标别名")
-    @Column(value = "indicator_alias")
-    private String indicatorAlias;
-
-    @Schema(description = "指标别名1")
-    @Column(value = "indicator_alias1")
-    private String indicatorAlias1;
 
     /**
      * 数据类型
@@ -131,6 +139,12 @@ public class OrgIndicatorEntity extends BaseEntity<OrgIndicatorEntity> {
     @Schema(description = "时间戳")
     @Column(value = "ts")
     private Date ts;
+
+    @Column(value = "ut")
+    private Date ut;
+
+    @Column(value = "owner_id")
+    private Long ownerId;
 
 
 }

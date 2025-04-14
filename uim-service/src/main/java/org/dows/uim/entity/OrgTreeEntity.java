@@ -119,5 +119,11 @@ public class OrgTreeEntity extends BaseEntity<OrgTreeEntity> {
     @Column(value = "ts")
     private Date ts;
 
+    @Column(value = "ut")
+    private Date ut;
+
+    @Column(value = "owner_id")
+    private Long ownerId;
+
 
 }

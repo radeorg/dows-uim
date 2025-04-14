@@ -91,5 +91,11 @@ public class OrgIndicatorMappingEntity extends BaseEntity<OrgIndicatorMappingEnt
     @Column(value = "condition")
     private String condition;
 
+    @Column(value = "ut")
+    private Date ut;
+
+    @Column(value = "owner_id")
+    private Long ownerId;
+
 
 }
