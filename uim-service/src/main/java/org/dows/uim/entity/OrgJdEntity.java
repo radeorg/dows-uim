@@ -59,8 +59,8 @@ public class OrgJdEntity extends BaseEntity<OrgJdEntity> {
     private Long orgRuleId;
 
     @Schema(description = "人事账号实例ID")
-    @Column(value = "hr_account_instance_id")
-    private Long hrAccountInstanceId;
+    @Column(value = "owner_id")
+    private Long ownerId;
 
     /**
      * 操作者ID

@@ -8,7 +8,7 @@
         <result column="org_root_id" jdbcType="BIGINT" property="orgRootId"/>
         <result column="org_tree_id" jdbcType="BIGINT" property="orgTreeId"/>
         <result column="org_rule_id" jdbcType="BIGINT" property="orgRuleId"/>
-        <result column="hr_account_instance_id" jdbcType="BIGINT" property="hrAccountInstanceId"/>
+        <result column="owner_id" jdbcType="BIGINT" property="ownerId"/>
         <result column="operator_id" jdbcType="BIGINT" property="operatorId"/>
 
         <result column="jd_name" jdbcType="VARCHAR" property="jdName"/>
