@@ -28,7 +28,7 @@ public class OrgJobJDResponse  {
     private Long orgRuleId;
 
     @Schema(description = "人事账号实例ID")
-    private Long hrAccountInstanceId;
+    private Long ownerId;
 
     @Schema(description = "操作者ID")
     private Long operatorId;
