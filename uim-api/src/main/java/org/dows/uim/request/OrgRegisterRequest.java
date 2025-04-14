@@ -3,6 +3,8 @@ package org.dows.uim.request;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class OrgRegisterRequest {
 
@@ -60,6 +62,9 @@ public class OrgRegisterRequest {
     @Schema(description = "企业邮箱")
     private String email;
 
+    @Schema(description = "邮箱类型")
+    private Integer emailType;
+
     /**
      * 联系电话
      */
@@ -77,5 +82,8 @@ public class OrgRegisterRequest {
      */
     @Schema(description = "应用ID")
     private String appId;
+
+    @Schema(description = "过滤条件[telephone,email...],该字段为可选字段")
+    private List<String> filters;
 
 }
