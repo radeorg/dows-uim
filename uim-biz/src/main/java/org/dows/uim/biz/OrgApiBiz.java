@@ -164,6 +164,8 @@ public class OrgApiBiz {
         List<OrgRegisterEntity> orgRegisterEntities = BeanUtil.copyToList(orgRegisterRequest, OrgRegisterEntity.class);
         // 批量保存账号信息
         List<AccountInstanceEntity> accountInstanceEntities = new ArrayList<>();
+        // 批量报保存企业邮箱信息
+        List<OrgEmailEntity> orgEmailEntities = new ArrayList<>();
         for (int i = 0; i < orgTreeEntities.size(); i++) {
             OrgRegisterEntity orgRegisterEntity = orgRegisterEntities.get(i);
             orgRegisterEntity.setOrgRootId(orgTreeEntities.get(i).getOrgTreeId());
@@ -172,6 +174,13 @@ public class OrgApiBiz {
             accountInstanceEntity.setTelephone(orgRegisterEntity.getTelephone());
             accountInstanceEntity.setSuperAccount(0);
             accountInstanceEntities.add(accountInstanceEntity);
+
+            // 构建企业邮箱
+            OrgEmailEntity orgEmailEntity = new OrgEmailEntity();
+            orgEmailEntity.setEmail(orgRegisterEntity.getEmail());
+            orgEmailEntity.setOrgTreeId(orgTreeEntities.get(i).getOrgTreeId());
+            orgEmailEntity.setOrgRootId(orgTreeEntities.get(i).getOrgTreeId());
+            orgEmailEntities.add(orgEmailEntity);
         }
         // batch save account instance
         accountInstanceService.saveBatch(accountInstanceEntities);
@@ -196,9 +205,10 @@ public class OrgApiBiz {
         }
         // batch save account identifier
         accountIdentifierService.saveBatch(accountIdentifierEntities);
-
         // batch save org register
         orgRegisterService.saveOrUpdateBatch(orgRegisterEntities);
+        // 批量保存企业邮箱
+        orgEmailService.saveBatch(orgEmailEntities);
 
         // 将当前账号关联组织节点
         List<OrgNodeEntity> orgNodeEntities = new ArrayList<>();
