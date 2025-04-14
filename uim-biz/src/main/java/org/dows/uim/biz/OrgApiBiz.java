@@ -283,7 +283,8 @@ public class OrgApiBiz {
 
         BeanUtils.copyProperties(orgJdSaveRequest, objEntity, OrgJdEntity.class);
         objEntity.setTs(new Date());
-        objEntity.setOrgTreeId(orgJdSaveRequest.getOrgJdRequirements().getHrAccountInstanceId());
+        objEntity.setOrgTreeId(orgJdSaveRequest.getOrgTreeId());
+        objEntity.setHrAccountInstanceId(orgJdSaveRequest.getOrgJdRequirements().getHrAccountInstanceId());
         objEntity.setOrgRuleId(response.getOrgRuleId());
         objEntity.saveOrUpdate();
         orgJdSaveRequest.setOrgJdId(objEntity.getOrgJdId());
