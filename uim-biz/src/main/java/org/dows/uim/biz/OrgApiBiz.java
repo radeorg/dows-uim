@@ -227,23 +227,25 @@ public class OrgApiBiz {
     public OrgRegisterResponse getOrgInfo(OrgRegisterRequest orgRegisterRequest) {
         // 查询企业邮箱
         List<String> filters = orgRegisterRequest.getFilters();
-        // 过滤条件
-        if (filters.contains("email")) {
-            log.info("通过邮箱查询企业信息");
-            QueryWrapper eq = QueryWrapper.create()
-                    .eq(OrgEmailEntity::getEmail, orgRegisterRequest.getEmail(), Objects.nonNull(orgRegisterRequest.getEmail()))
-                    .eq(OrgEmailEntity::getEmailType, orgRegisterRequest.getEmailType(), Objects.nonNull(orgRegisterRequest.getEmailType()));
-            OrgEmailEntity orgEmailEntity = orgEmailService.getOne(eq);
-            // 先通过邮箱查询企业邮箱信息
-            if (Objects.isNull(orgEmailEntity)) {
-                log.info("未查询到企业邮箱信息");
-                return null;
+        if (filters != null) {
+            // 过滤条件
+            if (filters.contains("email")) {
+                log.info("通过邮箱查询企业信息");
+                QueryWrapper eq = QueryWrapper.create()
+                        .eq(OrgEmailEntity::getEmail, orgRegisterRequest.getEmail(), Objects.nonNull(orgRegisterRequest.getEmail()))
+                        .eq(OrgEmailEntity::getEmailType, orgRegisterRequest.getEmailType(), Objects.nonNull(orgRegisterRequest.getEmailType()));
+                OrgEmailEntity orgEmailEntity = orgEmailService.getOne(eq);
+                // 先通过邮箱查询企业邮箱信息
+                if (Objects.isNull(orgEmailEntity)) {
+                    log.info("未查询到企业邮箱信息");
+                    return null;
+                }
+                // 查询注册信息
+                OrgRegisterEntity orgRegisterEntity = orgRegisterService.getById(orgEmailEntity.getOrgTreeId());
+                return BeanUtil.copyProperties(orgRegisterEntity, OrgRegisterResponse.class);
+            } else if (filters.contains("telephone")) {
+                log.info("通过手机号查询企业信息");
             }
-            // 查询注册信息
-            OrgRegisterEntity orgRegisterEntity = orgRegisterService.getById(orgEmailEntity.getOrgTreeId());
-            return BeanUtil.copyProperties(orgRegisterEntity, OrgRegisterResponse.class);
-        } else if (filters.contains("telephone")) {
-            log.info("通过手机号查询企业信息");
         } else {
             log.info("通过其他条件查询企业信息");
             OrgRegisterEntity one = orgRegisterService.getOne(QueryWrapper.create()
