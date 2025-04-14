@@ -1,6 +1,7 @@
 package org.dows.uim.biz;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.StrUtil;
 import com.mybatisflex.core.query.QueryChain;
 import com.mybatisflex.core.query.QueryWrapper;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.dows.uim.entity.AccountIdentifierEntity;
 import org.dows.uim.entity.AccountInstanceEntity;
 import org.dows.uim.entity.AccountRoleEntity;
 import org.dows.uim.entity.AccountTypeEntity;
+import org.dows.uim.exception.UimException;
 import org.dows.uim.handler.AccountHandler;
 import org.dows.uim.request.AccountInstanceRequest;
 import org.dows.uim.request.AddOrgAccountRequest;
@@ -170,32 +172,59 @@ public class AccountApiBiz {
         return BeanUtil.copyToList(list, AccountTypeResponse.class);
     }
 
+    /**
+     * 验证并绑定账号信息（更具手机号和账号ID验证，如果存在则绑定，不存在则抛出异常）
+     *
+     * @param bindingAccountRequest
+     */
     public void bindingAccount(BindingAccountRequest bindingAccountRequest) {
 
         Long accountInstanceId = bindingAccountRequest.getAccountInstanceId();
-        AccountInstanceEntity accountInstanceEntity = new AccountInstanceEntity();
-        accountInstanceEntity.setNickname(bindingAccountRequest.getNickname());
-        accountInstanceEntity.setAvatar(bindingAccountRequest.getAvatar());
-        accountInstanceEntity.setTelephone(bindingAccountRequest.getTelephone());
-        accountInstanceEntity.setZoneNo(bindingAccountRequest.getZoneNo());
-        // 构建查询条件
-        QueryWrapper eq = QueryWrapper.create()
-                .eq(AccountInstanceEntity::getAccountInstanceId, accountInstanceId);
-        // 根据查询条件accountId&appId更新账号信息到账号实例
-        accountInstanceService.update(accountInstanceEntity, eq);
+        // 构建查询条件，根据账号实例ID查询账号实例
+        /*QueryWrapper eq = QueryWrapper.create()
+                .eq(AccountInstanceEntity::getAccountInstanceId, accountInstanceId);*/
         // 查询账号标识（手机号）是否存在
-        QueryWrapper eq1 = QueryWrapper.create()
+        QueryWrapper eq = QueryWrapper.create()
                 .eq(AccountIdentifierEntity::getAccountInstanceId, accountInstanceId)
                 .eq(AccountIdentifierEntity::getIdentifierType, IdentifierType.PHONE.getType())
                 .eq(AccountIdentifierEntity::getIdentifier, bindingAccountRequest.getTelephone());
-        AccountIdentifierEntity one = accountIdentifierService.getOne(eq1);
-        if (one == null) {
+        AccountIdentifierEntity identifierEntity = accountIdentifierService.getOne(eq);
+        if (identifierEntity == null) {
+            throw new UimException("手机号验证失败，请检查系统注册手机号是否为当前手机号");
+        }
+        // 绑定时，根据条件绑定，校验字段值是否存在且相等
+        List<String> verifiers = bindingAccountRequest.getVerifiers();
+        if (verifiers != null && !verifiers.isEmpty()) {
+            for (String verifier : verifiers) {
+                Object fieldValue = BeanUtil.getFieldValue(identifierEntity, verifier);
+                Object fieldValue1 = BeanUtil.getFieldValue(bindingAccountRequest, verifier);
+                if (!StrUtil.equals(fieldValue.toString(), fieldValue1.toString())) {
+                    throw new UimException(String.format("UIM账号绑定失败，字段或值不匹配，字段：%s，值：%s", verifier, fieldValue1));
+                }
+            }
+            AccountInstanceEntity accountInstanceEntity = new AccountInstanceEntity();
+            if (StrUtil.isNotEmpty(bindingAccountRequest.getNickname())) {
+                accountInstanceEntity.setNickname(bindingAccountRequest.getNickname());
+            }
+            if (StrUtil.isNotEmpty(bindingAccountRequest.getAvatar())) {
+                accountInstanceEntity.setAvatar(bindingAccountRequest.getAvatar());
+            }
+            /*if(StrUtil.isNotEmpty(bindingAccountRequest.getTelephone())){
+                accountInstanceEntity.setTelephone(bindingAccountRequest.getTelephone());
+            }*/
+            if (StrUtil.isNotEmpty(bindingAccountRequest.getZoneNo())) {
+                accountInstanceEntity.setZoneNo(bindingAccountRequest.getZoneNo());
+            }
+            // 根据查询条件accountId&appId更新账号信息到账号实例,实现更新账号实例信息，完成绑定账号信息，比如手机号绑定，以及其他字段信息绑定
+            accountInstanceService.update(accountInstanceEntity, eq);
+           /* if (one == null) {
             // 保存账号标识
             accountIdentifierService.save(AccountIdentifierEntity.builder()
                     .accountInstanceId(accountInstanceId)
                     .identifier(bindingAccountRequest.getTelephone())
                     .identifierType(IdentifierType.PHONE.getType())
                     .build());
+            }*/
         }
     }
 }
