@@ -83,6 +83,19 @@ public interface AccountApi {
     }
 
 
+    /**
+     * 根据账号ID集合获取账号实例集合
+     *
+     * @param appId
+     * @param accountIds 账号ID集合
+     * @param filters    过滤字段
+     * @return
+     */
+    @GetMapping("/v1/open/uim/account/instance/list")
+    default List<AccountInstanceResponse> getAccountInstanceByIds(String appId, List<Long> accountIds, List<String> filters) {
+        throw new UnsupportedOperationException("not class implement");
+    }
+
 
 
     default AccountInstanceResponse getAccountInstanceById(Long accountInstanceId) {

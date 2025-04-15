@@ -249,4 +249,20 @@ public class AccountApiBiz {
         accountIdentifierService.save(identifierEntity);
         return accountInstanceEntity.getAccountInstanceId();
     }
+
+    /**
+     * 根据账号ID列表获取账号实例列表
+     *
+     * @param appId
+     * @param accountIds
+     * @param filters
+     * @return
+     */
+    public List<AccountInstanceResponse> getAccountInstanceByIds(String appId, List<Long> accountIds, List<String> filters) {
+        List<AccountInstanceEntity> accountInstanceEntities = accountInstanceService.list(QueryWrapper.create()
+                .select(filters.toArray(new String[0]))
+                .in(AccountInstanceEntity::getAccountInstanceId, accountIds, Objects.nonNull(accountIds))
+                .eq(AccountInstanceEntity::getAppId, appId, Objects.nonNull(appId)));
+        return BeanUtil.copyToList(accountInstanceEntities, AccountInstanceResponse.class);
+    }
 }

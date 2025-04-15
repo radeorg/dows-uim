@@ -11,7 +11,10 @@ import org.dows.uim.request.AccountInstanceRequest;
 import org.dows.uim.request.BindingAccountRequest;
 import org.dows.uim.response.AccountInstanceResponse;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -61,5 +64,17 @@ public class AccountApiRest implements AccountApi{
         return accountApiBiz.getAllRoleIds(appId, accountInstanceId);
     }
 
+    /**
+     * 根据账号ID集合获取账号实例集合
+     *
+     * @param appId
+     * @param accountIds 账号ID集合
+     * @param filters    过滤字段
+     * @return
+     */
+    @GetMapping("/v1/open/uim/account/instance/list")
+    public List<AccountInstanceResponse> getAccountInstanceByIds(String appId, List<Long> accountIds, List<String> filters) {
+        return accountApiBiz.getAccountInstanceByIds(appId, accountIds, filters);
+    }
 }
 
