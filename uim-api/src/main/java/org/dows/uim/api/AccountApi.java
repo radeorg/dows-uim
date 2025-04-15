@@ -29,6 +29,7 @@ public interface AccountApi {
      * @param accountInstanceRequest
      * @return
      */
+    @PostMapping("/v1/open/uim/account/register")
     default Long getAccountWithRegister(AccountInstanceRequest accountInstanceRequest) {
         throw new UnsupportedOperationException("not class implement");
     }
@@ -41,7 +42,7 @@ public interface AccountApi {
      * @return
      */
 
-    @GetMapping("/v1/open/account/type/list")
+    @GetMapping("/v1/open/uim/account/type/list")
     default List<AccountTypeResponse> getAccountType(AccountTypeRequest accountTypeRequest) {
         throw new UnsupportedOperationException("not class implement");
     }
@@ -53,9 +54,23 @@ public interface AccountApi {
      * @param identifier
      * @return
      */
+    @GetMapping("/v1/open/uim/account/info")
     default AccountInstanceResponse getAccountInstanceByIdentifier(String appId, String identifier) {
         throw new UnsupportedOperationException("not class implement");
     }
+
+    /**
+     * 获取账号所有关联的角色ID(个人和所在组织所拥有的角色)
+     *
+     * @param appId
+     * @return
+     */
+    @GetMapping("/v1/open/uim/account/role/list")
+    default List<Long> getAllRoleIds(String appId, Long accountId) {
+        throw new UnsupportedOperationException("not class implement");
+    }
+
+
 
 
     default AccountInstanceResponse getAccountInstanceById(Long accountInstanceId) {
@@ -74,15 +89,7 @@ public interface AccountApi {
     }
 
 
-    /**
-     * 获取账号所有关联的角色ID(个人和所在组织所拥有的角色)
-     *
-     * @param appId
-     * @return
-     */
-    default List<Long> getAllRoleIds(String appId, Long accountId) {
-        throw new UnsupportedOperationException("not class implement");
-    }
+
 
     /**
      * 根据组织ID（orgNodeId）获取对应组织角色ID集合

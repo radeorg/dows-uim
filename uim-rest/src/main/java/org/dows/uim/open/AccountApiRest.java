@@ -16,18 +16,17 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@Tag(name = "账户管理接口", description = "账户管理接口")
+@Tag(name = "账号管理", description = "账户管理")
 @RequiredArgsConstructor
 public class AccountApiRest implements AccountApi{
     private final AccountApiBiz accountApiBiz;
 
-    @PostMapping("/v1/open/account/register")
     @Operation(summary = "保存注册账户实例")
     public Long getAccountWithRegister(@RequestBody AccountInstanceRequest accountInstance) {
         return accountApiBiz.accountRegister(accountInstance);
     }
 
-    @GetMapping("/v1/open/account/info")
+
     @Operation(summary = "通过账户标识符获取账户实例")
     public AccountInstanceResponse getAccountInstanceByIdentifier(@RequestParam String appId, @RequestParam String accountIdentifier) {
         return accountApiBiz.getAccountInstanceByIdentifier(appId, accountIdentifier);
@@ -39,13 +38,12 @@ public class AccountApiRest implements AccountApi{
         accountApiBiz.bindingAccount(bindingAccountRequest);
     }
 
-    /*@GetMapping("/v1/open/account/type/list")*/
     @Operation(summary = "保存注册账户实例")
     public List<AccountTypeResponse> getAccountType(AccountTypeRequest accountTypeRequest) {
         return accountApiBiz.getAccountType(accountTypeRequest);
     }
 
-    @GetMapping("/v1/open/account/role/list")
+
     @Operation(summary = "通过账户实例获取角色ID列表")
     public List<Long> getAllRoleIds(@RequestParam String appId, @RequestParam Long accountInstanceId){
         return accountApiBiz.getAllRoleIds(appId, accountInstanceId);
