@@ -1,6 +1,7 @@
 package org.dows.uim.biz;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.mybatisflex.core.query.QueryChain;
@@ -382,6 +383,9 @@ public class OrgApiBiz {
     public List<RootOrgResponse> getRootOrgListByAccountInstanceId(Long accountInstanceId) {
         QueryWrapper eq = QueryWrapper.create().eq(OrgNodeEntity::getAccountInstanceId, accountInstanceId);
         List<OrgNodeEntity> list = orgNodeService.list(eq);
-        return BeanUtil.copyToList(list, RootOrgResponse.class);
+        if (!CollectionUtil.isEmpty(list)) {
+            return BeanUtil.copyToList(list, RootOrgResponse.class);
+        }
+        return null;
     }
 }
