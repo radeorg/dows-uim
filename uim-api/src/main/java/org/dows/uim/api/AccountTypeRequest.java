@@ -7,5 +7,5 @@ import lombok.Data;
 @Data
 public class AccountTypeRequest {
     @Schema(description = "账号实例ID")
-    private String accountInstanceId;
+    private Long accountInstanceId;
 }

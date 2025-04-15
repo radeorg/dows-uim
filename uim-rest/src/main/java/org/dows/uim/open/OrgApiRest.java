@@ -81,5 +81,10 @@ public class OrgApiRest implements OrgApi, OrgAccountApi {
         return orgApiBiz.getOrgInfo(orgRegisterRequest);
     }
 
+    @Override
+    public List<RootOrgResponse> getRootOrgListByAccountInstanceId(Long accountInstanceId) {
+        return orgApiBiz.getRootOrgListByAccountInstanceId(accountInstanceId);
+    }
+
 }
 

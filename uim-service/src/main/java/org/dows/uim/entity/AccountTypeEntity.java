@@ -64,7 +64,7 @@ public class AccountTypeEntity extends BaseEntity<AccountTypeEntity> {
     private Long referenceId;
 
     /**
-     * 账号类型
+     * 账号类型 @AccountType
      */
     @Schema(description = "账号类型")
     @Column(value = "account_type")

@@ -372,4 +372,16 @@ public class OrgApiBiz {
         response.setIndicatorList(responseList);
         return response;
     }
+
+    /**
+     * 根据账号实例ID获取其所在的组织列表
+     *
+     * @param accountInstanceId
+     * @return
+     */
+    public List<RootOrgResponse> getRootOrgListByAccountInstanceId(Long accountInstanceId) {
+        QueryWrapper eq = QueryWrapper.create().eq(OrgNodeEntity::getAccountInstanceId, accountInstanceId);
+        List<OrgNodeEntity> list = orgNodeService.list(eq);
+        return BeanUtil.copyToList(list, RootOrgResponse.class);
+    }
 }

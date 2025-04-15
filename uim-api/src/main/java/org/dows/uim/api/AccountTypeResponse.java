@@ -11,5 +11,5 @@ public class AccountTypeResponse {
     @Schema(description = "Account type ID")
     private Long accountTypeId;
     @Schema(description = "Account type")
-    private String accountType;
+    private Integer accountType;
 }

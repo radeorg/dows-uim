@@ -72,4 +72,8 @@ public interface OrgApi {
     default OrgRegisterResponse getOrgInfo(OrgRegisterRequest orgRegisterRequest) {
         throw new UnsupportedOperationException("not class implement");
     }
+
+    default List<RootOrgResponse> getRootOrgListByAccountInstanceId(Long accountInstanceId){
+        throw new UnsupportedOperationException("not class implement");
+    }
 }
