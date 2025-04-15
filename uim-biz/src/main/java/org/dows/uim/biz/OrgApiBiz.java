@@ -355,9 +355,17 @@ public class OrgApiBiz {
     @Operation(summary = "保存岗位指标")
     @Transactional
     public JobIndicatorResponse saveOrgRuleIndicator(OrgIndicatorListSaveRequest orgIndicatorListSaveRequest) {
+
         JobIndicatorResponse response = new JobIndicatorResponse();
         List<OrgIndicatorResponse> responseList = new ArrayList<>();
         if(Objects.nonNull(orgIndicatorListSaveRequest) && Objects.nonNull(orgIndicatorListSaveRequest.getIndicatorList())) {
+            //先删除
+            if(orgIndicatorListSaveRequest.getIndicatorList().size() > 0) {
+                Long ruleId = orgIndicatorListSaveRequest.getIndicatorList().get(0).getOrgRuleId();
+                int deletedRows = orgIndicatorService.deleteByOrgRuleId(ruleId);
+                log.debug("delete records " + deletedRows);
+            }
+            //重新保存
             for (OrgIndicatorSaveRequest itemEntity : orgIndicatorListSaveRequest.getIndicatorList()) {
                 OrgIndicatorEntity objEntity = new OrgIndicatorEntity();
                 BeanUtils.copyProperties(itemEntity, objEntity, OrgIndicatorEntity.class);

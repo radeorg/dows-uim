@@ -12,5 +12,5 @@ import org.dows.uim.entity.OrgIndicatorEntity;
  * @since 1.0
  */
 public interface OrgIndicatorService extends BaseService<OrgIndicatorEntity> {
-
+    int deleteByOrgRuleId(Long orgRuleId);
 }
