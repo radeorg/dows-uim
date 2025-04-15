@@ -38,7 +38,7 @@ public class AccountApiRest implements AccountApi{
         accountApiBiz.bindingAccount(bindingAccountRequest);
     }
 
-    @Operation(summary = "保存注册账户实例")
+    @Operation(summary = "获取账号类型列表")
     public List<AccountTypeResponse> getAccountType(AccountTypeRequest accountTypeRequest) {
         return accountApiBiz.getAccountType(accountTypeRequest);
     }
