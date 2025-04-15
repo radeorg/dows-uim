@@ -36,6 +36,18 @@ public interface AccountApi {
 
 
     /**
+     * 根据手机号注册即创建账号，如果账号已存在，则直接返回账号实例ID，不存在则创建账号并返回账号实例ID
+     *
+     * @param telephone
+     * @return
+     */
+    @PostMapping("/v1/open/uim/account/telephone/register")
+    default Long getAccountByTelephone(String telephone) {
+        throw new UnsupportedOperationException("not class implement");
+    }
+
+
+    /**
      * 获取账号类型
      *
      * @param accountTypeRequest

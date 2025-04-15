@@ -227,4 +227,26 @@ public class AccountApiBiz {
             }*/
         }
     }
+
+    public Long getAccountByTelephone(String telephone) {
+        // 查询账号标识（手机号）是否存在
+        AccountIdentifierEntity one = accountIdentifierService.getOne(QueryWrapper.create()
+                //.eq(AccountIdentifierEntity::getAppId, appId, Objects.nonNull(appId))
+                .eq(AccountIdentifierEntity::getIdentifier, telephone, Objects.nonNull(telephone)));
+        // 存在则返回账号实例ID，不存在则创建账号实例并返回账号实例ID
+        if (one != null) {
+            return one.getAccountInstanceId();
+        }
+        // 创建账号实例
+        AccountInstanceEntity accountInstanceEntity = new AccountInstanceEntity();
+        accountInstanceEntity.setTelephone(telephone);
+        accountInstanceService.save(accountInstanceEntity);
+        // 保存账号标识;
+        AccountIdentifierEntity identifierEntity = new AccountIdentifierEntity();
+        identifierEntity.setAccountInstanceId(accountInstanceEntity.getAccountInstanceId());
+        identifierEntity.setIdentifier(telephone);
+        identifierEntity.setIdentifierType(IdentifierType.PHONE.getType());
+        accountIdentifierService.save(identifierEntity);
+        return accountInstanceEntity.getAccountInstanceId();
+    }
 }
