@@ -1,8 +1,10 @@
 package org.dows.uim.api;
 
+import org.dows.rade.constant.IdentifierType;
 import org.dows.uim.request.AccountInstanceRequest;
 import org.dows.uim.request.BindingAccountRequest;
 import org.dows.uim.request.FindAccountIdentifierRequest;
+import org.dows.uim.request.RelevancyAccountInstanceIdForOpenidByTelephoneRequest;
 import org.dows.uim.response.AccountIdentifierResponse;
 import org.dows.uim.response.AccountInstanceResponse;
 import org.dows.uim.response.AccountOrgIdsResponse;
@@ -158,5 +160,14 @@ public interface AccountApi {
     }
 
 
+    default Long addAccountIdentifier(String identifier, IdentifierType identifierType) {
+        throw new UnsupportedOperationException("not class implement");
+    }
 
+    default void relevancyAccountInstanceIdForOpenidByTelephone(RelevancyAccountInstanceIdForOpenidByTelephoneRequest
+                                                                        relevancyAccountInstanceIdByTelephoneRequest) {
+        throw new UnsupportedOperationException("not class implement");
+    }
 }
+
+

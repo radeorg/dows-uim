@@ -15,9 +15,7 @@ import org.dows.uim.entity.AccountRoleEntity;
 import org.dows.uim.entity.AccountTypeEntity;
 import org.dows.uim.exception.UimException;
 import org.dows.uim.handler.AccountHandler;
-import org.dows.uim.request.AccountInstanceRequest;
-import org.dows.uim.request.AddOrgAccountRequest;
-import org.dows.uim.request.BindingAccountRequest;
+import org.dows.uim.request.*;
 import org.dows.uim.request.FindAccountIdentifierRequest;
 import org.dows.uim.response.*;
 import org.dows.uim.service.AccountIdentifierService;
@@ -41,7 +39,6 @@ public class AccountApiBiz {
     private final AccountHandler accountHandler;
 
     /**
-     *
      * @param accountInstance
      * @return
      */
@@ -68,7 +65,7 @@ public class AccountApiBiz {
         List<AccountIdentifierEntity> accountIdentifierEntityList = QueryChain.of(AccountIdentifierEntity.class)
                 .eq(AccountIdentifierEntity::getIdentifier, accountName, Objects.nonNull(accountName))
                 .eq(AccountIdentifierEntity::getAppId, appId, Objects.nonNull(appId)).list();
-        if(Objects.isNull(accountIdentifierEntityList) || accountIdentifierEntityList.isEmpty()){
+        if (Objects.isNull(accountIdentifierEntityList) || accountIdentifierEntityList.isEmpty()) {
             return response;
         }
 
@@ -77,7 +74,7 @@ public class AccountApiBiz {
         AccountInstanceEntity accountInstanceEntity = QueryChain.of(AccountInstanceEntity.class)
                 .eq(AccountInstanceEntity::getAccountInstanceId, accountInstanceId, Objects.nonNull(accountInstanceId))
                 .eq(AccountInstanceEntity::getAppId, appId, Objects.nonNull(appId)).one();
-        if(Objects.isNull(accountInstanceEntity)){
+        if (Objects.isNull(accountInstanceEntity)) {
             return response;
         }
 
@@ -94,28 +91,27 @@ public class AccountApiBiz {
     }
 
     /**
-     *
      * @param appId
      * @param accountInstanceId
      * @return
      */
-    public List<Long> getAllRoleIds(String appId, Long accountInstanceId){
+    public List<Long> getAllRoleIds(String appId, Long accountInstanceId) {
         List<Long> roleList = new ArrayList<>();
 
         List<AccountRoleEntity> accountRoleEntityList = QueryChain.of(AccountRoleEntity.class)
                 .eq(AccountRoleEntity::getAppId, appId, Objects.nonNull(appId))
                 .eq(AccountRoleEntity::getAccountInstanceId, accountInstanceId, Objects.nonNull(accountInstanceId)).list();
-        if(Objects.isNull(accountRoleEntityList) || accountRoleEntityList.isEmpty()){
+        if (Objects.isNull(accountRoleEntityList) || accountRoleEntityList.isEmpty()) {
             return roleList;
         }
-        for(AccountRoleEntity item : accountRoleEntityList){
+        for (AccountRoleEntity item : accountRoleEntityList) {
             roleList.add(item.getRbacRoleId());
         }
 
         return roleList;
     }
+
     /**
-     *
      * @param appId
      * @param accountIdentifier
      * @return
@@ -125,7 +121,7 @@ public class AccountApiBiz {
         List<AccountIdentifierEntity> accountIdentifierEntityList = QueryChain.of(AccountIdentifierEntity.class)
                 .eq(AccountIdentifierEntity::getIdentifier, accountIdentifier, Objects.nonNull(accountIdentifier))
                 .eq(AccountIdentifierEntity::getAppId, appId, Objects.nonNull(appId)).list();
-        if(Objects.isNull(accountIdentifierEntityList) || accountIdentifierEntityList.isEmpty()){
+        if (Objects.isNull(accountIdentifierEntityList) || accountIdentifierEntityList.isEmpty()) {
             return null;
         }
 
@@ -133,7 +129,7 @@ public class AccountApiBiz {
         AccountInstanceEntity accountInstanceEntity = QueryChain.of(AccountInstanceEntity.class)
                 .eq(AccountInstanceEntity::getAccountInstanceId, accountInstanceId, Objects.nonNull(accountInstanceId))
                 .eq(AccountInstanceEntity::getAppId, appId, Objects.nonNull(appId)).one();
-        if(Objects.isNull(accountInstanceEntity)){
+        if (Objects.isNull(accountInstanceEntity)) {
             return null;
         }
         AccountInstanceResponse accountInstanceResponse = BeanUtil
@@ -142,7 +138,7 @@ public class AccountApiBiz {
         IdentifierType byIdentifierType = IdentifierType
                 .getByIdentifierType(accountIdentifierEntityList.get(0).getIdentifierType());
         accountInstanceResponse.setIdentifierType(byIdentifierType);
-        return  accountInstanceResponse;
+        return accountInstanceResponse;
     }
 
     public AccountOrgIdsResponse getOrgIdsByAccountId(String appId, Long accountInstanceId, boolean check) {
@@ -151,7 +147,7 @@ public class AccountApiBiz {
         return response;
     }
 
-    public List<AccountRoleRelationResponse> getRoleByAccountInstanceId(String appId,  List<Long> principals) {
+    public List<AccountRoleRelationResponse> getRoleByAccountInstanceId(String appId, List<Long> principals) {
         List<AccountRoleRelationResponse> response = new ArrayList<>();
 
         return List.of();
@@ -268,5 +264,38 @@ public class AccountApiBiz {
                 .in(AccountInstanceEntity::getAccountInstanceId, accountIds, Objects.nonNull(accountIds))
                 .eq(AccountInstanceEntity::getAppId, appId, Objects.nonNull(appId)));
         return BeanUtil.copyToList(accountInstanceEntities, AccountInstanceResponse.class);
+    }
+
+    public Long addAccountIdentifier(String identifier, IdentifierType identifierType) {
+
+        AccountIdentifierEntity one = accountIdentifierService.getOne(QueryWrapper.create()
+                .eq(AccountIdentifierEntity::getIdentifier, identifier)
+                .eq(AccountIdentifierEntity::getIdentifierType, identifierType.getType()));
+        // 存在则返回账号标识ID，不存在则创建账号标识并返回账号标识ID
+        if (one != null) {
+            return one.getAccountIdentifierId();
+        }
+        // 保存账号标识
+        one = new AccountIdentifierEntity();
+        one.setIdentifier(identifier);
+        one.setIdentifierType(identifierType.getType());
+        accountIdentifierService.save(one);
+        return one.getAccountIdentifierId();
+    }
+
+    /**
+     * 根据手机号查询账号实例ID并关联到openid账号标识上
+     *
+     * @param relevancyAccountInstanceIdByTelephoneRequest
+     */
+    public void relevancyAccountInstanceIdForOpenidByTelephone(RelevancyAccountInstanceIdForOpenidByTelephoneRequest
+                                                                       relevancyAccountInstanceIdByTelephoneRequest) {
+
+        AccountIdentifierEntity one = new AccountIdentifierEntity();
+        one.setAccountIdentifierId(relevancyAccountInstanceIdByTelephoneRequest.getAccountIdentifierId());
+        one.setIdentifier(relevancyAccountInstanceIdByTelephoneRequest.getIdentifier());
+        one.setAccountInstanceId(relevancyAccountInstanceIdByTelephoneRequest.getAccountInstanceId());
+        accountIdentifierService.updateById(one,true);
+
     }
 }
