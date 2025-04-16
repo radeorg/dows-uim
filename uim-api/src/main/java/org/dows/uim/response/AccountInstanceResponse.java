@@ -1,6 +1,7 @@
 package org.dows.uim.response;
 
 import lombok.Data;
+import org.dows.rade.constant.IdentifierType;
 
 @Data
 public class AccountInstanceResponse {
@@ -10,4 +11,5 @@ public class AccountInstanceResponse {
     private Long accountInstanceId;
     private String nickname;
     private String telephone;
+    private IdentifierType identifierType;
 }

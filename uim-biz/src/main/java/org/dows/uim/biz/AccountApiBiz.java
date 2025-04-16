@@ -121,7 +121,7 @@ public class AccountApiBiz {
      * @return
      */
     public AccountInstanceResponse getAccountInstanceByIdentifier(String appId, String accountIdentifier) {
-
+        //todo ?? 为什么时集合？不应该是只有一个么？
         List<AccountIdentifierEntity> accountIdentifierEntityList = QueryChain.of(AccountIdentifierEntity.class)
                 .eq(AccountIdentifierEntity::getIdentifier, accountIdentifier, Objects.nonNull(accountIdentifier))
                 .eq(AccountIdentifierEntity::getAppId, appId, Objects.nonNull(appId)).list();
@@ -136,8 +136,12 @@ public class AccountApiBiz {
         if(Objects.isNull(accountInstanceEntity)){
             return null;
         }
-        AccountInstanceResponse accountInstanceResponse = BeanUtil.copyProperties(accountInstanceEntity, AccountInstanceResponse.class);
+        AccountInstanceResponse accountInstanceResponse = BeanUtil
+                .copyProperties(accountInstanceEntity, AccountInstanceResponse.class);
         accountInstanceResponse.setIdentifier(accountIdentifier);
+        IdentifierType byIdentifierType = IdentifierType
+                .getByIdentifierType(accountIdentifierEntityList.get(0).getIdentifierType());
+        accountInstanceResponse.setIdentifierType(byIdentifierType);
         return  accountInstanceResponse;
     }
 
