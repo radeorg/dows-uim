@@ -89,8 +89,18 @@ public class AccountApiBiz {
         AccountIdentifierEntity one = accountIdentifierService.getOne(QueryWrapper.create()
                 .eq(AccountIdentifierEntity::getIdentifier, findAccountIdentifierRequest.getIdentifier())
                 .eq(AccountIdentifierEntity::getIdentifierType, findAccountIdentifierRequest.getIdentifierType().getType()));
+
         return BeanUtil.copyProperties(one, AccountIdentifierResponse.class);
     }
+
+
+    public AccountInstanceResponse getAccountInstanceById(Long accountInstanceId) {
+        AccountIdentifierEntity one = accountIdentifierService.getOne(QueryWrapper.create()
+                        .eq(AccountInstanceEntity::getAccountInstanceId, accountInstanceId))
+                .one();
+        return BeanUtil.copyProperties(one, AccountInstanceResponse.class);
+    }
+
 
     /**
      * @param appId

@@ -105,6 +105,16 @@ public class AccountApiRest implements AccountApi{
     }
 
     /**
+     * 根据账号ID获取账号实例
+     *
+     * @param accountInstanceId
+     * @return
+     */
+    public AccountInstanceResponse getAccountInstanceById(Long accountInstanceId) {
+        return accountApiBiz.getAccountInstanceById(accountInstanceId);
+    }
+
+    /**
      * 根据手机号关联openid和accountInstanceId
      * @param relevancyAccountInstanceIdByTelephoneRequest
      */
