@@ -160,7 +160,7 @@ public interface AccountApi {
     }
 
 
-    default Long addAccountIdentifier(String identifier, IdentifierType identifierType) {
+    default AccountIdentifierResponse saveAccountIdentifier(String identifier, IdentifierType identifierType) {
         throw new UnsupportedOperationException("not class implement");
     }
 

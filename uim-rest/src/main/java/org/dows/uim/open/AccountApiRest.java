@@ -10,7 +10,9 @@ import org.dows.uim.api.AccountTypeResponse;
 import org.dows.uim.biz.AccountApiBiz;
 import org.dows.uim.request.AccountInstanceRequest;
 import org.dows.uim.request.BindingAccountRequest;
+import org.dows.uim.request.FindAccountIdentifierRequest;
 import org.dows.uim.request.RelevancyAccountInstanceIdForOpenidByTelephoneRequest;
+import org.dows.uim.response.AccountIdentifierResponse;
 import org.dows.uim.response.AccountInstanceResponse;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -88,14 +90,30 @@ public class AccountApiRest implements AccountApi{
      * @return
      */
     @Override
-    public Long addAccountIdentifier(String identifier, IdentifierType identifierType) {
-         return accountApiBiz.addAccountIdentifier(identifier, identifierType);
+    public AccountIdentifierResponse saveAccountIdentifier(String identifier, IdentifierType identifierType) {
+         return accountApiBiz.saveAccountIdentifier(identifier, identifierType);
     }
 
+    /**
+     * 获取账号标识符
+     *
+     * @param findAccountIdentifierRequest
+     * @return
+     */
+    public AccountIdentifierResponse getAccountIdentifier(FindAccountIdentifierRequest findAccountIdentifierRequest) {
+        return accountApiBiz.getAccountIdentifier(findAccountIdentifierRequest);
+    }
+
+    /**
+     * 根据手机号关联openid和accountInstanceId
+     * @param relevancyAccountInstanceIdByTelephoneRequest
+     */
     public void relevancyAccountInstanceIdForOpenidByTelephone(RelevancyAccountInstanceIdForOpenidByTelephoneRequest
                                                                         relevancyAccountInstanceIdByTelephoneRequest) {
         accountApiBiz.relevancyAccountInstanceIdForOpenidByTelephone(relevancyAccountInstanceIdByTelephoneRequest);
 
     }
+
+
 }
 

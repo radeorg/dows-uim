@@ -85,9 +85,11 @@ public class AccountApiBiz {
         return response;
     }
 
-    public AccountIdentifierResponse getAccountIdentifier(String appId, FindAccountIdentifierRequest findAccountIdentifierRequest) {
-        AccountIdentifierResponse response = new AccountIdentifierResponse();
-        return response;
+    public AccountIdentifierResponse getAccountIdentifier(FindAccountIdentifierRequest findAccountIdentifierRequest) {
+        AccountIdentifierEntity one = accountIdentifierService.getOne(QueryWrapper.create()
+                .eq(AccountIdentifierEntity::getIdentifier, findAccountIdentifierRequest.getIdentifier())
+                .eq(AccountIdentifierEntity::getIdentifierType, findAccountIdentifierRequest.getIdentifierType().getType()));
+        return BeanUtil.copyProperties(one, AccountIdentifierResponse.class);
     }
 
     /**
@@ -126,8 +128,12 @@ public class AccountApiBiz {
         }
 
         Long accountInstanceId = accountIdentifierEntityList.get(0).getAccountInstanceId();
+        if (accountInstanceId == null) {
+            log.debug("accountInstanceId is null");
+            return null;
+        }
         AccountInstanceEntity accountInstanceEntity = QueryChain.of(AccountInstanceEntity.class)
-                .eq(AccountInstanceEntity::getAccountInstanceId, accountInstanceId, Objects.nonNull(accountInstanceId))
+                .eq(AccountInstanceEntity::getAccountInstanceId, accountInstanceId)
                 .eq(AccountInstanceEntity::getAppId, appId, Objects.nonNull(appId)).one();
         if (Objects.isNull(accountInstanceEntity)) {
             return null;
@@ -266,21 +272,29 @@ public class AccountApiBiz {
         return BeanUtil.copyToList(accountInstanceEntities, AccountInstanceResponse.class);
     }
 
-    public Long addAccountIdentifier(String identifier, IdentifierType identifierType) {
+    /**
+     * 保存账号标识，如果存在则返回账号标识ID，不存在则创建账号标识并返回账号标识ID
+     *
+     * @param identifier
+     * @param identifierType
+     * @return
+     */
+    public AccountIdentifierResponse saveAccountIdentifier(String identifier, IdentifierType identifierType) {
 
         AccountIdentifierEntity one = accountIdentifierService.getOne(QueryWrapper.create()
                 .eq(AccountIdentifierEntity::getIdentifier, identifier)
                 .eq(AccountIdentifierEntity::getIdentifierType, identifierType.getType()));
         // 存在则返回账号标识ID，不存在则创建账号标识并返回账号标识ID
         if (one != null) {
-            return one.getAccountIdentifierId();
+            return BeanUtil.copyProperties(one, AccountIdentifierResponse.class);
+            //return one.getAccountIdentifierId();
         }
         // 保存账号标识
         one = new AccountIdentifierEntity();
         one.setIdentifier(identifier);
         one.setIdentifierType(identifierType.getType());
         accountIdentifierService.save(one);
-        return one.getAccountIdentifierId();
+        return BeanUtil.copyProperties(one, AccountIdentifierResponse.class);
     }
 
     /**
@@ -293,7 +307,6 @@ public class AccountApiBiz {
 
         AccountIdentifierEntity one = new AccountIdentifierEntity();
         one.setAccountIdentifierId(relevancyAccountInstanceIdByTelephoneRequest.getAccountIdentifierId());
-        one.setIdentifier(relevancyAccountInstanceIdByTelephoneRequest.getIdentifier());
         one.setAccountInstanceId(relevancyAccountInstanceIdByTelephoneRequest.getAccountInstanceId());
         accountIdentifierService.updateById(one,true);
 
