@@ -95,9 +95,7 @@ public class AccountApiBiz {
 
 
     public AccountInstanceResponse getAccountInstanceById(Long accountInstanceId) {
-        AccountIdentifierEntity one = accountIdentifierService.getOne(QueryWrapper.create()
-                        .eq(AccountInstanceEntity::getAccountInstanceId, accountInstanceId))
-                .one();
+        AccountIdentifierEntity one = accountIdentifierService.getById(accountInstanceId);
         return BeanUtil.copyProperties(one, AccountInstanceResponse.class);
     }
 
