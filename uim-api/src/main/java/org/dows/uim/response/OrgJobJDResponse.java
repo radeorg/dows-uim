@@ -27,6 +27,9 @@ public class OrgJobJDResponse  {
     @Schema(description = "岗位规则ID")
     private Long orgRuleId;
 
+    @Schema(description = "岗位地址")
+    private String orgAddress;
+
     @Schema(description = "人事账号实例ID")
     private Long ownerId;
 
