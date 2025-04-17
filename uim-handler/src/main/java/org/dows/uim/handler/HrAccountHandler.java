@@ -4,6 +4,8 @@ import cn.hutool.core.bean.BeanUtil;
 import com.mybatisflex.core.paginate.Page;
 import com.mybatisflex.core.query.QueryChain;
 import com.mybatisflex.core.query.QueryWrapper;
+import com.mybatisflex.core.row.DbChain;
+import com.mybatisflex.core.row.Row;
 import com.mybatisflex.core.update.UpdateChain;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,12 +33,6 @@ import java.util.stream.Collectors;
 public class HrAccountHandler {
 
     private final AccountInstanceService accountInstanceService;
-    private final AccountIdentifierService accountIdentifierService;
-    private final AccountTypeService accountTypeService;
-
-    private final OrgNodeService orgNodeService;
-    private final OrgRegisterService orgRegisterService;
-    private final OrgTreeService orgTreeService;
 
     public Page<HrAccountInstanceResponse> page(HrAccountInstanceRequest request) {
 
@@ -69,95 +65,41 @@ public class HrAccountHandler {
         if(resultPage == null || resultPage.getRecords().isEmpty()){
             return resultPage;
         }
+
+        Set<Long> interviewInstanceIds = resultPage.getRecords().stream().map(HrAccountInstanceResponse::getAccountInstanceId).collect(Collectors.toSet());
+
+        List<HrAccountInstanceResponse> resumeCountList = DbChain.table("interview_invite").select("interviewer_id as accountInstanceId",
+                        "count(1) as resumeCount ")
+                        .in("interviewer_id",interviewInstanceIds).groupBy("interviewer_id").listAs(HrAccountInstanceResponse.class);
+        List<HrAccountInstanceResponse> interviewCountList = DbChain.table("interview_invite").select("interviewer_id as accountInstanceId",
+                        "count(1) as interviewCount ")
+                .in("interviewer_id",interviewInstanceIds)
+                .set("passed",2).groupBy("interviewer_id").listAs(HrAccountInstanceResponse.class);
+
+        Map<Long, Long> resumeCountMap = resumeCountList.stream()
+                .filter(vo -> vo.getAccountInstanceId() != null)
+                .collect(Collectors.toMap(
+                        HrAccountInstanceResponse::getAccountInstanceId,
+                        HrAccountInstanceResponse::getResumeCount,
+                        (existing, replacement) -> existing,
+                        HashMap::new
+                ));
+
+        Map<Long, Long> interviewCountMap = interviewCountList.stream()
+                .filter(vo -> vo.getAccountInstanceId() != null)
+                .collect(Collectors.toMap(
+                        HrAccountInstanceResponse::getAccountInstanceId,
+                        HrAccountInstanceResponse::getInterviewCount,
+                        (existing, replacement) -> existing,
+                        HashMap::new
+                ));
         resultPage.getRecords().stream().forEach(hrAccountInstanceResponse -> {
-            hrAccountInstanceResponse.setResumeCount(1L);
-            hrAccountInstanceResponse.setInterviewCount(1L);
+            hrAccountInstanceResponse.setResumeCount(resumeCountMap.get(hrAccountInstanceResponse.getAccountInstanceId()) == null
+                    ? 0L:resumeCountMap.get(hrAccountInstanceResponse.getAccountInstanceId()));
+            hrAccountInstanceResponse.setInterviewCount(interviewCountMap.get(hrAccountInstanceResponse.getAccountInstanceId()) == null
+                    ? 0L:interviewCountMap.get(hrAccountInstanceResponse.getAccountInstanceId()));
         });
         return resultPage;
-    }
-    public Long addAccount(AccountInstanceRequest accountInstance) {
-        // 保存账号 实例
-        AccountInstanceEntity accountInstanceEntity =
-                BeanUtil.copyProperties(accountInstance, AccountInstanceEntity.class);
-        accountInstanceService.save(accountInstanceEntity);
-        Long accountInstanceId = accountInstanceEntity.getAccountInstanceId();
-        // 保存账号 标识
-        AccountIdentifierEntity accountIdentifierEntity = new AccountIdentifierEntity();
-        accountIdentifierEntity.setAccountInstanceId(accountInstanceId);
-        accountIdentifierEntity.setIdentifier(accountInstance.getIdentifier());
-        // fix #2023-04-09 账号标识类型
-        accountIdentifierEntity.setIdentifierType(accountInstance.getIdentifierType());
-        accountIdentifierEntity.setAppId(accountInstance.getAppId());
-        accountIdentifierService.save(accountIdentifierEntity);
-        return accountInstanceId;
-    }
-
-
-    public void saveOrgAccount(List<AddOrgAccountRequest> addOrgAccountRequests) {
-        // 构建账号集合并批量保存账号实例
-        // 构建标识集合并批量保存账号标识
-        // 保存账号 类型
-        List<AccountInstanceEntity> accountInstanceEntities = new ArrayList<>();
-        addOrgAccountRequests.forEach(addOrgAccountRequest -> {
-            AccountInstanceEntity accountInstanceEntity = new AccountInstanceEntity();
-            //accountInstanceEntity.setIdentifier(addOrgAccountRequest.getAccountName());
-            accountInstanceEntity.setPassword(addOrgAccountRequest.getPassword());
-            accountInstanceEntity.setZoneNo(addOrgAccountRequest.getZoneNo());
-            accountInstanceEntity.setTelephone(addOrgAccountRequest.getPhone());
-            /*accountInstanceEntity.setAvator("");
-            accountInstanceEntity.setReferralsNo("");
-            accountInstanceEntity.setSource("");
-            accountInstanceEntity.setAppId("");
-            accountInstanceEntity.setOperatorId(1L);*/
-            accountInstanceEntity.setSuperAccount(0);
-            accountInstanceEntities.add(accountInstanceEntity);
-        });
-        // 批量保存账号实例
-        accountInstanceService.saveOrUpdateBatch(accountInstanceEntities);
-        List<AccountIdentifierEntity> accountIdentifierEntities = new ArrayList<>();
-        List<AccountTypeEntity> accountTypeEntities = new ArrayList<>();
-        accountInstanceEntities.forEach(accountInstanceEntity -> {
-            // 保存账号 标识
-            AccountIdentifierEntity accountIdentifierEntity = new AccountIdentifierEntity();
-            accountIdentifierEntity.setAccountInstanceId(accountInstanceEntity.getAccountInstanceId());
-            accountIdentifierEntity.setIdentifier(accountInstanceEntity.getTelephone());
-            accountIdentifierEntity.setIdentifierType(IdentifierType.PHONE.getType());
-            // 保存账号类型
-            AccountTypeEntity accountTypeEntity = new AccountTypeEntity();
-            accountTypeEntity.setAccountInstanceId(accountInstanceEntity.getAccountInstanceId());
-            accountTypeEntity.setAccountType(AccountType.ORG_RECRUIT_ACCOUNT.getValue());
-            accountIdentifierEntities.add(accountIdentifierEntity);
-            accountTypeEntities.add(accountTypeEntity);
-        });
-        // 批量保存账号标识
-        accountIdentifierService.saveOrUpdateBatch(accountIdentifierEntities);
-        // 批量保存账号类型
-        accountTypeService.saveOrUpdateBatch(accountTypeEntities);
-
-        // 保存组织信息
-        // 保存组织成员信息
-        OrgRegisterEntity superAccount = orgRegisterService.getOne(QueryWrapper.create()
-                .eq(OrgRegisterEntity::getAccountInstanceId, ""));
-        
-        Long orgRootId = superAccount.getOrgRootId();
-        List<OrgTreeEntity> orgTreeEntities = new ArrayList<>();
-        List<OrgNodeEntity> orgNodeEntities = new ArrayList<>();
-        for (int i = 0; i < addOrgAccountRequests.size(); i++) {
-            OrgTreeEntity childOrgTreeEntity = new OrgTreeEntity();
-            childOrgTreeEntity.setPid(orgRootId);
-            childOrgTreeEntity.setOrgName(addOrgAccountRequests.get(i).getOrgName());
-            orgTreeEntities.add(childOrgTreeEntity);
-
-            OrgNodeEntity orgNodeEntity = new OrgNodeEntity();
-            orgNodeEntity.setOrgRootId(orgRootId);
-            orgNodeEntity.setOrgTreeId(childOrgTreeEntity.getOrgTreeId());
-            orgNodeEntity.setAccountInstanceId(accountInstanceEntities.get(i).getAccountInstanceId());
-            orgNodeEntities.add(orgNodeEntity);
-        }
-//        orgTreeService
-        orgTreeService.saveBatch(orgTreeEntities);
-        orgNodeService.saveBatch(orgNodeEntities);
-
     }
 
     /**
