@@ -7,6 +7,6 @@ public class AccountIdentifierResponse {
     private Long accountIdentifierId;
     private Long accountInstanceId;
     private String identifier;
-    private Integer type;
+    private Integer identifierType;
     private String appId;
 }
