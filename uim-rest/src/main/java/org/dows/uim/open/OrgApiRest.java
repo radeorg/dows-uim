@@ -24,6 +24,10 @@ public class OrgApiRest implements OrgApi, OrgAccountApi {
     private final OrgApiBiz orgApiBiz;
     private final AccountApiBiz accountApiBiz;
 
+    @Operation(summary = "JD上架或下架")
+    public OrgJobJDResponse upOrDownJd(@RequestBody OrgJDUpOrDownRequest orgJDUpOrDownRequest) throws UnavailableException {
+        return orgApiBiz.upOrDownJd(orgJDUpOrDownRequest);
+    }
 
     @Operation(summary = "通过岗位名称获取指标")
     public JobIndicatorResponse getOrgIndicatorByJobName(@RequestParam Long orgRootId,@RequestParam String jobName) {

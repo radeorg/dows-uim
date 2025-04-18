@@ -260,6 +260,30 @@ public class OrgApiBiz {
         return null;
     }
 
+    @Operation(summary = "JD上架或下架信息")
+    @Transactional
+    public OrgJobJDResponse upOrDownJd(OrgJDUpOrDownRequest orgJDUpOrDownRequest) throws UnavailableException {
+        OrgJdEntity objEntity = new OrgJdEntity();
+
+        if(Objects.isNull(orgJDUpOrDownRequest.getOrgJdId())){
+            throw new UnavailableException("orgJdId 必填");
+        }
+        List<OrgJdEntity> orgJdEntityList = QueryChain.of(OrgJdEntity.class)
+                .eq(OrgJdEntity::getOrgJdId, orgJDUpOrDownRequest.getOrgJdId(), Objects.nonNull(orgJDUpOrDownRequest.getOrgJdId())).list();
+        if(Objects.isNull(orgJdEntityList) || orgJdEntityList.size() == 0){
+            throw new UnavailableException("orgJdId 该Jd不存在");
+        }
+        objEntity = orgJdEntityList.get(0);
+        objEntity.setOrgJdId(orgJDUpOrDownRequest.getOrgJdId());
+        objEntity.setUt(new Date());
+        objEntity.setState(orgJDUpOrDownRequest.getState());
+        objEntity.updateById();
+
+        OrgJobJDResponse response = BeanUtil.copyProperties(objEntity, OrgJobJDResponse.class);
+
+        return response;
+    }
+
     @Operation(summary = "保存JD信息")
     @Transactional
      public OrgJobJDResponse saveOrgJdInfo(OrgJdSaveRequest orgJdSaveRequest) throws UnavailableException {
@@ -287,6 +311,10 @@ public class OrgApiBiz {
         objEntity.setOrgTreeId(orgJdSaveRequest.getOrgTreeId());
         objEntity.setOwnerId(orgJdSaveRequest.getOrgJdRequirements().getHrAccountInstanceId());
         objEntity.setOrgRuleId(response.getOrgRuleId());
+        if(Objects.isNull(objEntity.getOrgJdId())){
+            //新增默认上架
+            objEntity.setState(1);
+        }
         objEntity.saveOrUpdate();
         orgJdSaveRequest.setOrgJdId(objEntity.getOrgJdId());
 

@@ -25,6 +25,11 @@ public interface OrgApi {
         throw new UnsupportedOperationException("not class implement");
     }
 
+    @PostMapping("/v1/uim/jd/upordown/info")
+    default OrgJobJDResponse upOrDownJd(OrgJDUpOrDownRequest orgJDUpOrDownRequest) throws UnavailableException {
+        throw new UnsupportedOperationException("not class implement");
+    }
+
     @PostMapping("/v1/uim/jd/save/info")
     default OrgJobJDResponse saveOrgJdInfo(OrgJdSaveRequest orgJdSaveRequest) throws UnavailableException {
         throw new UnsupportedOperationException("not class implement");
