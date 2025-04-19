@@ -12,7 +12,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/admin/recruiter")
+@RequestMapping("/v1/open/uim/admin/recruiter")
 @Tag(name = "后台管理招聘官管理", description = "后台管理招聘官管理")
 @RequiredArgsConstructor
 public class OrgRecruiterRest {
