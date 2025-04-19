@@ -16,6 +16,7 @@ import org.dows.uim.request.*;
 import org.dows.uim.response.*;
 import org.dows.uim.service.*;
 import org.springframework.beans.BeanUtils;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +40,8 @@ public class OrgApiBiz {
 
     private final AccountInstanceService accountInstanceService;
     private final AccountIdentifierService accountIdentifierService;
+
+    private final PasswordEncoder passwordEncoder;
 
     public JobIndicatorResponse getOrgIndicatorByIndicatorId(Long orgRootId, Long orgRuleId) {
         JobIndicatorResponse response = new JobIndicatorResponse();
@@ -173,6 +176,9 @@ public class OrgApiBiz {
 
             AccountInstanceEntity accountInstanceEntity = new AccountInstanceEntity();
             accountInstanceEntity.setTelephone(orgRegisterEntity.getTelephone());
+            // todo 设置密码 需要加密
+            String password = orgRegisterRequest.get(i).getPassword();
+            accountInstanceEntity.setPassword(passwordEncoder.encode(password));
             accountInstanceEntity.setSuperAccount(0);
             accountInstanceEntities.add(accountInstanceEntity);
 

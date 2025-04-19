@@ -1,6 +1,7 @@
 package org.dows.uim.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 import java.util.List;
@@ -64,6 +65,10 @@ public class OrgRegisterRequest {
 
     @Schema(description = "邮箱类型")
     private Integer emailType;
+
+    @NotBlank(message = "密码不能为空")
+    @Schema(description = "密码")
+    private String password;
 
     /**
      * 联系电话
