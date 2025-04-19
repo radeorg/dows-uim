@@ -47,7 +47,7 @@ spring:
     activate:
       on-profile: sit
 server:
-  port: 28001
+  port: 28002
 
 
 ---

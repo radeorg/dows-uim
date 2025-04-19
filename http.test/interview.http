@@ -1,0 +1,15 @@
+## 接口测试
+### B 端面试官列表
+GET http://{{host}}/v1/open/uim/admin/recruiter/page?pageNum=1&pageSize=10
+Accept: application/json; charset=utf-8
+Content-Type: application/json; charset=utf-8
+
+{
+  "pageNum": 1,
+  "pageSize": 10,
+  "appId": null,
+  "orgRootId": null,
+  "orgName": null,
+  "nickname": null,
+  "telephone": null
+}

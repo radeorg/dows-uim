@@ -49,9 +49,11 @@ public class HrAccountHandler {
                 .on(AccountInstanceEntity::getAccountInstanceId, AccountTypeEntity::getAccountInstanceId)
                 .innerJoin(OrgNodeEntity.class)
                 .on(OrgNodeEntity::getAccountInstanceId, AccountInstanceEntity::getAccountInstanceId)
-                .innerJoin(OrgTreeEntity.class)
-                .on(OrgTreeEntity::getId, OrgNodeEntity::getOrgTreeId)
+                //todo 后期需要打开
+//                .innerJoin(OrgTreeEntity.class)
+//                .on(OrgTreeEntity::getId, OrgNodeEntity::getOrgTreeId)
                 .select(OrgTreeEntity::getOrgName)
+                .isNotNull(OrgNodeEntity::getOrgTreeId)
                 .eq(AccountTypeEntity::getAccountType,AccountType.ORG_RECRUIT_ACCOUNT.getValue())
                 .eq(AccountInstanceEntity::getAppId,request.getAppId(), Objects.nonNull(request.getAppId()))
                 .eq(OrgNodeEntity::getOrgRootId,request.getOrgRootId(), Objects.nonNull(request.getOrgRootId()))
