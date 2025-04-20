@@ -10,14 +10,13 @@ import org.dows.uim.biz.OrgApiBiz;
 import org.dows.uim.request.*;
 import org.dows.uim.response.*;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/open/org")
+//@RequestMapping("/open/org")
 @Tag(name = "组织管理接口", description = "组织管理接口")
 @RequiredArgsConstructor
 public class OrgApiRest implements OrgApi, OrgAccountApi {
