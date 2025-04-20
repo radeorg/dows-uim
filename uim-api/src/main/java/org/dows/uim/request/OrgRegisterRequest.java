@@ -27,6 +27,8 @@ public class OrgRegisterRequest {
 //    @Schema(description = "操作者ID")
 //    private Long operatorId;
 
+    @Schema(description = "组织名称")
+    private String orgName;
     /**
      * 社会统一信用代码
      */
