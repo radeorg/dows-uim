@@ -87,6 +87,7 @@ public class AccountApiBiz {
 
     public AccountIdentifierResponse getAccountIdentifier(FindAccountIdentifierRequest findAccountIdentifierRequest) {
         AccountIdentifierEntity one = accountIdentifierService.getOne(QueryWrapper.create()
+                .eq(AccountIdentifierEntity::getAccountInstanceId, findAccountIdentifierRequest.getAccountInstanceId(), Objects.nonNull(findAccountIdentifierRequest.getAccountInstanceId()))
                 .eq(AccountIdentifierEntity::getIdentifier, findAccountIdentifierRequest.getIdentifier())
                 .eq(AccountIdentifierEntity::getIdentifierType, findAccountIdentifierRequest.getIdentifierType().getType()));
 
@@ -316,7 +317,7 @@ public class AccountApiBiz {
         AccountIdentifierEntity one = new AccountIdentifierEntity();
         one.setAccountIdentifierId(relevancyAccountInstanceIdByTelephoneRequest.getAccountIdentifierId());
         one.setAccountInstanceId(relevancyAccountInstanceIdByTelephoneRequest.getAccountInstanceId());
-        accountIdentifierService.updateById(one,true);
+        accountIdentifierService.updateById(one, true);
 
     }
 }
