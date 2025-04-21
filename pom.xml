@@ -127,13 +127,6 @@
                 <version>${project.version}</version>
             </dependency>
 
-
-            <dependency>
-                <groupId>org.dows.cloud</groupId>
-                <artifactId>aac-api</artifactId>
-                <version>${aac.version}</version>
-            </dependency>
-
 <!--            <dependency>-->
 <!--                <groupId>org.dows.cloud</groupId>-->
 <!--                <artifactId>hrm-feign</artifactId>-->

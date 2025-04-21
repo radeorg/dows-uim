@@ -27,11 +27,6 @@
             <artifactId>uim-handler</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.dows.cloud</groupId>
-            <artifactId>aac-api</artifactId>
-        </dependency>
-
         <!--<dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-crypto</artifactId>
