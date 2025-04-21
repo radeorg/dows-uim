@@ -78,6 +78,13 @@ public class OrgRegisterEntity extends BaseEntity<OrgRegisterEntity> {
     private String logo;
 
     /**
+     * 组织名
+     */
+    @Schema(description = "组织名")
+    @Column(value = "org_name")
+    private String orgName;
+
+    /**
      * 企业简介
      */
     @Schema(description = "企业简介")
