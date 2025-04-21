@@ -86,7 +86,7 @@ public class AccountHandler {
         if (one != null) {
             accountTypeEntity = AccountTypeEntity.builder()
                     .accountInstanceId(one.getAccountInstanceId())
-                    .accountType(AccountType.JOB_HUNTER_ACCOUNT.getValue())
+                    .accountType(addOrgAccountRequest.getAccountType().getValue())
                     .build();
             accountInstanceId = one.getAccountInstanceId();
         } else {
@@ -100,6 +100,7 @@ public class AccountHandler {
             accountInstanceEntity.setSource("");
             accountInstanceEntity.setAppId("");
             accountInstanceEntity.setOperatorId(1L);*/
+            // 设置为超级账号
             accountInstanceEntity.setSuperAccount(0);
             accountInstanceService.save(accountInstanceEntity);
             accountInstanceId = accountInstanceEntity.getAccountInstanceId();
@@ -113,35 +114,48 @@ public class AccountHandler {
                     .build();
             List<AccountIdentifierEntity> identifiers = List.of(phoneIdentifier, emailIdentifier);
             // 批量保存账号标识
-            accountIdentifierService.saveOrUpdateBatch(identifiers);
+            accountIdentifierService.saveBatch(identifiers);
             // 账号类型
             accountTypeEntity = AccountTypeEntity.builder()
                     .accountInstanceId(accountInstanceEntity.getAccountInstanceId())
-                    .accountType(AccountType.JOB_HUNTER_ACCOUNT.getValue())
+                    .accountType(addOrgAccountRequest.getAccountType().getValue())
                     .build();
         }
-        // 保存账号 类型
-        accountTypeService.save(accountTypeEntity);
+        AccountTypeEntity dbAccountType = accountTypeService.getOne(QueryWrapper.create()
+                .eq(AccountTypeEntity::getAccountInstanceId, accountInstanceId)
+                .eq(AccountTypeEntity::getAccountType, addOrgAccountRequest.getAccountType().getValue()));
+        // 如果为空时，保存账号 类型
+        if (dbAccountType == null) {
+            accountTypeService.save(accountTypeEntity);
+        }
         // 关联组织
-
         // todo 处理组织
-        OrgTreeEntity orgNameExit = orgTreeService.getOne(QueryWrapper.create()
+        OrgTreeEntity dbOrgTree = orgTreeService.getOne(QueryWrapper.create()
                 .eq(OrgTreeEntity::getOrgName, addOrgAccountRequest.getOrgName())
                 .eq(OrgTreeEntity::getAppId, addOrgAccountRequest.getAppId()));
         Long orgTreeId = addOrgAccountRequest.getOrgTreeId();
         Long orgRootId = aacContext.getAacUser().getOrgRootId();
         //OrgTreeEntity childOrgTreeEntity
-        if (orgNameExit == null) {
-            orgNameExit = new OrgTreeEntity();
-            orgNameExit.setPid(Objects.nonNull(orgTreeId) ? orgTreeId : orgRootId);
-            orgNameExit.setOrgName(addOrgAccountRequest.getOrgName());
-            orgTreeService.save(orgNameExit);
+        if (dbOrgTree == null) {
+            dbOrgTree = new OrgTreeEntity();
+            dbOrgTree.setPid(Objects.nonNull(orgTreeId) ? orgTreeId : orgRootId);
+            dbOrgTree.setOrgName(addOrgAccountRequest.getOrgName());
+            orgTreeService.save(dbOrgTree);
         }
-        OrgNodeEntity orgNodeEntity = new OrgNodeEntity();
-        orgNodeEntity.setOrgRootId(orgRootId);
-        orgNodeEntity.setOrgTreeId(orgNameExit.getOrgTreeId());
-        orgNodeEntity.setAccountInstanceId(accountInstanceId);
-        orgNodeService.save(orgNodeEntity);
+
+        // 如果已经绑定，不再绑定
+        OrgNodeEntity dbOrgNode = orgNodeService.getOne(QueryWrapper.create()
+                .eq(OrgNodeEntity::getAccountInstanceId, accountInstanceId)
+                .eq(OrgNodeEntity::getOrgTreeId, orgTreeId)
+                .eq(OrgNodeEntity::getOrgRootId, orgRootId));
+        if (dbOrgNode == null) {
+            OrgNodeEntity orgNodeEntity = OrgNodeEntity.builder()
+                    .orgTreeId(dbOrgTree.getOrgTreeId())
+                    .orgRootId(orgRootId)
+                    .accountInstanceId(accountInstanceId)
+                    .build();
+            orgNodeService.save(orgNodeEntity);
+        }
     }
 
     public void saveOrgAccount(List<AddOrgAccountRequest> addOrgAccountRequests) {
