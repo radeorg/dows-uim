@@ -9,7 +9,7 @@ public class AddOrgAccountRequest {
     private String orgName;
     private String accountName;
     private AccountType accountType;
-    private String phone;
+    private String telephone;
     private String email;
     private String password;
     private String zoneNo;

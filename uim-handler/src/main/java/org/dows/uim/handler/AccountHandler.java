@@ -73,7 +73,7 @@ public class AccountHandler {
             //accountInstanceEntity.setIdentifier(addOrgAccountRequest.getAccountName());
             accountInstanceEntity.setPassword(addOrgAccountRequest.getPassword());
             accountInstanceEntity.setZoneNo(addOrgAccountRequest.getZoneNo());
-            accountInstanceEntity.setTelephone(addOrgAccountRequest.getPhone());
+            accountInstanceEntity.setTelephone(addOrgAccountRequest.getTelephone());
             /*accountInstanceEntity.setAvator("");
             accountInstanceEntity.setReferralsNo("");
             accountInstanceEntity.setSource("");

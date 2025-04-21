@@ -10,47 +10,47 @@ import java.util.List;
 
 public interface OrgApi {
 
-    @GetMapping("/v1/uim/job/indicator/info")
+    @GetMapping("/v1/uim/org/job/indicator/info")
     default JobIndicatorResponse getOrgIndicatorByJobName(Long orgRootId, String jobName) {
         throw new UnsupportedOperationException("not class implement");
     }
 
-    @GetMapping("/v1/uim/job/info")
+    @GetMapping("/v1/uim/org/job/info")
     default JobDescriptionResponse getJobDescriptionByJobName(Long orgRootId, String jobName) {
         throw new UnsupportedOperationException("not class implement");
     }
 
-    @GetMapping("/v1/uim/job/indicator/infobyid")
+    @GetMapping("/v1/uim/job/indicator/get")
     default JobIndicatorResponse getOrgIndicatorById(Long orgRootId, Long orgRuleId) {
         throw new UnsupportedOperationException("not class implement");
     }
 
-    @PostMapping("/v1/uim/jd/upordown/info")
+    @PostMapping("/v1/uim/org/jd/state/update")
     default OrgJobJDResponse upOrDownJd(OrgJDUpOrDownRequest orgJDUpOrDownRequest) throws UnavailableException {
         throw new UnsupportedOperationException("not class implement");
     }
 
-    @PostMapping("/v1/uim/jd/save/info")
+    @PostMapping("/v1/uim/org/jd/save")
     default OrgJobJDResponse saveOrgJdInfo(OrgJdSaveRequest orgJdSaveRequest) throws UnavailableException {
         throw new UnsupportedOperationException("not class implement");
     }
 
-    @GetMapping("/v1/uim/jd/get/list")
+    @GetMapping("/v1/uim/org/jd/list")
     default OrgJdListResponse getJdList(OrgJdQueryRequest orgJdQueryRequest) throws UnavailableException {
         throw new UnsupportedOperationException("not class implement");
     }
 
-    @PostMapping("/v1/uim/rule/save/info")
+    @PostMapping("/v1/uim/org/rule/save")
     default OrgRuleResponse saveOrgRule(OrgRuleSaveRequest orgRuleSaveRequest) {
         throw new UnsupportedOperationException("not class implement");
     }
 
-    @PostMapping("/v1/uim/ruleaction/save/info")
+    @PostMapping("/v1/uim/org/action/save")
     default OrgActionResponse saveOrgRuleAction(OrgActionSaveRequest orgActionSaveRequest) {
         throw new UnsupportedOperationException("not class implement");
     }
 
-    @PostMapping("/v1/uim/ruleindicator/save/info")
+    @PostMapping("/v1/uim/org/indicator/save")
     default JobIndicatorResponse saveOrgRuleIndicator(OrgIndicatorListSaveRequest orgIndicatorListSaveRequest) {
         throw new UnsupportedOperationException("not class implement");
     }
