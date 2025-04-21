@@ -10,8 +10,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.UnavailableException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.dows.rade.constant.IdentifierType;
 import org.dows.uim.entity.*;
+import org.dows.uim.exception.UimException;
 import org.dows.uim.request.*;
 import org.dows.uim.response.*;
 import org.dows.uim.service.*;
@@ -160,6 +162,18 @@ public class OrgApiBiz {
      */
     @Transactional
     public List<OrgRegisterResponse> getOrgWithRegister(List<OrgRegisterRequest> orgRegisterRequest) {
+        //判断邮箱是否为空，或重复
+        for(OrgRegisterRequest item : orgRegisterRequest) {
+            if(StringUtils.isEmpty(item.getEmail())){
+                throw new UimException(item.getOrgName() + " 邮箱为空，无法保存");
+            }
+            List<OrgEmailEntity> orgEmailEntities = QueryChain.of(OrgEmailEntity.class)
+                    .eq(OrgEmailEntity::getEmail, item.getEmail(), Objects.nonNull(item.getEmail())).list();
+            if (Objects.nonNull(orgEmailEntities) && orgEmailEntities.size() > 0) {
+                throw new UimException(item.getOrgName() + "， 【" + item.getEmail() + "】邮箱已存在，无法保存");
+            }
+        }
+
         // 批量保存组织树
         List<OrgTreeEntity> orgTreeEntities = BeanUtil.copyToList(orgRegisterRequest, OrgTreeEntity.class);
         orgTreeService.saveOrUpdateBatch(orgTreeEntities);
