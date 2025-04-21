@@ -172,7 +172,7 @@ public class OrgApiBiz {
             }
             List<OrgEmailEntity> orgEmailEntities = QueryChain.of(OrgEmailEntity.class)
                     .eq(OrgEmailEntity::getEmail, item.getEmail(), Objects.nonNull(item.getEmail())).list();
-            if (Objects.nonNull(orgEmailEntities) && orgEmailEntities.size() > 0) {
+            if (Objects.nonNull(orgEmailEntities) && !orgEmailEntities.isEmpty()) {
                 throw new UimException(item.getOrgName() + "， 【" + item.getEmail() + "】邮箱已存在，无法保存");
             }
 
@@ -180,7 +180,7 @@ public class OrgApiBiz {
                 List<AccountIdentifierEntity> accountIdentifierEntities = QueryChain.of(AccountIdentifierEntity.class)
                         .eq(AccountIdentifierEntity::getIdentifier, item.getTelephone(), Objects.nonNull(item.getTelephone()))
                         .eq(AccountIdentifierEntity::getIdentifierType, IdentifierType.PHONE.getType()).list();
-                if (Objects.nonNull(accountIdentifierEntities) && accountIdentifierEntities.size() > 0) {
+                if (Objects.nonNull(accountIdentifierEntities) && !accountIdentifierEntities.isEmpty()) {
                     throw new UimException(item.getOrgName() + "， 【" + item.getTelephone() + "】手机号已存在，无法保存");
                 }
             }
