@@ -10,10 +10,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.UnavailableException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.dows.rade.constant.IdentifierType;
 import org.dows.uim.entity.*;
-import org.dows.uim.exception.UimException;
 import org.dows.uim.request.*;
 import org.dows.uim.response.*;
 import org.dows.uim.service.*;
@@ -41,6 +39,8 @@ public class OrgApiBiz {
 
     private final AccountInstanceService accountInstanceService;
     private final AccountIdentifierService accountIdentifierService;
+
+    private final EncryptApi encryptApi;
 
 //    private final PasswordEncoder passwordEncoder;
 
@@ -192,7 +192,7 @@ public class OrgApiBiz {
             // todo 设置密码 需要加密
             String password = orgRegisterRequest.get(i).getPassword();
 //            accountInstanceEntity.setPassword(passwordEncoder.encode(password));
-            accountInstanceEntity.setPassword(password);
+            accountInstanceEntity.setPassword(encryptApi.getBCryptPassword(password));
             accountInstanceEntity.setSuperAccount(0);
             accountInstanceEntities.add(accountInstanceEntity);
 
