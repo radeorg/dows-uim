@@ -57,4 +57,6 @@ public class OrgJobJDResponse  {
     @Schema(description = "时间戳")
     private Date ts;
 
+    @Schema(description = "逻辑删除，0未删除，1删除")
+    private Integer deleted;
 }

@@ -44,6 +44,11 @@ public class OrgApiRest implements OrgApi, OrgAccountApi {
         return orgApiBiz.saveOrgJdInfo(orgJdSaveRequest);
     }
 
+    @Operation(summary = "删除JD信息")
+    public Boolean deleteJd(@RequestParam Long orgJdId) throws UnavailableException {
+        return orgApiBiz.deleteJd(orgJdId);
+    }
+
     @Operation(summary = "获取JD列表")
     public OrgJdListResponse getJdList(@RequestBody OrgJdQueryRequest orgJdQueryRequest) throws UnavailableException {
         return orgApiBiz.getJdList(orgJdQueryRequest);

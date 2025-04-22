@@ -3,6 +3,7 @@ package org.dows.uim.api;
 import jakarta.servlet.UnavailableException;
 import org.dows.uim.request.*;
 import org.dows.uim.response.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -32,6 +33,12 @@ public interface OrgApi {
 
     @PostMapping("/v1/uim/org/jd/save")
     default OrgJobJDResponse saveOrgJdInfo(OrgJdSaveRequest orgJdSaveRequest) throws UnavailableException {
+        throw new UnsupportedOperationException("not class implement");
+    }
+
+
+    @DeleteMapping("/v1/uim/org/jd/delete")
+    default Boolean deleteJd(Long orgJdId) throws UnavailableException {
         throw new UnsupportedOperationException("not class implement");
     }
 

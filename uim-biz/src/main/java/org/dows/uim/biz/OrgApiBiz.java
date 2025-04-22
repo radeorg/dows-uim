@@ -6,6 +6,7 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.mybatisflex.core.query.QueryChain;
 import com.mybatisflex.core.query.QueryWrapper;
+import com.mybatisflex.core.update.UpdateChain;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.UnavailableException;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.dows.rade.constant.IdentifierType;
 import org.dows.rade.encrypt.EncryptApi;
+import org.dows.uim.constant.CommonDelEnum;
 import org.dows.uim.entity.*;
 import org.dows.uim.exception.UimException;
 import org.dows.uim.request.*;
@@ -55,7 +57,8 @@ public class OrgApiBiz {
         Long jdDefaultId = null;
         String jobName = "##";
         List<OrgJdEntity> orgJdEntities = QueryChain.of(OrgJdEntity.class)
-                .like(OrgJdEntity::getJdName, jobName, Objects.nonNull(jobName)).list();
+                .like(OrgJdEntity::getJdName, jobName, Objects.nonNull(jobName))
+                .eq(OrgJdEntity::getDeleted, CommonDelEnum.NORMAL.getCode()).list();
         if (Objects.nonNull(orgJdEntities) && orgJdEntities.size() > 0) {
             jdDefaultId = orgJdEntities.get(0).getOrgRuleId();
         }
@@ -95,6 +98,7 @@ public class OrgApiBiz {
         JobIndicatorResponse response = new JobIndicatorResponse();
         List<OrgJdEntity> orgJdEntities = QueryChain.of(OrgJdEntity.class)
                 .eq(OrgJdEntity::getOrgRootId, orgRootId, Objects.nonNull(orgRootId))
+                .eq(OrgJdEntity::getDeleted, CommonDelEnum.NORMAL.getCode())
                 .like(OrgJdEntity::getJdName, jobName, Objects.nonNull(jobName)).list();
         if (Objects.nonNull(orgJdEntities) && orgJdEntities.size() > 0) {
             jdId = orgJdEntities.get(0).getOrgRuleId();
@@ -104,7 +108,8 @@ public class OrgApiBiz {
         Long jdDefaultId = null;
         jobName = "##";
         orgJdEntities = QueryChain.of(OrgJdEntity.class)
-                .like(OrgJdEntity::getDescription, jobName, Objects.nonNull(jobName)).list();
+                .like(OrgJdEntity::getDescription, jobName, Objects.nonNull(jobName))
+                .list();
         if (Objects.nonNull(orgJdEntities) && orgJdEntities.size() > 0) {
             jdDefaultId = orgJdEntities.get(0).getOrgRuleId();
         }
@@ -144,6 +149,7 @@ public class OrgApiBiz {
 
         List<OrgJdEntity> orgJdEntityList = QueryChain.of(OrgJdEntity.class)
                 .eq(OrgJdEntity::getOrgRootId, orgRootId, Objects.nonNull(orgRootId))
+                .eq(OrgJdEntity::getDeleted, CommonDelEnum.NORMAL.getCode())
                 .like(OrgJdEntity::getJdName, jobName, Objects.nonNull(jobName)).list();
         List<OrgJobJDResponse> jobList = new ArrayList<>();
         for (OrgJdEntity item : orgJdEntityList) {
@@ -413,6 +419,27 @@ public class OrgApiBiz {
         return response;
     }
 
+
+    @Operation(summary = "JD删除")
+    @Transactional
+    public Boolean deleteJd(Long orgJdId) throws UnavailableException {
+        if (Objects.isNull(orgJdId)) {
+            throw new UnavailableException("orgJdId 必填");
+        }
+
+        List<OrgJdEntity> orgJdEntityList = QueryChain.of(OrgJdEntity.class)
+                .eq(OrgJdEntity::getOrgJdId, orgJdId).list();
+        if (Objects.isNull(orgJdEntityList) || orgJdEntityList.size() == 0) {
+            throw new UnavailableException("orgJdId 该Jd不存在");
+        }
+
+        boolean updateRec = UpdateChain.of(OrgJdEntity.class)
+                .set(OrgJdEntity::getDeleted, CommonDelEnum.DELETE.getCode())
+                .eq(OrgJdEntity::getOrgJdId, orgJdId).update();
+
+        return updateRec;
+    }
+
     @Operation(summary = "保存JD信息")
     @Transactional
     public OrgJobJDResponse saveOrgJdInfo(OrgJdSaveRequest orgJdSaveRequest) throws UnavailableException {
@@ -440,6 +467,7 @@ public class OrgApiBiz {
         objEntity.setOrgTreeId(orgJdSaveRequest.getOrgTreeId());
         objEntity.setOwnerId(orgJdSaveRequest.getOrgJdRequirements().getHrAccountInstanceId());
         objEntity.setOrgRuleId(response.getOrgRuleId());
+        objEntity.setDeleted(CommonDelEnum.NORMAL.getCode());
         if (Objects.isNull(objEntity.getOrgJdId())) {
             //新增默认上架
             objEntity.setState(1);
@@ -462,7 +490,10 @@ public class OrgApiBiz {
                 .eq(OrgJdEntity::getOrgRootId, orgJdQueryRequest.getOrgRootId(), Objects.nonNull(orgJdQueryRequest.getOrgRootId()))
                 .eq(OrgJdEntity::getOrgTreeId, orgJdQueryRequest.getOrgTreeId(), Objects.nonNull(orgJdQueryRequest.getOrgTreeId()))
                 .eq(OrgJdEntity::getOrgJdId, orgJdQueryRequest.getOrgJdId(), Objects.nonNull(orgJdQueryRequest.getOrgJdId()))
-                .like(OrgJdEntity::getJdName, orgJdQueryRequest.getJdName(), Objects.nonNull(orgJdQueryRequest.getJdName())).list();
+                .like(OrgJdEntity::getJdName, orgJdQueryRequest.getJdName(), Objects.nonNull(orgJdQueryRequest.getJdName()))
+                .eq(OrgJdEntity::getDeleted, CommonDelEnum.NORMAL.getCode())
+                .orderBy(OrgJdEntity::getUt, false)
+                .list();
         List<OrgJobJDDetailResponse> jdList = new ArrayList<>();
 
         for (OrgJdEntity item : orgJdEntityList) {

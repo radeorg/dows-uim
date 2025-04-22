@@ -122,5 +122,10 @@ public class OrgJdEntity extends BaseEntity<OrgJdEntity> {
     @Column(value = "ut")
     private Date ut;
 
-
+    /**
+     * 逻辑删除，0未删除，1删除
+     */
+    @Schema(description = "逻辑删除，0未删除，1删除")
+    @Column(value = "deleted")
+    private Integer deleted;
 }
