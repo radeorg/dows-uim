@@ -374,9 +374,12 @@ public class OrgApiBiz {
             OrgRuleEntity orgRuleEntity = QueryChain.of(OrgRuleEntity.class)
                     .eq(OrgRuleEntity::getOrgRuleId, item.getOrgRuleId(), Objects.nonNull(item.getOrgRuleId())).limit(1).one();
             if(Objects.nonNull(orgRuleEntity) && Objects.nonNull(orgRuleEntity.getRuleDescription())){
-                OrgJdRequirements orgJdRequirements =
-                JSONObject.parseObject(orgRuleEntity.getRuleDescription(),OrgJdRequirements.class);
-                jdDetailResponse.setOrgJdRequirements(orgJdRequirements);
+                try {
+                    OrgJdRequirements orgJdRequirements =
+                            JSONObject.parseObject(orgRuleEntity.getRuleDescription(), OrgJdRequirements.class);
+                    jdDetailResponse.setOrgJdRequirements(orgJdRequirements);
+                } catch (Exception e) {
+                }
             }
             jdList.add(jdDetailResponse);
         }
