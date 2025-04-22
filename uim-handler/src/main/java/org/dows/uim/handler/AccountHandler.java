@@ -118,12 +118,18 @@ public class AccountHandler {
             AccountIdentifierEntity phoneIdentifier = AccountIdentifierEntity.builder()
                     .accountInstanceId(accountInstanceId)
                     .identifierType(IdentifierType.PHONE.getType())
+                    .identifier(addOrgAccountRequest.getTelephone())
                     .build();
-            AccountIdentifierEntity emailIdentifier = AccountIdentifierEntity.builder()
-                    .accountInstanceId(accountInstanceId)
-                    .identifierType(IdentifierType.EMAIL.getType())
-                    .build();
-            List<AccountIdentifierEntity> identifiers = List.of(phoneIdentifier, emailIdentifier);
+
+            List<AccountIdentifierEntity> identifiers = List.of(phoneIdentifier);
+            if (!StrUtil.isBlank(addOrgAccountRequest.getEmail())) {
+                AccountIdentifierEntity emailIdentifier = AccountIdentifierEntity.builder()
+                        .accountInstanceId(accountInstanceId)
+                        .identifierType(IdentifierType.EMAIL.getType())
+                        .identifier(addOrgAccountRequest.getEmail())
+                        .build();
+                identifiers.add(emailIdentifier);
+            }
             // 批量保存账号标识
             accountIdentifierService.saveBatch(identifiers);
             // 账号类型
@@ -146,6 +152,8 @@ public class AccountHandler {
                 .eq(OrgTreeEntity::getAppId, addOrgAccountRequest.getAppId()));
         Long orgTreeId = addOrgAccountRequest.getOrgTreeId();
         Long orgRootId = aacContext.getAacUser().getOrgRootId();
+
+
         //OrgTreeEntity childOrgTreeEntity
         if (dbOrgTree == null) {
             dbOrgTree = new OrgTreeEntity();
