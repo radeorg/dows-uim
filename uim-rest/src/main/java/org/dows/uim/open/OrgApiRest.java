@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -29,7 +30,7 @@ public class OrgApiRest implements OrgApi, OrgAccountApi {
     }
 
     @Operation(summary = "通过岗位名称获取指标")
-    public JobIndicatorResponse getOrgIndicatorByJobName(@RequestParam Long orgRootId,@RequestParam String jobName) {
+    public JobIndicatorResponse getOrgIndicatorByJobName(@RequestParam Long orgRootId, @RequestParam String jobName) {
         return orgApiBiz.getOrgIndicatorByJobName(orgRootId, jobName);
     }
 
@@ -71,7 +72,12 @@ public class OrgApiRest implements OrgApi, OrgAccountApi {
     @Operation(summary = "注册企业账号")
     @Override
     public List<OrgRegisterResponse> getOrgWithRegister(@RequestBody List<OrgRegisterRequest> orgRegisterRequest) {
-        return orgApiBiz.getOrgWithRegister(orgRegisterRequest);
+        List<OrgRegisterResponse> orgWithRegisters = new ArrayList<>();
+        for (OrgRegisterRequest registerRequest : orgRegisterRequest) {
+            OrgRegisterResponse orgWithRegister = orgApiBiz.getOrgWithRegister(registerRequest);
+            orgWithRegisters.add(orgWithRegister);
+        }
+        return orgWithRegisters;
     }
 
     @Operation(summary = "增加企业账号[招聘官,企业管理员,企业用户...]")
