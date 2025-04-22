@@ -2,6 +2,7 @@ package org.dows.uim.handler;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.StrUtil;
 import com.mybatisflex.core.keygen.IKeyGenerator;
 import com.mybatisflex.core.keygen.KeyGeneratorFactory;
 import com.mybatisflex.core.keygen.KeyGenerators;
@@ -83,16 +84,26 @@ public class AccountHandler {
 
         Long accountInstanceId;
         AccountTypeEntity accountTypeEntity;
+        AccountInstanceEntity accountInstanceEntity;
+        String password = addOrgAccountRequest.getPassword();
+        String bCryptPassword = encryptApi.getBCryptPassword(StrUtil.isBlank(password) ? "" : password);
         if (one != null) {
             accountTypeEntity = AccountTypeEntity.builder()
                     .accountInstanceId(one.getAccountInstanceId())
                     .accountType(addOrgAccountRequest.getAccountType().getValue())
                     .build();
             accountInstanceId = one.getAccountInstanceId();
+            // todo 如果用户在小程序端已经注册账号，则直接更新账号类型，同时也更新账号信息，此处可以更新密码，使账号可以密码方式登录
+            accountInstanceEntity = new AccountInstanceEntity();
+            accountInstanceEntity.setAccountInstanceId(accountInstanceId);
+            accountInstanceEntity.setPassword(bCryptPassword);
+            // todo 如果变更手机号，需要重写一个接口
+//            accountInstanceEntity.setTelephone();
+            accountInstanceService.updateById(accountInstanceEntity);
         } else {
-            AccountInstanceEntity accountInstanceEntity = new AccountInstanceEntity();
+            accountInstanceEntity = new AccountInstanceEntity();
             accountInstanceEntity.setNickname(addOrgAccountRequest.getAccountName());
-            accountInstanceEntity.setPassword(encryptApi.getBCryptPassword(addOrgAccountRequest.getPassword()));
+            accountInstanceEntity.setPassword(bCryptPassword);
             accountInstanceEntity.setZoneNo(addOrgAccountRequest.getZoneNo());
             accountInstanceEntity.setTelephone(addOrgAccountRequest.getTelephone());
             /*accountInstanceEntity.setAvator("");
