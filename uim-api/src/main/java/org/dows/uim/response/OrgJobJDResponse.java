@@ -30,6 +30,9 @@ public class OrgJobJDResponse  {
     @Schema(description = "岗位地址")
     private String orgAddress;
 
+    @Schema(description = "职位类别ID")
+    private Long orgJdCategoryId;
+
     @Schema(description = "人事账号实例ID")
     private Long ownerId;
 
