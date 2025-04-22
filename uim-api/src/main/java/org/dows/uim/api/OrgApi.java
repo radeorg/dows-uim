@@ -81,4 +81,5 @@ public interface OrgApi {
     default List<RootOrgResponse> getRootOrgListByAccountInstanceId(Long accountInstanceId){
         throw new UnsupportedOperationException("not class implement");
     }
+
 }
