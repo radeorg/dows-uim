@@ -169,9 +169,10 @@ public class AccountApiBiz {
     }
 
     public List<AddOrgAccountResponse> saveOrgAccount(List<AddOrgAccountRequest> addOrgAccountRequests) {
-
-
-        accountHandler.saveOrgAccount(addOrgAccountRequests);
+        for (AddOrgAccountRequest addOrgAccountRequest : addOrgAccountRequests) {
+            accountHandler.saveOrgAccount(addOrgAccountRequest);
+        }
+        // todo 先不做返回
         return null;
     }
 

@@ -21,7 +21,7 @@ public class AccountInstanceRequest {
     private String zoneNo;
 
     @Schema(description = "手机号")
-    private String phone;
+    private String telephone;
 
     @Schema(description = "头像")
     private String avatar;
