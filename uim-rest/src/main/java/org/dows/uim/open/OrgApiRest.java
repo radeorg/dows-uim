@@ -50,8 +50,8 @@ public class OrgApiRest implements OrgApi, OrgAccountApi {
     }
 
     @Operation(summary = "获取JD列表")
-    public OrgJdListResponse getJdList(@RequestParam Long orgJdId, @RequestParam Long orgRootId, @RequestParam Long orgTreeId, @RequestParam String jdName) throws UnavailableException {
-        return orgApiBiz.getJdList(orgJdId, orgRootId, orgTreeId, jdName);
+    public OrgJdListResponse getJdList(OrgJdQueryRequest orgJdQueryRequest) throws UnavailableException {
+        return orgApiBiz.getJdList(orgJdQueryRequest);
     }
 
     @Operation(summary = "保存岗位规则")

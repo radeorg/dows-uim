@@ -6,7 +6,6 @@ import org.dows.uim.response.*;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -44,7 +43,7 @@ public interface OrgApi {
     }
 
     @GetMapping("/v1/uim/org/jd/list")
-    default OrgJdListResponse getJdList(Long orgJdId, @RequestParam Long orgRootId, @RequestParam Long orgTreeId, @RequestParam String jdName) throws UnavailableException {
+    default OrgJdListResponse getJdList(OrgJdQueryRequest orgJdQueryRequest) throws UnavailableException {
         throw new UnsupportedOperationException("not class implement");
     }
 
