@@ -89,4 +89,8 @@ public interface OrgApi {
         throw new UnsupportedOperationException("not class implement");
     }
 
+    default List<OrgJdOrgRegisterInfoListResponse> getOrgJdOrgRegisterInfoList(OrgJdOrgRegisterInfoListRequest request) {
+        throw new UnsupportedOperationException("not class implement");
+    }
+
 }
