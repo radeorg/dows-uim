@@ -308,7 +308,8 @@ public class OrgApiBiz {
             String password = orgRegisterRequest.get(i).getPassword();
 //            accountInstanceEntity.setPassword(passwordEncoder.encode(password));
             accountInstanceEntity.setPassword(encryptApi.getBCryptPassword(password));
-            accountInstanceEntity.setSuperAccount(0);
+            // 设置为超级账号
+            accountInstanceEntity.setSuperAccount(1);
             accountInstanceEntities.add(accountInstanceEntity);
 
             // 构建企业邮箱
