@@ -56,6 +56,11 @@ public class OrgEmailEntity extends BaseEntity<OrgEmailEntity> {
     @Column(value = "email")
     private String email;
 
+
+    @Schema(description = "授权码")
+    @Column(value = "auth_code")
+    private String authCode;
+
     /**
      * JSON配置
      */
