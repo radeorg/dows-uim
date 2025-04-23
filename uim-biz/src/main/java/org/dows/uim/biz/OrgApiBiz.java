@@ -23,11 +23,12 @@ import org.dows.uim.service.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -480,18 +481,18 @@ public class OrgApiBiz {
     }
 
     @Operation(summary = "获取JD列表")
-    public OrgJdListResponse getJdList(OrgJdQueryRequest orgJdQueryRequest) throws UnavailableException {
+    public OrgJdListResponse getJdList(Long orgJdId, @RequestParam Long orgRootId, @RequestParam Long orgTreeId, @RequestParam String jdName) throws UnavailableException {
         OrgJdListResponse response = new OrgJdListResponse();
 
-        if (Objects.isNull(orgJdQueryRequest.getOrgRootId())) {
+        if (Objects.isNull(orgRootId)) {
             throw new UnavailableException("orgRootId 必填");
         }
 
         List<OrgJdEntity> orgJdEntityList = QueryChain.of(OrgJdEntity.class)
-                .eq(OrgJdEntity::getOrgRootId, orgJdQueryRequest.getOrgRootId(), Objects.nonNull(orgJdQueryRequest.getOrgRootId()))
-                .eq(OrgJdEntity::getOrgTreeId, orgJdQueryRequest.getOrgTreeId(), Objects.nonNull(orgJdQueryRequest.getOrgTreeId()))
-                .eq(OrgJdEntity::getOrgJdId, orgJdQueryRequest.getOrgJdId(), Objects.nonNull(orgJdQueryRequest.getOrgJdId()))
-                .like(OrgJdEntity::getJdName, orgJdQueryRequest.getJdName(), Objects.nonNull(orgJdQueryRequest.getJdName()))
+                .eq(OrgJdEntity::getOrgRootId, orgRootId, Objects.nonNull(orgRootId))
+                .eq(OrgJdEntity::getOrgTreeId, orgTreeId, Objects.nonNull(orgTreeId))
+                .eq(OrgJdEntity::getOrgJdId, orgJdId, Objects.nonNull(orgJdId))
+                .like(OrgJdEntity::getJdName, jdName, Objects.nonNull(jdName))
                 .eq(OrgJdEntity::getDeleted, CommonDelEnum.NORMAL.getCode())
                 .orderBy(OrgJdEntity::getUt, false)
                 .list();
@@ -587,5 +588,33 @@ public class OrgApiBiz {
             return BeanUtil.copyToList(list, RootOrgResponse.class);
         }
         return null;
+    }
+
+    public List<OrgJdOrgRegisterInfoListResponse> getOrgJdOrgRegisterInfoList(OrgJdOrgRegisterInfoListRequest request) {
+        if (Objects.isNull(request) || CollectionUtils.isEmpty(request.getOrgJdIds())) {
+            return null;
+        }
+        List<OrgJdEntity> jdEntities = QueryChain.of(OrgJdEntity.class)
+                .in(OrgJdEntity::getOrgJdId, request.getOrgJdIds().stream().distinct().collect(Collectors.toList()))
+                .list();
+        if (CollectionUtil.isEmpty(jdEntities)) {
+            return null;
+        }
+        if (!Objects.equals(request.getQueryOrgRegisterInfo(), true)) {
+            return BeanUtil.copyToList(jdEntities, OrgJdOrgRegisterInfoListResponse.class);
+        }
+        Map<Long, OrgRegisterEntity> orgRegisterEntityMap = QueryChain.of(OrgRegisterEntity.class)
+                .in(OrgRegisterEntity::getOrgRootId, jdEntities.stream().map(OrgJdEntity::getOrgRootId).collect(Collectors.toSet()))
+                .list().stream().collect(Collectors.toMap(OrgRegisterEntity::getOrgRegisterId, Function.identity(), (l, r) -> l));
+        return jdEntities.stream().map(record -> {
+            OrgJdOrgRegisterInfoListResponse jdAndOrgDetailListResponse = new OrgJdOrgRegisterInfoListResponse();
+            BeanUtils.copyProperties(record, jdAndOrgDetailListResponse);
+            if (orgRegisterEntityMap.containsKey(record.getOrgRootId())) {
+                OrgJdOrgRegisterInfoListResponse.OrgRegisterInfo orgRegisterInfo = new OrgJdOrgRegisterInfoListResponse.OrgRegisterInfo();
+                BeanUtils.copyProperties(orgRegisterEntityMap.get(record.getOrgRootId()), orgRegisterInfo);
+                jdAndOrgDetailListResponse.setOrgRegisterInfo(orgRegisterInfo);
+            }
+            return jdAndOrgDetailListResponse;
+        }).collect(Collectors.toList());
     }
 }
