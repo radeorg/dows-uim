@@ -24,6 +24,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.*;
 import java.util.function.Function;
@@ -479,18 +480,18 @@ public class OrgApiBiz {
     }
 
     @Operation(summary = "获取JD列表")
-    public OrgJdListResponse getJdList(OrgJdQueryRequest orgJdQueryRequest) throws UnavailableException {
+    public OrgJdListResponse getJdList(Long orgJdId, @RequestParam Long orgRootId, @RequestParam Long orgTreeId, @RequestParam String jdName) throws UnavailableException {
         OrgJdListResponse response = new OrgJdListResponse();
 
-        if (Objects.isNull(orgJdQueryRequest.getOrgRootId())) {
+        if (Objects.isNull(orgRootId)) {
             throw new UnavailableException("orgRootId 必填");
         }
 
         List<OrgJdEntity> orgJdEntityList = QueryChain.of(OrgJdEntity.class)
-                .eq(OrgJdEntity::getOrgRootId, orgJdQueryRequest.getOrgRootId(), Objects.nonNull(orgJdQueryRequest.getOrgRootId()))
-                .eq(OrgJdEntity::getOrgTreeId, orgJdQueryRequest.getOrgTreeId(), Objects.nonNull(orgJdQueryRequest.getOrgTreeId()))
-                .eq(OrgJdEntity::getOrgJdId, orgJdQueryRequest.getOrgJdId(), Objects.nonNull(orgJdQueryRequest.getOrgJdId()))
-                .like(OrgJdEntity::getJdName, orgJdQueryRequest.getJdName(), Objects.nonNull(orgJdQueryRequest.getJdName()))
+                .eq(OrgJdEntity::getOrgRootId, orgRootId, Objects.nonNull(orgRootId))
+                .eq(OrgJdEntity::getOrgTreeId, orgTreeId, Objects.nonNull(orgTreeId))
+                .eq(OrgJdEntity::getOrgJdId, orgJdId, Objects.nonNull(orgJdId))
+                .like(OrgJdEntity::getJdName, jdName, Objects.nonNull(jdName))
                 .eq(OrgJdEntity::getDeleted, CommonDelEnum.NORMAL.getCode())
                 .orderBy(OrgJdEntity::getUt, false)
                 .list();
