@@ -15,6 +15,11 @@ import lombok.Data;
 @Schema(name = "企业主油箱")
 public class OrgEmailResponse {
 
+    /**
+     * 组织邮箱ID
+     */
+    @Schema(description = "组织邮箱ID")
+    private Long orgEmailId;
 
     /**
      * 企业邮箱

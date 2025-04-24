@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 public interface OrgEmailApi {
 
-    @PostMapping("/v1/uim/open/email/save")
+    @PostMapping("/v1/uim/open/email/get")
     default OrgEmailResponse getEmailInfo() throws UnavailableException {
         throw new UnsupportedOperationException("not class implement");
     }
