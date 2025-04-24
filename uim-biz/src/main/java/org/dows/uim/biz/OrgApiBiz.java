@@ -12,6 +12,7 @@ import jakarta.servlet.UnavailableException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.dows.rade.aac.AacContext;
 import org.dows.rade.constant.IdentifierType;
 import org.dows.rade.encrypt.EncryptApi;
 import org.dows.uim.constant.CommonDelEnum;
@@ -46,6 +47,7 @@ public class OrgApiBiz {
     private final AccountIdentifierService accountIdentifierService;
 
     private final EncryptApi encryptApi;
+    private final AacContext aacContext;
 
 //    private final PasswordEncoder passwordEncoder;
 
@@ -446,6 +448,9 @@ public class OrgApiBiz {
     public OrgJobJDResponse saveOrgJdInfo(OrgJdSaveRequest orgJdSaveRequest) throws UnavailableException {
         OrgJdEntity objEntity = new OrgJdEntity();
 
+        Long orgRootId = aacContext.getAacUser().getOrgRootId();
+        orgJdSaveRequest.setOrgRootId(orgRootId);
+
         if (Objects.isNull(orgJdSaveRequest.getOrgRootId())) {
             throw new UnavailableException("orgRootId 必填");
         }
@@ -485,6 +490,8 @@ public class OrgApiBiz {
     @Operation(summary = "获取JD列表")
     public OrgJdListResponse getJdList(OrgJdQueryRequest orgJdQueryRequest) throws UnavailableException {
         OrgJdListResponse response = new OrgJdListResponse();
+        Long orgRootId = aacContext.getAacUser().getOrgRootId();
+        orgJdQueryRequest.setOrgRootId(orgRootId);
 
         if (Objects.isNull(orgJdQueryRequest.getOrgRootId())) {
             throw new UnavailableException("orgRootId 必填");
