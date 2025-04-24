@@ -438,6 +438,7 @@ public class OrgApiBiz {
 
         boolean updateRec = UpdateChain.of(OrgJdEntity.class)
                 .set(OrgJdEntity::getDeleted, CommonDelEnum.DELETE.getCode())
+                .set(OrgJdEntity::getOperatorId, aacContext.getAacUser().getUserId())
                 .eq(OrgJdEntity::getOrgJdId, orgJdId).update();
 
         return updateRec;
@@ -464,7 +465,7 @@ public class OrgApiBiz {
         objEntity1.setRuleName(orgJdSaveRequest.getJdName());
         objEntity1.setOrgTreeId(orgJdSaveRequest.getOrgTreeId());
         objEntity1.setAppId(orgJdSaveRequest.getAppId());
-        objEntity1.setOperatorId(orgJdSaveRequest.getOperatorId());
+        objEntity1.setOperatorId(aacContext.getAacUser().getUserId());
         objEntity1.setTs(new Date());
         OrgRuleResponse response = saveOrgRule(objEntity1);
 
@@ -476,6 +477,7 @@ public class OrgApiBiz {
         }
         objEntity.setOrgRuleId(response.getOrgRuleId());
         objEntity.setDeleted(CommonDelEnum.NORMAL.getCode());
+        objEntity.setOperatorId(aacContext.getAacUser().getUserId());
         if (Objects.isNull(objEntity.getOrgJdId())) {
             //新增默认上架
             objEntity.setState(1);
@@ -534,6 +536,7 @@ public class OrgApiBiz {
         OrgRuleEntity objEntity = new OrgRuleEntity();
         BeanUtils.copyProperties(orgRuleSaveRequest, objEntity, OrgRuleEntity.class);
         objEntity.setTs(new Date());
+        objEntity.setOperatorId(aacContext.getAacUser().getUserId());
         objEntity.saveOrUpdate();
         orgRuleSaveRequest.setOrgRuleId(objEntity.getOrgRuleId());
 
@@ -547,6 +550,7 @@ public class OrgApiBiz {
         OrgActionEntity objEntity = new OrgActionEntity();
         BeanUtils.copyProperties(orgActionSaveRequest, objEntity, OrgActionEntity.class);
         objEntity.setTs(new Date());
+        objEntity.setOperatorId(aacContext.getAacUser().getUserId());
         objEntity.saveOrUpdate();
         orgActionSaveRequest.setOrgActionId(objEntity.getOrgActionId());
 
@@ -572,6 +576,7 @@ public class OrgApiBiz {
                 OrgIndicatorEntity objEntity = new OrgIndicatorEntity();
                 BeanUtils.copyProperties(itemEntity, objEntity, OrgIndicatorEntity.class);
                 objEntity.setTs(new Date());
+                objEntity.setOperatorId(aacContext.getAacUser().getUserId());
                 objEntity.saveOrUpdate();
                 itemEntity.setOrgIndicatorId(objEntity.getOrgIndicatorId());
                 OrgIndicatorResponse orgIndicatorResponse = new OrgIndicatorResponse();
