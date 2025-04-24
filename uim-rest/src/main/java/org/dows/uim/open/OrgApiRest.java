@@ -5,8 +5,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.UnavailableException;
 import lombok.RequiredArgsConstructor;
 import org.dows.uim.api.OrgApi;
+import org.dows.uim.api.OrgEmailApi;
 import org.dows.uim.biz.AccountApiBiz;
 import org.dows.uim.biz.OrgApiBiz;
+import org.dows.uim.biz.OrgEmailBiz;
 import org.dows.uim.request.*;
 import org.dows.uim.response.*;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,9 +22,11 @@ import java.util.List;
 //@RequestMapping("/open/org")
 @Tag(name = "组织管理接口", description = "组织管理接口")
 @RequiredArgsConstructor
-public class OrgApiRest implements OrgApi, OrgAccountApi {
+public class OrgApiRest implements OrgApi, OrgAccountApi, OrgEmailApi {
     private final OrgApiBiz orgApiBiz;
     private final AccountApiBiz accountApiBiz;
+    private final OrgEmailBiz emailBiz;
+    private final OrgEmailBiz orgEmailBiz;
 
     @Operation(summary = "JD上架或下架")
     public OrgJobJDResponse upOrDownJd(@RequestBody OrgJDUpOrDownRequest orgJDUpOrDownRequest) throws UnavailableException {
@@ -103,6 +107,11 @@ public class OrgApiRest implements OrgApi, OrgAccountApi {
     @Override
     public List<OrgJdOrgRegisterInfoListResponse> getOrgJdOrgRegisterInfoList(OrgJdOrgRegisterInfoListRequest request) {
         return orgApiBiz.getOrgJdOrgRegisterInfoList(request);
+    }
+
+    @Override
+    public OrgEmailResponse getEmailInfo(){
+        return orgEmailBiz.getOrgEmailInfo();
     }
 
 }

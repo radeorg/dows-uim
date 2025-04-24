@@ -99,6 +99,12 @@
             </dependency>
 
             <dependency>
+                <groupId>org.dows.cloud</groupId>
+                <artifactId>aac-api</artifactId>
+                <version>${aac.version}</version>
+            </dependency>
+
+            <dependency>
                 <artifactId>uim-pojo</artifactId>
                 <groupId>org.dows.cloud</groupId>
                 <version>${project.version}</version>
