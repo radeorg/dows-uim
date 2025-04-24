@@ -5,7 +5,7 @@ import cn.hutool.core.bean.BeanUtil;
 import com.mybatisflex.core.query.QueryWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dows.aac.api.AacApi;
+import org.dows.rade.aac.AacContext;
 import org.dows.rade.aac.AacUser;
 import org.dows.uim.entity.OrgEmailEntity;
 import org.dows.uim.response.OrgEmailResponse;
@@ -23,12 +23,12 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Component
 public class OrgEmailBiz {
-    private final AacApi aacApi;
+    private final AacContext aacContext;
     private final OrgEmailService emailService;
 
     public OrgEmailResponse getOrgEmailInfo(){
 
-        AacUser aacUser = aacApi.getCurrentAacUser();
+        AacUser aacUser = aacContext.getAacUser();
         Long rootId = aacUser.getOrgRootId();
         OrgEmailEntity emailEntity = emailService.getOne(QueryWrapper.create()
                 .eq(OrgEmailEntity::getOrgRootId,rootId)
