@@ -466,7 +466,9 @@ public class OrgApiBiz {
         BeanUtils.copyProperties(orgJdSaveRequest, objEntity, OrgJdEntity.class);
         objEntity.setTs(new Date());
         objEntity.setOrgTreeId(orgJdSaveRequest.getOrgTreeId());
-        objEntity.setOwnerId(orgJdSaveRequest.getOrgJdRequirements().getHrAccountInstanceId());
+        if(Objects.isNull(orgJdSaveRequest.getOwnerId())) {
+            objEntity.setOwnerId(orgJdSaveRequest.getOrgJdRequirements().getHrAccountInstanceId());
+        }
         objEntity.setOrgRuleId(response.getOrgRuleId());
         objEntity.setDeleted(CommonDelEnum.NORMAL.getCode());
         if (Objects.isNull(objEntity.getOrgJdId())) {
@@ -474,6 +476,7 @@ public class OrgApiBiz {
             objEntity.setState(1);
         }
         objEntity.saveOrUpdate();
+        orgJdSaveRequest.setOrgRuleId(objEntity.getOrgRuleId());
         orgJdSaveRequest.setOrgJdId(objEntity.getOrgJdId());
 
         return (OrgJobJDResponse) orgJdSaveRequest;
