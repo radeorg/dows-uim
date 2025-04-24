@@ -1,28 +1,23 @@
 package org.dows.uim.handler;
 
-import cn.hutool.core.bean.BeanUtil;
 import com.mybatisflex.core.paginate.Page;
 import com.mybatisflex.core.query.QueryChain;
-import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.core.row.DbChain;
-import com.mybatisflex.core.row.Row;
 import com.mybatisflex.core.update.UpdateChain;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dows.rade.constant.IdentifierType;
 import org.dows.rade.status.CommonStatusCode;
 import org.dows.uim.constant.AccountType;
 import org.dows.uim.constant.CommonDelEnum;
-import org.dows.uim.entity.*;
+import org.dows.uim.entity.AccountInstanceEntity;
+import org.dows.uim.entity.AccountTypeEntity;
+import org.dows.uim.entity.OrgRegisterEntity;
 import org.dows.uim.exception.UimException;
-import org.dows.uim.request.AccountInstanceRequest;
-import org.dows.uim.request.AddOrgAccountRequest;
 import org.dows.uim.request.HrAccountInstanceRequest;
 import org.dows.uim.response.HrAccountInstanceResponse;
-import org.dows.uim.service.*;
+import org.dows.uim.service.AccountInstanceService;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -47,19 +42,26 @@ public class HrAccountHandler {
 //                .on(AccountInstanceEntity::getAccountInstanceId, AccountIdentifierEntity::getAccountInstanceId)
                 .innerJoin(AccountTypeEntity.class)
                 .on(AccountInstanceEntity::getAccountInstanceId, AccountTypeEntity::getAccountInstanceId)
-                .innerJoin(OrgNodeEntity.class)
-                .on(OrgNodeEntity::getAccountInstanceId, AccountInstanceEntity::getAccountInstanceId)
+                .innerJoin(OrgRegisterEntity.class)
+//                .innerJoin(OrgNodeEntity.class)
+                .on(OrgRegisterEntity::getAccountInstanceId, AccountInstanceEntity::getAccountInstanceId)
+//                .on(OrgNodeEntity::getAccountInstanceId, AccountInstanceEntity::getAccountInstanceId)
                 //todo 后期需要打开
 //                .innerJoin(OrgTreeEntity.class)
 //                .on(OrgTreeEntity::getId, OrgNodeEntity::getOrgTreeId)
-                .select(OrgTreeEntity::getOrgName)
-                .isNotNull(OrgNodeEntity::getOrgTreeId)
+//                .select(OrgTreeEntity::getOrgName)
+//                .isNotNull(OrgNodeEntity::getOrgTreeId)
+                .select(OrgRegisterEntity::getOrgName)
+                .isNotNull(OrgRegisterEntity::getOrgRootId)
                 .eq(AccountTypeEntity::getAccountType,AccountType.ORG_RECRUIT_ACCOUNT.getValue())
                 .eq(AccountInstanceEntity::getAppId,request.getAppId(), Objects.nonNull(request.getAppId()))
-                .eq(OrgNodeEntity::getOrgRootId,request.getOrgRootId(), Objects.nonNull(request.getOrgRootId()))
+//                .eq(OrgNodeEntity::getOrgRootId,request.getOrgRootId(), Objects.nonNull(request.getOrgRootId()))
+                .eq(OrgRegisterEntity::getOrgRootId,request.getOrgRootId(), Objects.nonNull(request.getOrgRootId()))
                 .like(AccountInstanceEntity::getNickname,request.getNickname(), Objects.nonNull(request.getNickname()))
                 .like(AccountInstanceEntity::getTelephone,request.getTelephone(), Objects.nonNull(request.getTelephone()))
-                .like(OrgTreeEntity::getOrgName,request.getOrgName(), Objects.nonNull(request.getOrgName()))
+                .like(OrgRegisterEntity::getOrgName,request.getOrgName(), Objects.nonNull(request.getOrgName()))
+//                .like(OrgTreeEntity::getOrgName,request.getOrgName(), Objects.nonNull(request.getOrgName()))
+                .eq(OrgRegisterEntity::getDeleted, CommonDelEnum.NORMAL.getCode())
                 .eq(AccountInstanceEntity::getDeleted, CommonDelEnum.NORMAL.getCode())
                 .orderBy(AccountInstanceEntity::getTs, false)
                 .pageAs(page,HrAccountInstanceResponse.class);
