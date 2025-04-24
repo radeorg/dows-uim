@@ -25,7 +25,6 @@ import java.util.List;
 public class OrgApiRest implements OrgApi, OrgAccountApi, OrgEmailApi {
     private final OrgApiBiz orgApiBiz;
     private final AccountApiBiz accountApiBiz;
-    private final OrgEmailBiz emailBiz;
     private final OrgEmailBiz orgEmailBiz;
 
     @Operation(summary = "JD上架或下架")
