@@ -12,6 +12,7 @@ import jakarta.servlet.UnavailableException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.dows.rade.aac.AacContext;
 import org.dows.rade.constant.IdentifierType;
 import org.dows.rade.encrypt.EncryptApi;
 import org.dows.uim.constant.CommonDelEnum;
@@ -46,6 +47,7 @@ public class OrgApiBiz {
     private final AccountIdentifierService accountIdentifierService;
 
     private final EncryptApi encryptApi;
+    private final AacContext aacContext;
 
 //    private final PasswordEncoder passwordEncoder;
 
@@ -437,6 +439,7 @@ public class OrgApiBiz {
 
         boolean updateRec = UpdateChain.of(OrgJdEntity.class)
                 .set(OrgJdEntity::getDeleted, CommonDelEnum.DELETE.getCode())
+                .set(OrgJdEntity::getOperatorId, aacContext.getAacUser().getUserId())
                 .eq(OrgJdEntity::getOrgJdId, orgJdId).update();
 
         return updateRec;
@@ -446,6 +449,9 @@ public class OrgApiBiz {
     @Transactional
     public OrgJobJDResponse saveOrgJdInfo(OrgJdSaveRequest orgJdSaveRequest) throws UnavailableException {
         OrgJdEntity objEntity = new OrgJdEntity();
+
+        Long orgRootId = aacContext.getAacUser().getOrgRootId();
+        orgJdSaveRequest.setOrgRootId(orgRootId);
 
         if (Objects.isNull(orgJdSaveRequest.getOrgRootId())) {
             throw new UnavailableException("orgRootId 必填");
@@ -460,21 +466,25 @@ public class OrgApiBiz {
         objEntity1.setRuleName(orgJdSaveRequest.getJdName());
         objEntity1.setOrgTreeId(orgJdSaveRequest.getOrgTreeId());
         objEntity1.setAppId(orgJdSaveRequest.getAppId());
-        objEntity1.setOperatorId(orgJdSaveRequest.getOperatorId());
+        objEntity1.setOperatorId(aacContext.getAacUser().getUserId());
         objEntity1.setTs(new Date());
         OrgRuleResponse response = saveOrgRule(objEntity1);
 
         BeanUtils.copyProperties(orgJdSaveRequest, objEntity, OrgJdEntity.class);
         objEntity.setTs(new Date());
         objEntity.setOrgTreeId(orgJdSaveRequest.getOrgTreeId());
-        objEntity.setOwnerId(orgJdSaveRequest.getOrgJdRequirements().getHrAccountInstanceId());
+        if(Objects.isNull(orgJdSaveRequest.getOwnerId())) {
+            objEntity.setOwnerId(orgJdSaveRequest.getOrgJdRequirements().getHrAccountInstanceId());
+        }
         objEntity.setOrgRuleId(response.getOrgRuleId());
         objEntity.setDeleted(CommonDelEnum.NORMAL.getCode());
+        objEntity.setOperatorId(aacContext.getAacUser().getUserId());
         if (Objects.isNull(objEntity.getOrgJdId())) {
             //新增默认上架
             objEntity.setState(1);
         }
         objEntity.saveOrUpdate();
+        orgJdSaveRequest.setOrgRuleId(objEntity.getOrgRuleId());
         orgJdSaveRequest.setOrgJdId(objEntity.getOrgJdId());
 
         return (OrgJobJDResponse) orgJdSaveRequest;
@@ -483,6 +493,8 @@ public class OrgApiBiz {
     @Operation(summary = "获取JD列表")
     public OrgJdListResponse getJdList(OrgJdQueryRequest orgJdQueryRequest) throws UnavailableException {
         OrgJdListResponse response = new OrgJdListResponse();
+        Long orgRootId = aacContext.getAacUser().getOrgRootId();
+        orgJdQueryRequest.setOrgRootId(orgRootId);
 
         if (Objects.isNull(orgJdQueryRequest.getOrgRootId())) {
             throw new UnavailableException("orgRootId 必填");
@@ -525,6 +537,7 @@ public class OrgApiBiz {
         OrgRuleEntity objEntity = new OrgRuleEntity();
         BeanUtils.copyProperties(orgRuleSaveRequest, objEntity, OrgRuleEntity.class);
         objEntity.setTs(new Date());
+        objEntity.setOperatorId(aacContext.getAacUser().getUserId());
         objEntity.saveOrUpdate();
         orgRuleSaveRequest.setOrgRuleId(objEntity.getOrgRuleId());
 
@@ -538,6 +551,7 @@ public class OrgApiBiz {
         OrgActionEntity objEntity = new OrgActionEntity();
         BeanUtils.copyProperties(orgActionSaveRequest, objEntity, OrgActionEntity.class);
         objEntity.setTs(new Date());
+        objEntity.setOperatorId(aacContext.getAacUser().getUserId());
         objEntity.saveOrUpdate();
         orgActionSaveRequest.setOrgActionId(objEntity.getOrgActionId());
 
@@ -563,6 +577,7 @@ public class OrgApiBiz {
                 OrgIndicatorEntity objEntity = new OrgIndicatorEntity();
                 BeanUtils.copyProperties(itemEntity, objEntity, OrgIndicatorEntity.class);
                 objEntity.setTs(new Date());
+                objEntity.setOperatorId(aacContext.getAacUser().getUserId());
                 objEntity.saveOrUpdate();
                 itemEntity.setOrgIndicatorId(objEntity.getOrgIndicatorId());
                 OrgIndicatorResponse orgIndicatorResponse = new OrgIndicatorResponse();
