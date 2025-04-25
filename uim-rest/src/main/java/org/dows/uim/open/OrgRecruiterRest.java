@@ -66,7 +66,7 @@ public class OrgRecruiterRest {
      * 删除
      *
      */
-    @Operation(summary = "删除")
+    @Operation(summary = "招聘官删除")
     @PostMapping("/del")
     public Boolean del(@RequestBody @Validated AccountInstanceRequest accountInstanceRequest) {
         // todo 登录用户组织id
