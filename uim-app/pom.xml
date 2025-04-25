@@ -16,6 +16,10 @@
 
     <dependencies>
 
+        <dependency>
+            <groupId>org.dows.framework</groupId>
+            <artifactId>rade-core</artifactId>
+        </dependency>
 <!--        <dependency>-->
 <!--            <groupId>org.dows.cloud</groupId>-->
 <!--            <artifactId>hrm-feign</artifactId>-->

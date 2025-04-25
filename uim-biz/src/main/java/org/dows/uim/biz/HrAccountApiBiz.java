@@ -38,4 +38,7 @@ public class HrAccountApiBiz {
     public Page<HrAccountInstanceResponse> page(HrAccountInstanceRequest request) {
         return hrAccountHandler.page(request);
     }
+    public Boolean delete(Long accountInstanceId) {
+        return hrAccountHandler.delete(accountInstanceId);
+    }
 }

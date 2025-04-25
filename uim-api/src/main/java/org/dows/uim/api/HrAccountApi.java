@@ -1,7 +1,6 @@
 package org.dows.uim.api;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.dows.rade.constant.IdentifierType;
 import org.dows.uim.request.*;
 import org.dows.uim.response.*;
 import org.springframework.web.bind.annotation.GetMapping;
