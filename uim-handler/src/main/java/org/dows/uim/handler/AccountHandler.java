@@ -15,7 +15,7 @@ import org.dows.rade.encrypt.EncryptApi;
 import org.dows.uim.constant.AccountType;
 import org.dows.uim.entity.*;
 import org.dows.uim.request.AccountInstanceRequest;
-import org.dows.uim.request.AddOrgAccountRequest;
+import org.dows.uim.request.SaveOrgAccountRequest;
 import org.dows.uim.service.*;
 import org.springframework.stereotype.Component;
 
@@ -76,118 +76,156 @@ public class AccountHandler {
         return accountInstanceId;
     }*/
 
-    public void saveOrgAccount(AddOrgAccountRequest addOrgAccountRequest) {
-        // 检测手机账号标识是否存在
-        AccountIdentifierEntity one = accountIdentifierService.getOne(QueryWrapper.create()
-                .eq(AccountIdentifierEntity::getIdentifier, addOrgAccountRequest.getTelephone())
-                .eq(AccountIdentifierEntity::getIdentifierType, IdentifierType.PHONE.getType()));
+    public void saveOrgAccount(SaveOrgAccountRequest saveOrgAccountRequest) {
 
-        Long accountInstanceId;
-        AccountTypeEntity accountTypeEntity;
-        AccountInstanceEntity accountInstanceEntity;
-        String password = addOrgAccountRequest.getPassword();
-        String bCryptPassword = encryptApi.getBCryptPassword(StrUtil.isBlank(password) ? "" : password);
-        if (one != null) {
-            accountTypeEntity = AccountTypeEntity.builder()
-                    .accountInstanceId(one.getAccountInstanceId())
-                    .accountType(addOrgAccountRequest.getAccountType().getValue())
-                    .build();
-            accountInstanceId = one.getAccountInstanceId();
-            // todo 如果用户在小程序端已经注册账号，则直接更新账号类型，同时也更新账号信息，此处可以更新密码，使账号可以密码方式登录
-            accountInstanceEntity = new AccountInstanceEntity();
-            accountInstanceEntity.setAccountInstanceId(accountInstanceId);
-            accountInstanceEntity.setPassword(bCryptPassword);
-            // todo 如果变更手机号，需要重写一个接口
-//            accountInstanceEntity.setTelephone();
+        AccountInstanceEntity accountInstanceEntity = null;
+        if (saveOrgAccountRequest.getAccountInstanceId() != null) {
+            accountInstanceEntity = accountInstanceService.getById(saveOrgAccountRequest.getAccountInstanceId());
+        }
+        // 修改，修改逻辑包括昵称，密码，组织关系等
+        if (accountInstanceEntity != null) {
+            // 更新昵称
+            accountInstanceEntity.setNickname(saveOrgAccountRequest.getNickname());
+            // 更新密码
+            String password = saveOrgAccountRequest.getPassword();
+            if (!StrUtil.isBlank(password)) {
+                accountInstanceEntity.setPassword(encryptApi.getBCryptPassword(password));
+            }
+            // 更新组织关系
+            // 检查是否已经存在关联的组织
+            OrgNodeEntity dbOrgNode = orgNodeService.getOne(QueryWrapper.create()
+                    .eq(OrgNodeEntity::getAccountInstanceId, accountInstanceEntity.getAccountInstanceId())
+                    .eq(OrgNodeEntity::getOrgTreeId, saveOrgAccountRequest.getOrgTreeId())
+                    .eq(OrgNodeEntity::getOrgRootId, aacContext.getAacUser().getOrgRootId()));
+            if (dbOrgNode == null) {
+                // 如果不存在，则创建新的组织关联
+                OrgNodeEntity orgNodeEntity = OrgNodeEntity.builder()
+                        .orgTreeId(saveOrgAccountRequest.getOrgTreeId())
+                        .orgRootId(aacContext.getAacUser().getOrgRootId())
+                        .accountInstanceId(accountInstanceEntity.getAccountInstanceId())
+                        .build();
+                orgNodeService.save(orgNodeEntity);
+            } else {
+                // 如果存在，则更新现有的组织关联
+                dbOrgNode.setOrgTreeId(saveOrgAccountRequest.getOrgTreeId());
+                orgNodeService.updateById(dbOrgNode);
+            }
+            // 保存更新后的账号实例
             accountInstanceService.updateById(accountInstanceEntity);
-        } else {
-            accountInstanceEntity = new AccountInstanceEntity();
-            accountInstanceEntity.setNickname(addOrgAccountRequest.getAccountName());
-            accountInstanceEntity.setPassword(bCryptPassword);
-            accountInstanceEntity.setZoneNo(addOrgAccountRequest.getZoneNo());
-            accountInstanceEntity.setTelephone(addOrgAccountRequest.getTelephone());
+
+        } else { // 新增
+            // 检测手机账号标识是否存在
+            AccountIdentifierEntity one = accountIdentifierService.getOne(QueryWrapper.create()
+                    .eq(AccountIdentifierEntity::getIdentifier, saveOrgAccountRequest.getTelephone())
+                    .eq(AccountIdentifierEntity::getIdentifierType, IdentifierType.PHONE.getType()));
+
+            Long accountInstanceId;
+            AccountTypeEntity accountTypeEntity;
+
+            String password = saveOrgAccountRequest.getPassword();
+            String bCryptPassword = encryptApi.getBCryptPassword(StrUtil.isBlank(password) ? "" : password);
+            if (one != null) {
+                accountTypeEntity = AccountTypeEntity.builder()
+                        .accountInstanceId(one.getAccountInstanceId())
+                        .accountType(saveOrgAccountRequest.getAccountType().getValue())
+                        .build();
+                accountInstanceId = one.getAccountInstanceId();
+                // todo 如果用户在小程序端已经注册账号，则直接更新账号类型，同时也更新账号信息，此处可以更新密码，使账号可以密码方式登录
+                accountInstanceEntity = new AccountInstanceEntity();
+                accountInstanceEntity.setAccountInstanceId(accountInstanceId);
+                accountInstanceEntity.setPassword(bCryptPassword);
+                // todo 如果变更手机号，需要重写一个接口
+//            accountInstanceEntity.setTelephone();
+                accountInstanceService.updateById(accountInstanceEntity);
+            } else {
+                accountInstanceEntity = new AccountInstanceEntity();
+                accountInstanceEntity.setNickname(saveOrgAccountRequest.getNickname());
+                accountInstanceEntity.setPassword(bCryptPassword);
+                accountInstanceEntity.setZoneNo(saveOrgAccountRequest.getZoneNo());
+                accountInstanceEntity.setTelephone(saveOrgAccountRequest.getTelephone());
             /*accountInstanceEntity.setAvator("");
             accountInstanceEntity.setReferralsNo("");
             accountInstanceEntity.setSource("");
             accountInstanceEntity.setAppId("");
             accountInstanceEntity.setOperatorId(1L);*/
-            // 设置为超级账号
-            accountInstanceEntity.setSuperAccount(0);
-            accountInstanceService.save(accountInstanceEntity);
-            accountInstanceId = accountInstanceEntity.getAccountInstanceId();
-            AccountIdentifierEntity phoneIdentifier = AccountIdentifierEntity.builder()
-                    .accountInstanceId(accountInstanceId)
-                    .identifierType(IdentifierType.PHONE.getType())
-                    .identifier(addOrgAccountRequest.getTelephone())
-                    .build();
-
-            List<AccountIdentifierEntity> identifiers = List.of(phoneIdentifier);
-            if (!StrUtil.isBlank(addOrgAccountRequest.getEmail())) {
-                AccountIdentifierEntity emailIdentifier = AccountIdentifierEntity.builder()
+                // 设置为超级账号
+                accountInstanceEntity.setSuperAccount(0);
+                accountInstanceService.save(accountInstanceEntity);
+                accountInstanceId = accountInstanceEntity.getAccountInstanceId();
+                AccountIdentifierEntity phoneIdentifier = AccountIdentifierEntity.builder()
                         .accountInstanceId(accountInstanceId)
-                        .identifierType(IdentifierType.EMAIL.getType())
-                        .identifier(addOrgAccountRequest.getEmail())
+                        .identifierType(IdentifierType.PHONE.getType())
+                        .identifier(saveOrgAccountRequest.getTelephone())
                         .build();
-                identifiers.add(emailIdentifier);
+
+                List<AccountIdentifierEntity> identifiers = List.of(phoneIdentifier);
+                if (!StrUtil.isBlank(saveOrgAccountRequest.getEmail())) {
+                    AccountIdentifierEntity emailIdentifier = AccountIdentifierEntity.builder()
+                            .accountInstanceId(accountInstanceId)
+                            .identifierType(IdentifierType.EMAIL.getType())
+                            .identifier(saveOrgAccountRequest.getEmail())
+                            .build();
+                    identifiers.add(emailIdentifier);
+                }
+                // 批量保存账号标识
+                accountIdentifierService.saveBatch(identifiers);
+                // 账号类型
+                accountTypeEntity = AccountTypeEntity.builder()
+                        .accountInstanceId(accountInstanceEntity.getAccountInstanceId())
+                        .accountType(saveOrgAccountRequest.getAccountType().getValue())
+                        .build();
             }
-            // 批量保存账号标识
-            accountIdentifierService.saveBatch(identifiers);
-            // 账号类型
-            accountTypeEntity = AccountTypeEntity.builder()
-                    .accountInstanceId(accountInstanceEntity.getAccountInstanceId())
-                    .accountType(addOrgAccountRequest.getAccountType().getValue())
-                    .build();
-        }
-        AccountTypeEntity dbAccountType = accountTypeService.getOne(QueryWrapper.create()
-                .eq(AccountTypeEntity::getAccountInstanceId, accountInstanceId)
-                .eq(AccountTypeEntity::getAccountType, addOrgAccountRequest.getAccountType().getValue()));
-        // 如果为空时，保存账号 类型
-        if (dbAccountType == null) {
-            accountTypeService.save(accountTypeEntity);
-        }
-        // 关联组织
-        // todo 处理组织
-        OrgTreeEntity dbOrgTree = orgTreeService.getOne(QueryWrapper.create()
-                .eq(OrgTreeEntity::getOrgName, addOrgAccountRequest.getOrgName())
-                .eq(OrgTreeEntity::getAppId, addOrgAccountRequest.getAppId()));
-        Long orgTreeId = addOrgAccountRequest.getOrgTreeId();
-        Long orgRootId = aacContext.getAacUser().getOrgRootId();
+            AccountTypeEntity dbAccountType = accountTypeService.getOne(QueryWrapper.create()
+                    .eq(AccountTypeEntity::getAccountInstanceId, accountInstanceId)
+                    .eq(AccountTypeEntity::getAccountType, saveOrgAccountRequest.getAccountType().getValue()));
+            // 如果为空时，保存账号 类型
+            if (dbAccountType == null) {
+                accountTypeService.save(accountTypeEntity);
+            }
+            // 关联组织
+            // todo 处理组织
+            OrgTreeEntity dbOrgTree = orgTreeService.getOne(QueryWrapper.create()
+                    .eq(OrgTreeEntity::getOrgName, saveOrgAccountRequest.getOrgName())
+                    .eq(OrgTreeEntity::getAppId, saveOrgAccountRequest.getAppId()));
+            Long orgTreeId = saveOrgAccountRequest.getOrgTreeId();
+            Long orgRootId = aacContext.getAacUser().getOrgRootId();
 
 
-        //OrgTreeEntity childOrgTreeEntity
-        if (dbOrgTree == null) {
-            dbOrgTree = new OrgTreeEntity();
-            dbOrgTree.setPid(Objects.nonNull(orgTreeId) ? orgTreeId : orgRootId);
-            dbOrgTree.setOrgName(addOrgAccountRequest.getOrgName());
-            orgTreeService.save(dbOrgTree);
-        }
+            //OrgTreeEntity childOrgTreeEntity
+            if (dbOrgTree == null) {
+                dbOrgTree = new OrgTreeEntity();
+                dbOrgTree.setPid(Objects.nonNull(orgTreeId) ? orgTreeId : orgRootId);
+                dbOrgTree.setOrgName(saveOrgAccountRequest.getOrgName());
+                orgTreeService.save(dbOrgTree);
+            }
 
-        // 如果已经绑定，不再绑定
-        OrgNodeEntity dbOrgNode = orgNodeService.getOne(QueryWrapper.create()
-                .eq(OrgNodeEntity::getAccountInstanceId, accountInstanceId)
-                .eq(OrgNodeEntity::getOrgTreeId, orgTreeId)
-                .eq(OrgNodeEntity::getOrgRootId, orgRootId));
-        if (dbOrgNode == null) {
-            OrgNodeEntity orgNodeEntity = OrgNodeEntity.builder()
-                    .orgTreeId(dbOrgTree.getOrgTreeId())
-                    .orgRootId(orgRootId)
-                    .accountInstanceId(accountInstanceId)
-                    .build();
-            orgNodeService.save(orgNodeEntity);
+            // 如果已经绑定，不再绑定
+            OrgNodeEntity dbOrgNode = orgNodeService.getOne(QueryWrapper.create()
+                    .eq(OrgNodeEntity::getAccountInstanceId, accountInstanceId)
+                    .eq(OrgNodeEntity::getOrgTreeId, orgTreeId)
+                    .eq(OrgNodeEntity::getOrgRootId, orgRootId));
+            if (dbOrgNode == null) {
+                OrgNodeEntity orgNodeEntity = OrgNodeEntity.builder()
+                        .orgTreeId(dbOrgTree.getOrgTreeId())
+                        .orgRootId(orgRootId)
+                        .accountInstanceId(accountInstanceId)
+                        .build();
+                orgNodeService.save(orgNodeEntity);
+            }
         }
     }
 
-    public void saveOrgAccount(List<AddOrgAccountRequest> addOrgAccountRequests) {
+    public void saveOrgAccount(List<SaveOrgAccountRequest> saveOrgAccountRequests) {
         // 构建账号集合并批量保存账号实例
         // 构建标识集合并批量保存账号标识
         // 保存账号 类型
 
-        List<String> telephones = addOrgAccountRequests.stream().map(AddOrgAccountRequest::getTelephone).toList();
+        List<String> telephones = saveOrgAccountRequests.stream().map(SaveOrgAccountRequest::getTelephone).toList();
         List<AccountIdentifierEntity> list = accountIdentifierService.list(QueryWrapper.create()
                 .in(AccountIdentifierEntity::getIdentifier, telephones)
                 .eq(AccountIdentifierEntity::getIdentifierType, IdentifierType.PHONE.getType()));
 
-        List<AddOrgAccountRequest> newAddOrgAccounts = new ArrayList<>();
+        List<SaveOrgAccountRequest> newAddOrgAccounts = new ArrayList<>();
         if (list != null) {
             Map<Long, String> collect = list.stream().collect(Collectors
                     .toMap(AccountIdentifierEntity::getAccountInstanceId, AccountIdentifierEntity::getIdentifier));
@@ -200,17 +238,17 @@ public class AccountHandler {
             }
             accountTypeService.saveOrUpdateBatch(accountTypeEntities);
             Collection<String> telephoneSet = collect.values();
-            newAddOrgAccounts = addOrgAccountRequests.stream()
+            newAddOrgAccounts = saveOrgAccountRequests.stream()
                     .filter(oa -> !telephoneSet.contains(oa.getTelephone())).toList();
         }
 
         List<AccountInstanceEntity> accountInstanceEntities = new ArrayList<>();
-        newAddOrgAccounts.forEach(addOrgAccountRequest -> {
+        newAddOrgAccounts.forEach(saveOrgAccountRequest -> {
             AccountInstanceEntity accountInstanceEntity = new AccountInstanceEntity();
-            accountInstanceEntity.setNickname(addOrgAccountRequest.getAccountName());
-            accountInstanceEntity.setPassword(encryptApi.getBCryptPassword(addOrgAccountRequest.getPassword()));
-            accountInstanceEntity.setZoneNo(addOrgAccountRequest.getZoneNo());
-            accountInstanceEntity.setTelephone(addOrgAccountRequest.getTelephone());
+            accountInstanceEntity.setNickname(saveOrgAccountRequest.getNickname());
+            accountInstanceEntity.setPassword(encryptApi.getBCryptPassword(saveOrgAccountRequest.getPassword()));
+            accountInstanceEntity.setZoneNo(saveOrgAccountRequest.getZoneNo());
+            accountInstanceEntity.setTelephone(saveOrgAccountRequest.getTelephone());
             /*accountInstanceEntity.setAvator("");
             accountInstanceEntity.setReferralsNo("");
             accountInstanceEntity.setSource("");
@@ -243,14 +281,14 @@ public class AccountHandler {
 
         // 保存组织信息
         // 保存组织成员信息
-        List<String> orgNames = addOrgAccountRequests.stream().map(AddOrgAccountRequest::getOrgName).toList();
+        List<String> orgNames = saveOrgAccountRequests.stream().map(SaveOrgAccountRequest::getOrgName).toList();
         // todo 处理组织
         List<OrgTreeEntity> orgNameExits = orgTreeService.list(QueryWrapper.create()
                 .in(OrgTreeEntity::getOrgName, orgNames)
-                .eq(OrgTreeEntity::getAppId, addOrgAccountRequests.get(0).getAppId()));
+                .eq(OrgTreeEntity::getAppId, saveOrgAccountRequests.get(0).getAppId()));
         if (CollectionUtil.isNotEmpty(orgNameExits)) {
             Set<String> collect = orgNameExits.stream().map(OrgTreeEntity::getOrgName).collect(Collectors.toSet());
-            List<AddOrgAccountRequest> addOrgAccountRequestList = addOrgAccountRequests.stream()
+            List<SaveOrgAccountRequest> saveOrgAccountRequestList = saveOrgAccountRequests.stream()
                     .filter(on -> !collect.contains(on.getOrgName()))
                     .toList();
 
@@ -261,13 +299,13 @@ public class AccountHandler {
             Long orgRootId = aacContext.getAacUser().getOrgRootId();
             List<OrgTreeEntity> orgTreeEntities = new ArrayList<>();
             List<OrgNodeEntity> orgNodeEntities = new ArrayList<>();
-            for (int i = 0; i < addOrgAccountRequestList.size(); i++) {
+            for (int i = 0; i < saveOrgAccountRequestList.size(); i++) {
                 OrgTreeEntity childOrgTreeEntity = new OrgTreeEntity();
-                Long orgTreeId = addOrgAccountRequestList.get(i).getOrgTreeId();
+                Long orgTreeId = saveOrgAccountRequestList.get(i).getOrgTreeId();
                 childOrgTreeEntity.setPid(Objects.nonNull(orgTreeId) ? orgTreeId : orgRootId);
                 Long newOrgTreeId = Long.valueOf(iKeyGenerator.generate(null, null).toString());
                 childOrgTreeEntity.setOrgTreeId(newOrgTreeId);
-                childOrgTreeEntity.setOrgName(addOrgAccountRequestList.get(i).getOrgName());
+                childOrgTreeEntity.setOrgName(saveOrgAccountRequestList.get(i).getOrgName());
                 orgTreeEntities.add(childOrgTreeEntity);
 
                 OrgNodeEntity orgNodeEntity = new OrgNodeEntity();
