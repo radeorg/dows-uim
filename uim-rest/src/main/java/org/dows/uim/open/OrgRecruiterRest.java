@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.dows.uim.biz.HrAccountApiBiz;
 import org.dows.uim.biz.InterviewBiz;
+import org.dows.uim.request.AccountInstanceRequest;
 import org.dows.uim.request.HrAccountInstanceRequest;
 import org.dows.uim.response.HrAccountInstanceResponse;
 import org.springframework.validation.annotation.Validated;
@@ -61,17 +62,17 @@ public class OrgRecruiterRest {
 //        return orgJdBiz.getJdInfo(orgRootId, orgJdId);
 //    }
 //
-//    /**
-//     * 删除
-//     *
-//     */
-//    @Operation(summary = "删除")
-//    @PostMapping("/del")
-//    public void del(@RequestBody @Validated AdminJdEditFO reqFo) {
-//        // todo 登录用户组织id
-//        Long orgRootId = null;
-//        orgJdBiz.jdDel(orgRootId, reqFo);
-//    }
+    /**
+     * 删除
+     *
+     */
+    @Operation(summary = "招聘官删除")
+    @PostMapping("/del")
+    public Boolean del(@RequestBody @Validated AccountInstanceRequest accountInstanceRequest) {
+        // todo 登录用户组织id
+        Long orgRootId = null;
+        return hrAccountApiBiz.delete(accountInstanceRequest.getAccountInstanceId());
+    }
 
 
 }
