@@ -1,5 +1,6 @@
 package org.dows.uim.api;
 
+import com.mybatisflex.core.paginate.Page;
 import jakarta.servlet.UnavailableException;
 import org.dows.uim.request.*;
 import org.dows.uim.response.*;
@@ -44,6 +45,11 @@ public interface OrgApi {
 
     @GetMapping("/v1/uim/org/jd/list")
     default OrgJdListResponse getJdList(OrgJdQueryRequest orgJdQueryRequest) throws UnavailableException {
+        throw new UnsupportedOperationException("not class implement");
+    }
+
+    @GetMapping("/v1/uim/org/jd/page")
+    default Page<OrgJobJDDetailResponse> getJdPage(OrgJdPageQueryRequest orgJdQueryRequest) throws UnavailableException{
         throw new UnsupportedOperationException("not class implement");
     }
 

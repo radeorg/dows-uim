@@ -4,8 +4,10 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
+import com.mybatisflex.core.paginate.Page;
 import com.mybatisflex.core.query.QueryChain;
 import com.mybatisflex.core.query.QueryWrapper;
+import com.mybatisflex.core.row.DbChain;
 import com.mybatisflex.core.update.UpdateChain;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.UnavailableException;
@@ -489,6 +491,84 @@ public class OrgApiBiz {
 
         return (OrgJobJDResponse) orgJdSaveRequest;
     }
+
+    @Operation(summary = "获取JD分页列表")
+    public Page<OrgJobJDDetailResponse>  getJdPage(OrgJdPageQueryRequest orgJdQueryRequest) throws UnavailableException {
+        OrgJdPageResponse response = new OrgJdPageResponse();
+        Long orgRootId = aacContext.getAacUser().getOrgRootId();
+        orgJdQueryRequest.setOrgRootId(orgRootId);
+
+        if (Objects.isNull(orgJdQueryRequest.getOrgRootId())) {
+            throw new UnavailableException("orgRootId 必填");
+        }
+
+        // 创建分页对象
+        Page<OrgJobJDDetailResponse> page = new Page<>(
+                Long.valueOf(orgJdQueryRequest.getPageNum()),
+                Long.valueOf(orgJdQueryRequest.getPageSize())
+        );
+
+        Page<OrgJobJDDetailResponse> orgJdEntityList = QueryChain.of(OrgJdEntity.class)
+                .eq(OrgJdEntity::getOrgRootId, orgJdQueryRequest.getOrgRootId(), Objects.nonNull(orgJdQueryRequest.getOrgRootId()))
+                .eq(OrgJdEntity::getOrgTreeId, orgJdQueryRequest.getOrgTreeId(), Objects.nonNull(orgJdQueryRequest.getOrgTreeId()))
+                .eq(OrgJdEntity::getOrgJdId, orgJdQueryRequest.getOrgJdId(), Objects.nonNull(orgJdQueryRequest.getOrgJdId()))
+                .like(OrgJdEntity::getJdName, orgJdQueryRequest.getJdName(), Objects.nonNull(orgJdQueryRequest.getJdName()))
+                .notIn(OrgJdEntity::getJdName, "##")
+                .eq(OrgJdEntity::getDeleted, CommonDelEnum.NORMAL.getCode())
+                .orderBy(OrgJdEntity::getUt, false)
+                .pageAs(page, OrgJobJDDetailResponse.class);
+
+        for (OrgJobJDDetailResponse item : orgJdEntityList.getRecords()) {
+            OrgJobJDDetailResponse jdDetailResponse = new OrgJobJDDetailResponse();
+            BeanUtils.copyProperties(item, jdDetailResponse);
+            OrgRuleEntity orgRuleEntity = QueryChain.of(OrgRuleEntity.class)
+                    .eq(OrgRuleEntity::getOrgRuleId, item.getOrgRuleId(), Objects.nonNull(item.getOrgRuleId())).limit(1).one();
+            OrgJdRequirements orgJdRequirements = new OrgJdRequirements();
+            if(Objects.nonNull(orgRuleEntity) && Objects.nonNull(orgRuleEntity.getRuleDescription())){
+                try {
+                    orgJdRequirements =
+                            JSONObject.parseObject(orgRuleEntity.getRuleDescription(), OrgJdRequirements.class);
+                } catch (Exception e) {
+                }
+            }
+            if(Objects.isNull(orgJdRequirements)){
+                orgJdRequirements = new OrgJdRequirements();
+            }
+            item.setOrgJdRequirements(orgJdRequirements);
+
+            OrgJdRelatedCountResponse orgJdRelatedCountResponse = new OrgJdRelatedCountResponse();
+            List<OrgJdRelatedCountResponse> resumeCountList1 = DbChain.table("resume_instance").select("org_jd_id as orgJdId",
+                            "count(1) as resumeCount ")
+                    .eq("org_jd_id", item.getOrgJdId()).groupBy("org_jd_id").listAs(OrgJdRelatedCountResponse.class);
+            if(Objects.nonNull(resumeCountList1) && resumeCountList1.size() > 0){
+                orgJdRelatedCountResponse.setResumeCount(resumeCountList1.get(0).getResumeCount());
+            }
+
+            List<OrgJdRelatedCountResponse> resumeCountList2 = DbChain.table("resume_instance").select("org_jd_id as orgJdId",
+                            "count(1) as interviewedCount ")
+                    .eq("org_jd_id", item.getOrgJdId())
+                    .isNotNull("interview_invite_id").groupBy("org_jd_id").listAs(OrgJdRelatedCountResponse.class);
+            if(Objects.nonNull(resumeCountList2) && resumeCountList2.size() > 0){
+                orgJdRelatedCountResponse.setInterviewedCount(resumeCountList2.get(0).getInterviewedCount());
+            }
+
+            List<OrgJdRelatedCountResponse> resumeCountList3 = DbChain.table("resume_instance").select("org_jd_id as orgJdId",
+                            "count(1) as matchCount ")
+                    .eq("org_jd_id", item.getOrgJdId())
+                    .between("match_percent", 70, 100).groupBy("org_jd_id").listAs(OrgJdRelatedCountResponse.class);
+
+            if(Objects.nonNull(resumeCountList3) && resumeCountList3.size() > 0){
+                orgJdRelatedCountResponse.setMatchCount(resumeCountList3.get(0).getMatchCount());
+            }
+            item.setOrgJdRelatedCountResponse(orgJdRelatedCountResponse);
+
+        }
+
+        response.setJdList(orgJdEntityList);
+
+        return orgJdEntityList;
+    }
+
 
     @Operation(summary = "获取JD列表")
     public OrgJdListResponse getJdList(OrgJdQueryRequest orgJdQueryRequest) throws UnavailableException {

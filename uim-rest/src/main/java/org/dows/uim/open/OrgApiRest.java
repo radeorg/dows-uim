@@ -1,5 +1,6 @@
 package org.dows.uim.open;
 
+import com.mybatisflex.core.paginate.Page;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.UnavailableException;
@@ -50,6 +51,11 @@ public class OrgApiRest implements OrgApi, OrgAccountApi, OrgEmailApi {
     @Operation(summary = "删除JD信息")
     public Boolean deleteJd(@RequestParam Long orgJdId) throws UnavailableException {
         return orgApiBiz.deleteJd(orgJdId);
+    }
+
+    @Operation(summary = "获取JD分页列表")
+    public Page<OrgJobJDDetailResponse> getJdPage(OrgJdPageQueryRequest orgJdQueryRequest) throws UnavailableException{
+        return orgApiBiz.getJdPage(orgJdQueryRequest);
     }
 
     @Operation(summary = "获取JD列表")

@@ -15,4 +15,7 @@ import org.dows.uim.request.OrgJdRequirements;
 public class OrgJobJDDetailResponse extends OrgJobJDResponse{
     @Schema(description = "岗位要求")
     private OrgJdRequirements orgJdRequirements;
+
+    @Schema(description = "Jd统计数据")
+    private OrgJdRelatedCountResponse orgJdRelatedCountResponse;
 }
