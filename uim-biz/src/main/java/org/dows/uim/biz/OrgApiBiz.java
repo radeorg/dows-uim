@@ -489,7 +489,7 @@ public class OrgApiBiz {
         orgJdSaveRequest.setOrgRuleId(objEntity.getOrgRuleId());
         orgJdSaveRequest.setOrgJdId(objEntity.getOrgJdId());
 
-        return (OrgJobJDResponse) orgJdSaveRequest;
+        return BeanUtil.copyProperties(orgJdSaveRequest, OrgJobJDResponse.class);
     }
 
     @Operation(summary = "获取JD分页列表")
