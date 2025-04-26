@@ -141,9 +141,10 @@ public class AccountApiBiz {
             log.debug("accountInstanceId is null");
             return null;
         }
-        AccountInstanceEntity accountInstanceEntity = QueryChain.of(AccountInstanceEntity.class)
+        /*AccountInstanceEntity accountInstanceEntity = QueryChain.of(AccountInstanceEntity.class)
                 .eq(AccountInstanceEntity::getAccountInstanceId, accountInstanceId)
-                .eq(AccountInstanceEntity::getAppId, appId, Objects.nonNull(appId)).one();
+                .eq(AccountInstanceEntity::getAppId, appId, Objects.nonNull(appId)).one();*/
+        AccountInstanceEntity accountInstanceEntity = accountInstanceService.getById(accountInstanceId);
         if (Objects.isNull(accountInstanceEntity)) {
             return null;
         }

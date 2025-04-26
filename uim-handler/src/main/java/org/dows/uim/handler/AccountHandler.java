@@ -111,7 +111,7 @@ public class AccountHandler {
                 orgNodeService.updateById(dbOrgNode);
             }
             // 保存更新后的账号实例
-            accountInstanceService.updateById(accountInstanceEntity);
+            accountInstanceService.updateById(accountInstanceEntity,true);
 
         } else { // 新增
             // 检测手机账号标识是否存在
