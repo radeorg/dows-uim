@@ -115,8 +115,8 @@ public class OrgApiRest implements OrgApi, OrgAccountApi, OrgEmailApi {
     }
 
     @Override
-    public OrgEmailResponse getEmailInfo(){
-        return orgEmailBiz.getOrgEmailInfo();
+    public OrgEmailResponse getEmailInfo(Long rootId){
+        return orgEmailBiz.getOrgEmailInfo(rootId);
     }
 
 }

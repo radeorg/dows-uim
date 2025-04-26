@@ -26,10 +26,8 @@ public class OrgEmailBiz {
     private final AacContext aacContext;
     private final OrgEmailService emailService;
 
-    public OrgEmailResponse getOrgEmailInfo(){
+    public OrgEmailResponse getOrgEmailInfo(Long rootId){
 
-        AacUser aacUser = aacContext.getAacUser();
-        Long rootId = aacUser.getOrgRootId();
         OrgEmailEntity emailEntity = emailService.getOne(QueryWrapper.create()
                 .eq(OrgEmailEntity::getOrgRootId,rootId)
                 .eq(OrgEmailEntity::getDeleted,0)
