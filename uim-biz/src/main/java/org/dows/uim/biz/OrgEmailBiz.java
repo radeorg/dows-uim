@@ -26,10 +26,10 @@ public class OrgEmailBiz {
     private final AacContext aacContext;
     private final OrgEmailService emailService;
 
-    public OrgEmailResponse getOrgEmailInfo(Long rootId){
+    public OrgEmailResponse getOrgEmailInfo(Long treeId){
 
         OrgEmailEntity emailEntity = emailService.getOne(QueryWrapper.create()
-                .eq(OrgEmailEntity::getOrgRootId,rootId)
+                .eq(OrgEmailEntity::getOrgTreeId,treeId)
                 .eq(OrgEmailEntity::getDeleted,0)
         );
         return BeanUtil.toBean(emailEntity, OrgEmailResponse.class);
