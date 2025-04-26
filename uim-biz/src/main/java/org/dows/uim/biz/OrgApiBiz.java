@@ -224,8 +224,10 @@ public class OrgApiBiz {
         // todo 设置密码 需要加密
         accountInstanceEntity.setPassword(encryptApi.getBCryptPassword(orgRegisterRequest.getPassword()));
         // 超级账号
+        accountInstanceEntity.setNickname(orgRegisterRequest.getContacts());
         accountInstanceEntity.setSuperAccount(1);
         accountInstanceService.save(accountInstanceEntity);
+
 
         List<AccountIdentifierEntity> accountIdentifierEntities = new ArrayList<>();
         // create account identifier for phone
