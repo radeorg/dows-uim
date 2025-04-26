@@ -30,6 +30,11 @@ public class MockAacContext implements AacContext {
                     }
 
                     @Override
+                    public Long getOrgTreeId() {
+                        return 0L;
+                    }
+
+                    @Override
                     public List<Long> getRoleIds() {
                         return List.of();
                     }
