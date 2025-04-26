@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.rade.aac.AacContext;
 import org.dows.rade.status.CommonStatusCode;
+import org.dows.uim.constant.AccountType;
 import org.dows.uim.constant.CommonDelEnum;
 import org.dows.uim.entity.*;
 import org.dows.uim.exception.UimException;
@@ -47,9 +48,13 @@ public class HrAccountHandler {
                 .eq(OrgNodeEntity::getDeleted, CommonDelEnum.NORMAL.getCode())
                 .innerJoin(OrgTreeEntity.class)
                 .on(OrgTreeEntity::getOrgTreeId, OrgNodeEntity::getOrgTreeId)
+                .innerJoin(AccountTypeEntity.class)
+                .on(AccountInstanceEntity::getAccountInstanceId, AccountTypeEntity::getAccountInstanceId)
                 .eq(OrgTreeEntity::getDeleted, CommonDelEnum.NORMAL.getCode())
                 .select(OrgTreeEntity::getOrgName)
+                .eq(AccountInstanceEntity::getAppId, AccountType.ORG_RECRUIT_ACCOUNT.getValue())
                 .eq(AccountInstanceEntity::getAppId,request.getAppId(), Objects.nonNull(request.getAppId()))
+                .eq(OrgNodeEntity::getOrgRootId,request.getOrgRootId(), Objects.nonNull(request.getOrgRootId()))
                 .eq(OrgNodeEntity::getOrgRootId,request.getOrgRootId(), Objects.nonNull(request.getOrgRootId()))
                 .like(AccountInstanceEntity::getNickname,request.getNickname(), Objects.nonNull(request.getNickname()))
                 .like(AccountInstanceEntity::getTelephone,request.getTelephone(), Objects.nonNull(request.getTelephone()))
