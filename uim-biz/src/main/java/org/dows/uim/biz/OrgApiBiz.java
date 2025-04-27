@@ -385,7 +385,8 @@ public class OrgApiBiz {
                     return null;
                 }
                 // 查询注册信息
-                OrgRegisterEntity orgRegisterEntity = orgRegisterService.getById(orgEmailEntity.getOrgTreeId());
+                OrgRegisterEntity orgRegisterEntity = orgRegisterService.getOne(QueryWrapper.create()
+                        .eq(OrgRegisterEntity::getOrgRootId, orgEmailEntity.getOrgTreeId()));
                 return BeanUtil.copyProperties(orgRegisterEntity, OrgRegisterResponse.class);
             } else if (filters.contains("telephone")) {
                 log.info("通过手机号查询企业信息");
