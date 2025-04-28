@@ -703,7 +703,7 @@ public class OrgApiBiz {
         }
         Map<Long, OrgRegisterEntity> orgRegisterEntityMap = QueryChain.of(OrgRegisterEntity.class)
                 .in(OrgRegisterEntity::getOrgRootId, jdEntities.stream().map(OrgJdEntity::getOrgRootId).collect(Collectors.toSet()))
-                .list().stream().collect(Collectors.toMap(OrgRegisterEntity::getOrgRegisterId, Function.identity(), (l, r) -> l));
+                .list().stream().collect(Collectors.toMap(OrgRegisterEntity::getOrgRootId, Function.identity(), (l, r) -> l));
         return jdEntities.stream().map(record -> {
             OrgJdOrgRegisterInfoListResponse jdAndOrgDetailListResponse = new OrgJdOrgRegisterInfoListResponse();
             BeanUtils.copyProperties(record, jdAndOrgDetailListResponse);
