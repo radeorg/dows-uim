@@ -25,6 +25,9 @@ public class OrgRegisterResponse {
     @Schema(description = "账号实例ID")
     private Long accountInstanceId;
 
+    @Schema(description = "组织名")
+    private String orgName;
+
     /**
      * 社会统一信用代码
      */
