@@ -16,10 +16,10 @@ public class OrgRegisterRequest {
     private Long orgRegisterId;
 
     /**
-     * 组织树ID
+     * 组织树RootID
      */
-    @Schema(description = "组织树ID")
-    private Long orgTreeId;
+    @Schema(description = "组织树RootID")
+    private Long orgRootId;
 
 //    /**
 //     * 操作者ID

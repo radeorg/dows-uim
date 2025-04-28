@@ -398,6 +398,7 @@ public class OrgApiBiz {
                     .eq(OrgRegisterEntity::getTelephone, orgRegisterRequest.getTelephone(), Objects.nonNull(orgRegisterRequest.getTelephone()))
                     .eq(OrgRegisterEntity::getCreditNo, orgRegisterRequest.getCreditNo(), Objects.nonNull(orgRegisterRequest.getCreditNo()))
                     .eq(OrgRegisterEntity::getContacts, orgRegisterRequest.getContacts(), Objects.nonNull(orgRegisterRequest.getContacts()))
+                    .eq(OrgRegisterEntity::getOrgRootId, orgRegisterRequest.getOrgRootId(), Objects.nonNull(orgRegisterRequest.getOrgRootId()))
             );
             return BeanUtil.copyProperties(one, OrgRegisterResponse.class);
         }
