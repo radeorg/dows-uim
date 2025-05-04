@@ -133,6 +133,12 @@ public class OrgJdOrgRegisterInfoListResponse {
          */
         @Schema(description = "企业邮箱")
         private String email;
+
+        /**
+         * 联系电话
+         */
+        @Schema(description = "联系电话")
+        private String telephone;
     }
 
 }
