@@ -1,16 +1,28 @@
 package org.dows.uim.api;
 
 import com.mybatisflex.core.paginate.Page;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.UnavailableException;
 import org.dows.uim.request.*;
 import org.dows.uim.response.*;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 public interface OrgApi {
+    @GetMapping("/v1/open/uim/org/jd/get")
+    @Operation(summary = "通过岗位名称获取岗位信息")
+    default JobDescriptionResponse getJobDescriptionByJobName(@RequestParam String jobName){
+        throw new UnsupportedOperationException("not class implement");
+    }
+
+    @GetMapping("/v1/open/uim/org/jd/indictor/get")
+    @Operation(summary = "通过岗位名称获取岗位指标")
+    default JobIndicatorResponse getOrgIndicatorByJobName(@RequestParam String jobName){
+        throw new UnsupportedOperationException("not class implement");
+    }
+
+
 
     @GetMapping("/v1/uim/org/job/indicator/info")
     default JobIndicatorResponse getOrgIndicatorByJobName(Long orgRootId, String jobName) {
@@ -86,10 +98,10 @@ public interface OrgApi {
      * @param orgRegisterRequest
      * @return
      */
-    @GetMapping("v1/uim/org/register/info")
-    default OrgRegisterResponse getOrgInfo(OrgRegisterRequest orgRegisterRequest) {
+    @PostMapping("v1/uim/org/register/info")
+    OrgRegisterResponse getOrgInfo(@RequestBody OrgRegisterRequest orgRegisterRequest) ;/*{
         throw new UnsupportedOperationException("not class implement");
-    }
+    }*/
 
     default List<RootOrgResponse> getRootOrgListByAccountInstanceId(Long accountInstanceId){
         throw new UnsupportedOperationException("not class implement");
