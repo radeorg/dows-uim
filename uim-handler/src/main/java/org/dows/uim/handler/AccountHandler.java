@@ -76,7 +76,7 @@ public class AccountHandler {
         return accountInstanceId;
     }*/
 
-    public void saveOrgAccount(SaveOrgAccountRequest saveOrgAccountRequest) {
+    public void saveOrgAccount(SaveOrgAccountRequest saveOrgAccountRequest){
 
         AccountInstanceEntity accountInstanceEntity = null;
         if (saveOrgAccountRequest.getAccountInstanceId() != null) {
@@ -95,8 +95,8 @@ public class AccountHandler {
             // 检查是否已经存在关联的组织
             OrgNodeEntity dbOrgNode = orgNodeService.getOne(QueryWrapper.create()
                     .eq(OrgNodeEntity::getAccountInstanceId, accountInstanceEntity.getAccountInstanceId())
-                    .eq(OrgNodeEntity::getOrgTreeId, saveOrgAccountRequest.getOrgTreeId())
-                    .eq(OrgNodeEntity::getOrgRootId, aacContext.getAacUser().getOrgRootId()));
+                    .eq(OrgNodeEntity::getOrgTreeId, saveOrgAccountRequest.getOrgTreeId(), Objects.nonNull(saveOrgAccountRequest.getOrgTreeId()))
+                    .eq(OrgNodeEntity::getOrgRootId, aacContext.getAacUser().getOrgRootId(), Objects.nonNull(aacContext.getAacUser().getOrgRootId())));
             if (dbOrgNode == null) {
                 // 如果不存在，则创建新的组织关联
                 OrgNodeEntity orgNodeEntity = OrgNodeEntity.builder()
@@ -107,11 +107,25 @@ public class AccountHandler {
                 orgNodeService.save(orgNodeEntity);
             } else {
                 // 如果存在，则更新现有的组织关联
-                dbOrgNode.setOrgTreeId(saveOrgAccountRequest.getOrgTreeId());
+                if(Objects.nonNull(dbOrgNode.getOrgTreeId())) {
+                    dbOrgNode.setOrgTreeId(dbOrgNode.getOrgTreeId());
+                }else{
+                    dbOrgNode.setOrgTreeId(saveOrgAccountRequest.getOrgTreeId());
+                }
+                dbOrgNode.setAliasName(saveOrgAccountRequest.getOrgName());
+                dbOrgNode.setUt(new Date());
                 orgNodeService.updateById(dbOrgNode);
             }
             // 保存更新后的账号实例
             accountInstanceService.updateById(accountInstanceEntity,true);
+
+            if(Objects.nonNull(dbOrgNode.getOrgTreeId())){
+                OrgTreeEntity dbOrgTree = orgTreeService.getOne(QueryWrapper.create()
+                        .eq(OrgTreeEntity::getOrgTreeId, dbOrgNode.getOrgTreeId()));
+                dbOrgTree.setOrgName(saveOrgAccountRequest.getOrgName());
+                dbOrgTree.setUt(new Date());
+                orgTreeService.saveOrUpdate(dbOrgTree);
+            }
 
         } else { // 新增
             // 检测手机账号标识是否存在
@@ -123,8 +137,20 @@ public class AccountHandler {
             AccountTypeEntity accountTypeEntity;
 
             String password = saveOrgAccountRequest.getPassword();
-            String bCryptPassword = encryptApi.getBCryptPassword(StrUtil.isBlank(password) ? "" : password);
+            String bCryptPassword = "";
+            if(Objects.nonNull(password)) {
+                bCryptPassword = encryptApi.getBCryptPassword(password);
+            }
             if (one != null) {
+                //判断在组织树是否存在，如存在提示重复
+                // 检查是否已经存在关联的组织
+                OrgNodeEntity dbOrgNode = orgNodeService.getOne(QueryWrapper.create()
+                        .eq(OrgNodeEntity::getAccountInstanceId, one.getAccountInstanceId())
+                        .eq(OrgNodeEntity::getOrgRootId, aacContext.getAacUser().getOrgRootId(), Objects.nonNull(aacContext.getAacUser().getOrgRootId())));
+                if (Objects.nonNull(dbOrgNode)) {
+                    throw new RuntimeException("该手机号已经存在，不能重复提交");
+                }
+
                 accountTypeEntity = AccountTypeEntity.builder()
                         .accountInstanceId(one.getAccountInstanceId())
                         .accountType(saveOrgAccountRequest.getAccountType().getValue())
@@ -188,6 +214,9 @@ public class AccountHandler {
                     .eq(OrgTreeEntity::getOrgName, saveOrgAccountRequest.getOrgName())
                     .eq(OrgTreeEntity::getAppId, saveOrgAccountRequest.getAppId()));
             Long orgTreeId = saveOrgAccountRequest.getOrgTreeId();
+            if(Objects.isNull(orgTreeId)){
+                orgTreeId = dbOrgTree.getOrgTreeId();
+            }
             Long orgRootId = aacContext.getAacUser().getOrgRootId();
 
 
@@ -210,6 +239,7 @@ public class AccountHandler {
                         .orgRootId(orgRootId)
                         .accountInstanceId(accountInstanceId)
                         .build();
+                orgNodeEntity.setAliasName(saveOrgAccountRequest.getOrgName());
                 orgNodeService.save(orgNodeEntity);
             }
         }
