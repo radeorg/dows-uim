@@ -512,15 +512,29 @@ public class OrgApiBiz {
                 Long.valueOf(orgJdQueryRequest.getPageSize())
         );
 
-        Page<OrgJobJDDetailResponse> orgJdEntityList = QueryChain.of(OrgJdEntity.class)
-                .eq(OrgJdEntity::getOrgRootId, orgJdQueryRequest.getOrgRootId(), Objects.nonNull(orgJdQueryRequest.getOrgRootId()))
-                .eq(OrgJdEntity::getOrgTreeId, orgJdQueryRequest.getOrgTreeId(), Objects.nonNull(orgJdQueryRequest.getOrgTreeId()))
-                .eq(OrgJdEntity::getOrgJdId, orgJdQueryRequest.getOrgJdId(), Objects.nonNull(orgJdQueryRequest.getOrgJdId()))
-                .like(OrgJdEntity::getJdName, orgJdQueryRequest.getJdName(), Objects.nonNull(orgJdQueryRequest.getJdName()))
-                .notIn(OrgJdEntity::getJdName, "##")
-                .eq(OrgJdEntity::getDeleted, CommonDelEnum.NORMAL.getCode())
-                .orderBy(OrgJdEntity::getUt, false)
-                .pageAs(page, OrgJobJDDetailResponse.class);
+        Page<OrgJobJDDetailResponse> orgJdEntityList = new Page<>();
+        if(Objects.nonNull(orgJdQueryRequest.getStartDate()) && Objects.nonNull(orgJdQueryRequest.getEndDate())) {
+            orgJdEntityList = QueryChain.of(OrgJdEntity.class)
+                    .eq(OrgJdEntity::getOrgRootId, orgJdQueryRequest.getOrgRootId(), Objects.nonNull(orgJdQueryRequest.getOrgRootId()))
+                    .eq(OrgJdEntity::getOrgTreeId, orgJdQueryRequest.getOrgTreeId(), Objects.nonNull(orgJdQueryRequest.getOrgTreeId()))
+                    .eq(OrgJdEntity::getOrgJdId, orgJdQueryRequest.getOrgJdId(), Objects.nonNull(orgJdQueryRequest.getOrgJdId()))
+                    .like(OrgJdEntity::getJdName, orgJdQueryRequest.getJdName(), Objects.nonNull(orgJdQueryRequest.getJdName()))
+                    .notIn(OrgJdEntity::getJdName, "##")
+                    .eq(OrgJdEntity::getDeleted, CommonDelEnum.NORMAL.getCode())
+                    .between(OrgJdEntity::getTs, orgJdQueryRequest.getStartDate(), orgJdQueryRequest.getEndDate())
+                    .orderBy(OrgJdEntity::getUt, false)
+                    .pageAs(page, OrgJobJDDetailResponse.class);
+        }else{
+            orgJdEntityList = QueryChain.of(OrgJdEntity.class)
+                    .eq(OrgJdEntity::getOrgRootId, orgJdQueryRequest.getOrgRootId(), Objects.nonNull(orgJdQueryRequest.getOrgRootId()))
+                    .eq(OrgJdEntity::getOrgTreeId, orgJdQueryRequest.getOrgTreeId(), Objects.nonNull(orgJdQueryRequest.getOrgTreeId()))
+                    .eq(OrgJdEntity::getOrgJdId, orgJdQueryRequest.getOrgJdId(), Objects.nonNull(orgJdQueryRequest.getOrgJdId()))
+                    .like(OrgJdEntity::getJdName, orgJdQueryRequest.getJdName(), Objects.nonNull(orgJdQueryRequest.getJdName()))
+                    .notIn(OrgJdEntity::getJdName, "##")
+                    .eq(OrgJdEntity::getDeleted, CommonDelEnum.NORMAL.getCode())
+                    .orderBy(OrgJdEntity::getUt, false)
+                    .pageAs(page, OrgJobJDDetailResponse.class);
+        }
 
         for (OrgJobJDDetailResponse item : orgJdEntityList.getRecords()) {
             OrgJobJDDetailResponse jdDetailResponse = new OrgJobJDDetailResponse();
@@ -585,13 +599,14 @@ public class OrgApiBiz {
         }
 
         List<OrgJdEntity> orgJdEntityList = QueryChain.of(OrgJdEntity.class)
-                .eq(OrgJdEntity::getOrgRootId, orgJdQueryRequest.getOrgRootId(), Objects.nonNull(orgJdQueryRequest.getOrgRootId()))
-                .eq(OrgJdEntity::getOrgTreeId, orgJdQueryRequest.getOrgTreeId(), Objects.nonNull(orgJdQueryRequest.getOrgTreeId()))
-                .eq(OrgJdEntity::getOrgJdId, orgJdQueryRequest.getOrgJdId(), Objects.nonNull(orgJdQueryRequest.getOrgJdId()))
-                .like(OrgJdEntity::getJdName, orgJdQueryRequest.getJdName(), Objects.nonNull(orgJdQueryRequest.getJdName()))
-                .eq(OrgJdEntity::getDeleted, CommonDelEnum.NORMAL.getCode())
-                .orderBy(OrgJdEntity::getUt, false)
-                .list();
+                    .eq(OrgJdEntity::getOrgRootId, orgJdQueryRequest.getOrgRootId(), Objects.nonNull(orgJdQueryRequest.getOrgRootId()))
+                    .eq(OrgJdEntity::getOrgTreeId, orgJdQueryRequest.getOrgTreeId(), Objects.nonNull(orgJdQueryRequest.getOrgTreeId()))
+                    .eq(OrgJdEntity::getOrgJdId, orgJdQueryRequest.getOrgJdId(), Objects.nonNull(orgJdQueryRequest.getOrgJdId()))
+                    .like(OrgJdEntity::getJdName, orgJdQueryRequest.getJdName(), Objects.nonNull(orgJdQueryRequest.getJdName()))
+                    .eq(OrgJdEntity::getDeleted, CommonDelEnum.NORMAL.getCode())
+                    .orderBy(OrgJdEntity::getUt, false)
+                    .list();
+
         List<OrgJobJDDetailResponse> jdList = new ArrayList<>();
 
         for (OrgJdEntity item : orgJdEntityList) {
