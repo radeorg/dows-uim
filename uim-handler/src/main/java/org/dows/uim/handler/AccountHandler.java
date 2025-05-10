@@ -76,7 +76,11 @@ public class AccountHandler {
         return accountInstanceId;
     }*/
 
-    public void saveOrgAccount(SaveOrgAccountRequest saveOrgAccountRequest){
+    /**
+     * 保存企业账号
+     * @param saveOrgAccountRequest
+     */
+    public void saveOrgAccount(SaveOrgAccountRequest saveOrgAccountRequest) {
 
         AccountInstanceEntity accountInstanceEntity = null;
         if (saveOrgAccountRequest.getAccountInstanceId() != null) {
@@ -154,6 +158,7 @@ public class AccountHandler {
                 accountTypeEntity = AccountTypeEntity.builder()
                         .accountInstanceId(one.getAccountInstanceId())
                         .accountType(saveOrgAccountRequest.getAccountType().getValue())
+                        .typeName(saveOrgAccountRequest.getAccountType().getName())
                         .build();
                 accountInstanceId = one.getAccountInstanceId();
                 // todo 如果用户在小程序端已经注册账号，则直接更新账号类型，同时也更新账号信息，此处可以更新密码，使账号可以密码方式登录
@@ -199,6 +204,7 @@ public class AccountHandler {
                 accountTypeEntity = AccountTypeEntity.builder()
                         .accountInstanceId(accountInstanceEntity.getAccountInstanceId())
                         .accountType(saveOrgAccountRequest.getAccountType().getValue())
+                        .typeName(saveOrgAccountRequest.getAccountType().getName())
                         .build();
             }
             AccountTypeEntity dbAccountType = accountTypeService.getOne(QueryWrapper.create()
