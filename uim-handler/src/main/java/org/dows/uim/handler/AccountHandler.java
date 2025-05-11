@@ -220,7 +220,7 @@ public class AccountHandler {
                     .eq(OrgTreeEntity::getOrgName, saveOrgAccountRequest.getOrgName())
                     .eq(OrgTreeEntity::getAppId, saveOrgAccountRequest.getAppId()));
             Long orgTreeId = saveOrgAccountRequest.getOrgTreeId();
-            if(Objects.isNull(orgTreeId)){
+            if(Objects.isNull(orgTreeId) && Objects.nonNull(dbOrgTree)){
                 orgTreeId = dbOrgTree.getOrgTreeId();
             }
             Long orgRootId = aacContext.getAacUser().getOrgRootId();
@@ -232,6 +232,7 @@ public class AccountHandler {
                 dbOrgTree.setPid(Objects.nonNull(orgTreeId) ? orgTreeId : orgRootId);
                 dbOrgTree.setOrgName(saveOrgAccountRequest.getOrgName());
                 orgTreeService.save(dbOrgTree);
+                orgTreeId = dbOrgTree.getOrgTreeId();
             }
 
             // 如果已经绑定，不再绑定
@@ -244,8 +245,8 @@ public class AccountHandler {
                         .orgTreeId(dbOrgTree.getOrgTreeId())
                         .orgRootId(orgRootId)
                         .accountInstanceId(accountInstanceId)
+                        .aliasName(saveOrgAccountRequest.getOrgName())
                         .build();
-                orgNodeEntity.setAliasName(saveOrgAccountRequest.getOrgName());
                 orgNodeService.save(orgNodeEntity);
             }
         }
