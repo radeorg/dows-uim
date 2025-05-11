@@ -97,11 +97,12 @@ public class OrgApiBiz {
         return response;
     }
 
-    public JobIndicatorResponse getOrgIndicatorByJobName(Long orgRootId, String jobName) {
+    public JobIndicatorResponse getOrgIndicatorByJobName(Long orgJdId,Long orgRootId, String jobName) {
         Long jdId = null;
         JobIndicatorResponse response = new JobIndicatorResponse();
         List<OrgJdEntity> orgJdEntities = QueryChain.of(OrgJdEntity.class)
                 .eq(OrgJdEntity::getOrgRootId, orgRootId, Objects.nonNull(orgRootId))
+                .eq(OrgJdEntity::getOrgJdId, orgJdId, Objects.nonNull(orgJdId))
                 .eq(OrgJdEntity::getDeleted, CommonDelEnum.NORMAL.getCode())
                 .like(OrgJdEntity::getJdName, jobName, Objects.nonNull(jobName)).list();
         if (Objects.nonNull(orgJdEntities) && orgJdEntities.size() > 0) {
@@ -148,11 +149,12 @@ public class OrgApiBiz {
         return response;
     }
 
-    public JobDescriptionResponse getJobDescriptionByJobName(Long orgRootId, String jobName) {
+    public JobDescriptionResponse getJobDescriptionByJobName(Long orgJdId,Long orgRootId, String jobName) {
         JobDescriptionResponse response = new JobDescriptionResponse();
 
         List<OrgJdEntity> orgJdEntityList = QueryChain.of(OrgJdEntity.class)
                 .eq(OrgJdEntity::getOrgRootId, orgRootId, Objects.nonNull(orgRootId))
+                .eq(OrgJdEntity::getOrgJdId, orgJdId, Objects.nonNull(orgJdId))
                 .eq(OrgJdEntity::getDeleted, CommonDelEnum.NORMAL.getCode())
                 .like(OrgJdEntity::getJdName, jobName, Objects.nonNull(jobName)).list();
         List<OrgJobJDResponse> jobList = new ArrayList<>();
