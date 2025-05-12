@@ -14,9 +14,11 @@ import jakarta.servlet.UnavailableException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.dows.rade.aac.AacContext;
 import org.dows.rade.constant.IdentifierType;
 import org.dows.rade.encrypt.EncryptApi;
+import org.dows.rade.util.DateUtil;
 import org.dows.uim.constant.CommonDelEnum;
 import org.dows.uim.entity.*;
 import org.dows.uim.exception.UimException;
@@ -516,6 +518,13 @@ public class OrgApiBiz {
 
         Page<OrgJobJDDetailResponse> orgJdEntityList = new Page<>();
         if(Objects.nonNull(orgJdQueryRequest.getStartDate()) && Objects.nonNull(orgJdQueryRequest.getEndDate())) {
+            try {
+                Date endDate = DateUtil.parseDate(orgJdQueryRequest.getEndDate());
+                endDate = DateUtils.addDays(endDate, 1);
+                orgJdQueryRequest.setEndDate(DateUtil.formateDate(endDate));
+            } catch (Exception e) {
+                log.error(e.getLocalizedMessage());
+            }
             orgJdEntityList = QueryChain.of(OrgJdEntity.class)
                     .eq(OrgJdEntity::getOrgRootId, orgJdQueryRequest.getOrgRootId(), Objects.nonNull(orgJdQueryRequest.getOrgRootId()))
                     .eq(OrgJdEntity::getOrgTreeId, orgJdQueryRequest.getOrgTreeId(), Objects.nonNull(orgJdQueryRequest.getOrgTreeId()))
@@ -526,6 +535,7 @@ public class OrgApiBiz {
                     .between(OrgJdEntity::getTs, orgJdQueryRequest.getStartDate(), orgJdQueryRequest.getEndDate())
                     .orderBy(OrgJdEntity::getUt, false)
                     .pageAs(page, OrgJobJDDetailResponse.class);
+
         }else{
             orgJdEntityList = QueryChain.of(OrgJdEntity.class)
                     .eq(OrgJdEntity::getOrgRootId, orgJdQueryRequest.getOrgRootId(), Objects.nonNull(orgJdQueryRequest.getOrgRootId()))
