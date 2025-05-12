@@ -138,6 +138,9 @@ public class AccountHandler {
                     .eq(AccountIdentifierEntity::getIdentifier, saveOrgAccountRequest.getTelephone())
                     .eq(AccountIdentifierEntity::getIdentifierType, IdentifierType.PHONE.getType()));
 
+            AccountInstanceEntity accountInstance = accountInstanceService.getOne(QueryWrapper.create()
+                    .eq(AccountInstanceEntity::getTelephone, saveOrgAccountRequest.getTelephone()));
+
             Long accountInstanceId;
             AccountTypeEntity accountTypeEntity;
 
@@ -153,7 +156,9 @@ public class AccountHandler {
                         .eq(OrgNodeEntity::getAccountInstanceId, one.getAccountInstanceId())
                         .eq(OrgNodeEntity::getOrgRootId, aacContext.getAacUser().getOrgRootId(), Objects.nonNull(aacContext.getAacUser().getOrgRootId())));
                 if (Objects.nonNull(dbOrgNode) && one.getDeleted() == CommonDelEnum.NORMAL.getCode()) {
-                    throw new RuntimeException("该手机号已经存在，不能重复提交");
+                    if(Objects.nonNull(accountInstance) && accountInstance.getDeleted() == CommonDelEnum.NORMAL.getCode()) {
+                        throw new RuntimeException("该手机号已经存在，不能重复提交");
+                    }
                 }
 
                 accountTypeEntity = AccountTypeEntity.builder()
@@ -163,6 +168,7 @@ public class AccountHandler {
                         .build();
                 accountInstanceId = one.getAccountInstanceId();
                 // todo 如果用户在小程序端已经注册账号，则直接更新账号类型，同时也更新账号信息，此处可以更新密码，使账号可以密码方式登录
+
                 accountInstanceEntity = new AccountInstanceEntity();
                 accountInstanceEntity.setAccountInstanceId(accountInstanceId);
                 accountInstanceEntity.setPassword(bCryptPassword);
@@ -170,6 +176,7 @@ public class AccountHandler {
                 // todo 如果变更手机号，需要重写一个接口
 //            accountInstanceEntity.setTelephone();
                 accountInstanceService.updateById(accountInstanceEntity);
+
             } else {
                 accountInstanceEntity = new AccountInstanceEntity();
                 accountInstanceEntity.setNickname(saveOrgAccountRequest.getNickname());

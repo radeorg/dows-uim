@@ -116,7 +116,7 @@ public class AccountInstanceEntity extends BaseEntity<AccountInstanceEntity> {
      * 逻辑删除，0未删除，1删除
      */
     @Schema(description = "逻辑删除，0未删除，1删除")
-    @Column(value = "deleted", isLogicDelete = true)
+    @Column(value = "deleted")
     private Integer deleted;
 
     /**
