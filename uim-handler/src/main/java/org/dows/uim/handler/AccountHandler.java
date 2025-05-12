@@ -13,6 +13,7 @@ import org.dows.rade.aac.AacContext;
 import org.dows.rade.constant.IdentifierType;
 import org.dows.rade.encrypt.EncryptApi;
 import org.dows.uim.constant.AccountType;
+import org.dows.uim.constant.CommonDelEnum;
 import org.dows.uim.entity.*;
 import org.dows.uim.request.AccountInstanceRequest;
 import org.dows.uim.request.SaveOrgAccountRequest;
@@ -145,13 +146,13 @@ public class AccountHandler {
             if(Objects.nonNull(password)) {
                 bCryptPassword = encryptApi.getBCryptPassword(password);
             }
-            if (one != null) {
+            if (one != null && Objects.nonNull(one.getAccountInstanceId()) && one.getDeleted() == CommonDelEnum.NORMAL.getCode()) {
                 //判断在组织树是否存在，如存在提示重复
                 // 检查是否已经存在关联的组织
                 OrgNodeEntity dbOrgNode = orgNodeService.getOne(QueryWrapper.create()
                         .eq(OrgNodeEntity::getAccountInstanceId, one.getAccountInstanceId())
                         .eq(OrgNodeEntity::getOrgRootId, aacContext.getAacUser().getOrgRootId(), Objects.nonNull(aacContext.getAacUser().getOrgRootId())));
-                if (Objects.nonNull(dbOrgNode)) {
+                if (Objects.nonNull(dbOrgNode) && one.getDeleted() == CommonDelEnum.NORMAL.getCode()) {
                     throw new RuntimeException("该手机号已经存在，不能重复提交");
                 }
 
@@ -165,6 +166,7 @@ public class AccountHandler {
                 accountInstanceEntity = new AccountInstanceEntity();
                 accountInstanceEntity.setAccountInstanceId(accountInstanceId);
                 accountInstanceEntity.setPassword(bCryptPassword);
+                accountInstanceEntity.setDeleted(CommonDelEnum.NORMAL.getCode());
                 // todo 如果变更手机号，需要重写一个接口
 //            accountInstanceEntity.setTelephone();
                 accountInstanceService.updateById(accountInstanceEntity);
@@ -181,6 +183,7 @@ public class AccountHandler {
             accountInstanceEntity.setOperatorId(1L);*/
                 // 设置为超级账号
                 accountInstanceEntity.setSuperAccount(0);
+                accountInstanceEntity.setDeleted(CommonDelEnum.NORMAL.getCode());
                 accountInstanceService.save(accountInstanceEntity);
                 accountInstanceId = accountInstanceEntity.getAccountInstanceId();
                 AccountIdentifierEntity phoneIdentifier = AccountIdentifierEntity.builder()
