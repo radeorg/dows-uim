@@ -169,20 +169,8 @@ public class AccountApiBiz {
         return List.of();
     }
 
-    public List<SaveOrgAccountResponse> saveOrgAccount(List<SaveOrgAccountRequest> saveOrgAccountRequests)  {
-        List<SaveOrgAccountResponse> responseList = new ArrayList<>();
-        for (SaveOrgAccountRequest saveOrgAccountRequest : saveOrgAccountRequests) {
-            try {
-                accountHandler.saveOrgAccount(saveOrgAccountRequest);
-            } catch (RuntimeException e) {
-                SaveOrgAccountResponse response = new SaveOrgAccountResponse();
-                response.setCode(500L);
-                response.setMessage(e.getLocalizedMessage());
-                responseList.add(response);
-            }
-        }
-        // todo 先不做返回
-        return responseList;
+    public void saveOrgAccount(SaveOrgAccountRequest saveOrgAccountRequest)  {
+        accountHandler.saveOrgAccount(saveOrgAccountRequest);
     }
 
     /**

@@ -95,8 +95,8 @@ public class OrgApiRest implements OrgApi, OrgAccountApi, OrgEmailApi {
     }
 
     @Operation(summary = "增加企业账号[招聘官,企业管理员,企业用户...]")
-    public List<SaveOrgAccountResponse> saveOrgAccount(@RequestBody List<SaveOrgAccountRequest> saveOrgAccountRequests) {
-        return accountApiBiz.saveOrgAccount(saveOrgAccountRequests);
+    public void saveOrgAccount(@RequestBody SaveOrgAccountRequest saveOrgAccountRequests) {
+        accountApiBiz.saveOrgAccount(saveOrgAccountRequests);
     }
 
     @Operation(summary = "通过邮箱获取组织信息")
