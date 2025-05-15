@@ -318,4 +318,16 @@ public class AccountApiBiz {
         accountIdentifierService.updateById(one, true);
 
     }
+    /**
+     * 根据账号实例ID修改账号密码
+     * @param accountInstanceId 账号实例ID
+     * @param newPassword 新密码
+     */
+    public void updateInstancePasswordByAccountInstanceId(Long accountInstanceId, String newPassword) {
+        AccountInstanceEntity one = accountInstanceService.getById(accountInstanceId);
+        if (one != null) {
+            one.setPassword(newPassword);
+            accountInstanceService.updateById(one, true);
+        }
+    }
 }

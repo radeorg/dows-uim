@@ -124,6 +124,9 @@ public class AccountApiRest implements AccountApi{
 
     }
 
-
+    @Operation(summary = "通过账户标实例Id修改账户密码")
+    public void updateInstancePasswordByAccountInstanceId(Long accountInstanceId, String newPassword) {
+        accountApiBiz.updateInstancePasswordByAccountInstanceId(accountInstanceId, newPassword);
+    }
 }
 

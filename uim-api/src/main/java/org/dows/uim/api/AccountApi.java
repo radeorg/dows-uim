@@ -168,6 +168,17 @@ public interface AccountApi {
                                                                         relevancyAccountInstanceIdByTelephoneRequest) {
         throw new UnsupportedOperationException("not class implement");
     }
+
+    /**
+     * 根据账号实例ID修改账号密码
+     * @param accountInstanceId 账号实例ID
+     * @param newPassword 新密码
+     */
+//    @PostMapping("/v1/open/uim/account/password/update")
+//    void updateInstancePasswordByAccountInstanceId(@RequestParam Long accountInstanceId, @RequestParam String newPassword);
+    default void updateInstancePasswordByAccountInstanceId(Long accountInstanceId, String newPassword){
+        throw new UnsupportedOperationException("not class implement");
+    }
 }
 
 
