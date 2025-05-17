@@ -481,6 +481,7 @@ public class OrgApiBiz {
         OrgRuleResponse response = saveOrgRule(objEntity1);
 
         BeanUtils.copyProperties(orgJdSaveRequest, objEntity, OrgJdEntity.class);
+        objEntity.setJdNo("JD"+UUID.randomUUID());
         objEntity.setTs(new Date());
         objEntity.setOrgTreeId(orgJdSaveRequest.getOrgTreeId());
         if(Objects.isNull(orgJdSaveRequest.getOwnerId())) {

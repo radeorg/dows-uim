@@ -39,6 +39,9 @@ public class OrgJobJDResponse  {
     @Schema(description = "操作者ID")
     private Long operatorId;
 
+    @Schema(description = "岗位编号")
+    private String jdNo;
+
     @Schema(description = "岗位名称+岗位编号")
     private String jdName;
 

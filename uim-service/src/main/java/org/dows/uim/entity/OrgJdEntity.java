@@ -80,6 +80,13 @@ public class OrgJdEntity extends BaseEntity<OrgJdEntity> {
     /**
      * 岗位名称+岗位编号
      */
+    @Schema(description = "岗位编号")
+    @Column(value = "jd_no")
+    private String jdNo;
+
+    /**
+     * 岗位名称+岗位编号
+     */
     @Schema(description = "岗位名称+岗位编号")
     @Column(value = "jd_name")
     private String jdName;
