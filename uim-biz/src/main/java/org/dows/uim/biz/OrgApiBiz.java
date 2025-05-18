@@ -482,6 +482,7 @@ public class OrgApiBiz {
 
         BeanUtils.copyProperties(orgJdSaveRequest, objEntity, OrgJdEntity.class);
         objEntity.setJdNo("JD"+UUID.randomUUID().toString().replace("-", ""));
+        log.info("JdNo是+++++++++++++++++++++",objEntity.getJdNo());
         objEntity.setTs(new Date());
         objEntity.setOrgTreeId(orgJdSaveRequest.getOrgTreeId());
         if(Objects.isNull(orgJdSaveRequest.getOwnerId())) {
