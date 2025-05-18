@@ -34,8 +34,8 @@ public class OrgApiRest implements OrgApi, OrgAccountApi, OrgEmailApi {
     }
 
     @Operation(summary = "通过岗位名称获取岗位信息")
-    public JobDescriptionResponse getJobDescriptionByJobName(@RequestParam Long orgJdId,@RequestParam Long orgRootId, @RequestParam String jobName) {
-        return orgApiBiz.getJobDescriptionByJobName(orgJdId,orgRootId, jobName);
+    public JobDescriptionResponse getJobDescriptionByJobName(@RequestParam Long orgJdId,@RequestParam Long orgRootId, @RequestParam String jobName, @RequestParam String jobNo) {
+        return orgApiBiz.getJobDescriptionByJobName(orgJdId,orgRootId, jobName,jobNo);
     }
 
     @Operation(summary = "通过规则ID获取指标")
@@ -79,8 +79,8 @@ public class OrgApiRest implements OrgApi, OrgAccountApi, OrgEmailApi {
     }
 
     @Operation(summary = "通过岗位名称获取指标")
-    public JobIndicatorResponse getOrgIndicatorByJobName(@RequestParam Long orgJdId,@RequestParam Long orgRootId, @RequestParam String jobName) {
-        return orgApiBiz.getOrgIndicatorByJobName(orgJdId,orgRootId, jobName);
+    public JobIndicatorResponse getOrgIndicatorByJobName(@RequestParam Long orgJdId,@RequestParam Long orgRootId, @RequestParam String jobName, @RequestParam String jobNo) {
+        return orgApiBiz.getOrgIndicatorByJobName(orgJdId,orgRootId, jobName,jobNo);
     }
 
     @Operation(summary = "注册企业账号")
