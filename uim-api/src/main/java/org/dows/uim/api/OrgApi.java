@@ -25,12 +25,12 @@ public interface OrgApi {
 
 
     @GetMapping("/v1/uim/org/job/indicator/info")
-    default JobIndicatorResponse getOrgIndicatorByJobName(Long orgJdId,Long orgRootId, String jobName) {
+    default JobIndicatorResponse getOrgIndicatorByJobName(Long orgJdId,Long orgRootId, String jobName, String jdNo) {
         throw new UnsupportedOperationException("not class implement");
     }
 
     @GetMapping("/v1/uim/org/job/info")
-    default JobDescriptionResponse getJobDescriptionByJobName(Long orgJdId,Long orgRootId, String jobName) {
+    default JobDescriptionResponse getJobDescriptionByJobName(Long orgJdId,Long orgRootId, String jobName, String jdNo) {
         throw new UnsupportedOperationException("not class implement");
     }
 
