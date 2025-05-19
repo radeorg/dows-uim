@@ -103,7 +103,8 @@ public class HrAccountHandler {
         List<HrAccountInstanceResponse> interviewCountList = DbChain.table("interview_invite").select("interviewer_id as accountInstanceId",
                         "count(1) as interviewCount ")
                 .in("interviewer_id",interviewInstanceIds)
-                .set("passed",2).groupBy("interviewer_id").listAs(HrAccountInstanceResponse.class);
+                .eq("passed",2)
+                .groupBy("interviewer_id").listAs(HrAccountInstanceResponse.class);
 
         Map<Long, Long> resumeCountMap = resumeCountList.stream()
                 .filter(vo -> vo.getAccountInstanceId() != null)
