@@ -15,7 +15,7 @@ spring:
   application:
     name: dows-uim
   profiles:
-    include: mysql,apidoc,mybatis,caffeine,rade,feign
+    include: mysql,apidoc,mybatis,caffeine,rade,feign,oss
     active: sit
 
   jackson:
@@ -39,6 +39,7 @@ spring:
       on-profile: dev
 server:
   port: 18001
+orgImgPath: /applications/resources/img/org/
 
 ---
 #测试环境
@@ -48,7 +49,7 @@ spring:
       on-profile: sit
 server:
   port: 28002
-
+orgImgPath: /applications/resources/img/org/
 
 ---
 #测试环境

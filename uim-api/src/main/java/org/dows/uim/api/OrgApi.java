@@ -102,7 +102,6 @@ public interface OrgApi {
     OrgRegisterResponse getOrgInfo(@RequestBody OrgRegisterRequest orgRegisterRequest) ;/*{
         throw new UnsupportedOperationException("not class implement");
     }*/
-
     default List<RootOrgResponse> getRootOrgListByAccountInstanceId(Long accountInstanceId){
         throw new UnsupportedOperationException("not class implement");
     }
@@ -111,4 +110,12 @@ public interface OrgApi {
         throw new UnsupportedOperationException("not class implement");
     }
 
+    /**
+     * 根据当前登录人获取所属组织信息
+     * @return RootOrgResponse
+     */
+    @GetMapping("/v1/uim/org/info")
+    default OrgRegisterResponse getContextRootOrg(){
+        throw new UnsupportedOperationException("not class implement");
+    }
 }

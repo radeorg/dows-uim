@@ -119,5 +119,9 @@ public class OrgApiRest implements OrgApi, OrgAccountApi, OrgEmailApi {
         return orgEmailBiz.getOrgEmailInfo(treeId);
     }
 
+    @Operation(summary = "通过组织树ID获取组织信息")
+    public OrgRegisterResponse getContextRootOrg() {
+        return orgApiBiz.getContextRootOrg();
+    }
 }
 

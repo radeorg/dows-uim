@@ -747,4 +747,10 @@ public class OrgApiBiz {
             return jdAndOrgDetailListResponse;
         }).collect(Collectors.toList());
     }
+
+    public OrgRegisterResponse getContextRootOrg() {
+        OrgRegisterEntity orgRegisterEntity = orgRegisterService.getOne(QueryWrapper.create()
+                .eq(OrgRegisterEntity::getOrgRootId, aacContext.getAacUser().getOrgRootId()));
+        return BeanUtil.copyProperties(orgRegisterEntity, OrgRegisterResponse.class);
+    }
 }
