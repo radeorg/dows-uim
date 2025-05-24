@@ -6,11 +6,9 @@ import com.mybatisflex.annotation.KeyType;
 import com.mybatisflex.annotation.Table;
 import com.mybatisflex.core.keygen.KeyGenerators;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.dows.rade.crud.BaseEntity;
+import org.dows.uim.AutoFillDataListener;
 
 import java.util.Date;
 
@@ -19,12 +17,13 @@ import java.util.Date;
  *
  * @since 2025-04-22 11:31:57
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(name = "组织JD类目")
-@Table(value = "org_jd_category")
+@Table(value = "org_jd_category", onUpdate = AutoFillDataListener.class, onInsert = AutoFillDataListener.class)
 public class OrgJdCategoryEntity extends BaseEntity<OrgJdCategoryEntity> {
     /**
      * 职位类别ID
@@ -47,6 +46,8 @@ public class OrgJdCategoryEntity extends BaseEntity<OrgJdCategoryEntity> {
     /**
      * 应用ID
      */
+    @Schema(description = "应用ID")
+    @Column(value = "app_id", tenantId = true)
     private String appId;
     /**
      * 时间戳

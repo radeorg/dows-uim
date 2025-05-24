@@ -2,12 +2,14 @@ package org.dows.uim;
 
 import com.mybatisflex.core.FlexGlobalConfig;
 import com.mybatisflex.core.audit.AuditManager;
+import com.mybatisflex.spring.boot.MyBatisFlexCustomizer;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.rade.crud.BaseEntity;
 import org.dows.rade.crud.FieldFillListener;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @RequiredArgsConstructor
@@ -36,5 +38,10 @@ public class MyBatisFlexConfig {
         FieldFillListener fieldFillListener = new FieldFillListener();
         defaultConfig.registerInsertListener(fieldFillListener, BaseEntity.class);
         defaultConfig.registerUpdateListener(fieldFillListener, BaseEntity.class);
+    }
+
+    @Bean
+    public MyBatisFlexCustomizer flexCustomizer() {
+        return flex -> flex.registerUpdateListener(new AutoFillDataListener());
     }
 }

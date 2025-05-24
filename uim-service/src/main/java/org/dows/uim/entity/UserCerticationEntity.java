@@ -3,11 +3,9 @@ package org.dows.uim.entity;
 import com.mybatisflex.annotation.Column;
 import com.mybatisflex.annotation.Table;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.dows.rade.crud.BaseEntity;
+import org.dows.uim.AutoFillDataListener;
 
 import java.util.Date;
 
@@ -17,12 +15,13 @@ import java.util.Date;
  * @author lait.zhang@gmail.com
  * @since 1.0
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(name = "$table.comment")
-@Table(value = "user_certication")
+@Table(value = "user_certication", onUpdate = AutoFillDataListener.class, onInsert = AutoFillDataListener.class)
 public class UserCerticationEntity extends BaseEntity<UserCerticationEntity> {
 
     @Column(value = "user_certication_id")
@@ -40,7 +39,7 @@ public class UserCerticationEntity extends BaseEntity<UserCerticationEntity> {
     @Column(value = "cert_no")
     private String certNo;
 
-    @Column(value = "app_id")
+    @Column(value = "app_id", tenantId = true)
     private String appId;
 
     @Column(value = "perminent")

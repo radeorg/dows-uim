@@ -6,11 +6,9 @@ import com.mybatisflex.annotation.KeyType;
 import com.mybatisflex.annotation.Table;
 import com.mybatisflex.core.keygen.KeyGenerators;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.dows.rade.crud.BaseEntity;
+import org.dows.uim.AutoFillDataListener;
 
 import java.util.Date;
 
@@ -20,12 +18,13 @@ import java.util.Date;
  * @author lait.zhang@gmail.com
  * @since 1.0
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(name = "指标映射表")
-@Table(value = "org_indicator_mapping")
+@Table(value = "org_indicator_mapping", onUpdate = AutoFillDataListener.class, onInsert = AutoFillDataListener.class)
 public class OrgIndicatorMappingEntity extends BaseEntity<OrgIndicatorMappingEntity> {
 
     /**
@@ -74,7 +73,7 @@ public class OrgIndicatorMappingEntity extends BaseEntity<OrgIndicatorMappingEnt
      * 应用ID
      */
     @Schema(description = "应用ID")
-    @Column(value = "app_id")
+    @Column(value = "app_id", tenantId = true)
     private String appId;
 
     /**

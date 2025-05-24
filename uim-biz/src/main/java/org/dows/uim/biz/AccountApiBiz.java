@@ -22,6 +22,7 @@ import org.dows.uim.service.AccountIdentifierService;
 import org.dows.uim.service.AccountInstanceService;
 import org.dows.uim.service.AccountTypeService;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +43,7 @@ public class AccountApiBiz {
      * @param accountInstance
      * @return
      */
+    @Transactional
     public Long accountRegister(AccountInstanceRequest accountInstance) {
         // 保存账号 实例
         AccountInstanceEntity accountInstanceEntity =
@@ -54,7 +56,8 @@ public class AccountApiBiz {
         accountIdentifierEntity.setIdentifier(accountInstance.getIdentifier());
         // fix #2023-04-09 账号标识类型
         accountIdentifierEntity.setIdentifierType(accountInstance.getIdentifierType());
-        accountIdentifierEntity.setAppId(accountInstance.getAppId());
+//        accountIdentifierEntity.setAppId(accountInstance.getAppId());
+        accountIdentifierEntity.setOperatorId(accountInstanceId);
         accountIdentifierService.save(accountIdentifierEntity);
         return accountInstanceId;
     }
@@ -169,6 +172,7 @@ public class AccountApiBiz {
         return List.of();
     }
 
+    @Transactional
     public void saveOrgAccount(SaveOrgAccountRequest saveOrgAccountRequest)  {
         accountHandler.saveOrgAccount(saveOrgAccountRequest);
     }
@@ -190,6 +194,7 @@ public class AccountApiBiz {
      *
      * @param bindingAccountRequest
      */
+    @Transactional
     public void bindingAccount(BindingAccountRequest bindingAccountRequest) {
 
         Long accountInstanceId = bindingAccountRequest.getAccountInstanceId();
@@ -241,6 +246,7 @@ public class AccountApiBiz {
         }
     }
 
+    @Transactional
     public Long getAccountByTelephone(String telephone) {
         // 查询账号标识（手机号）是否存在
         AccountIdentifierEntity one = accountIdentifierService.getOne(QueryWrapper.create()

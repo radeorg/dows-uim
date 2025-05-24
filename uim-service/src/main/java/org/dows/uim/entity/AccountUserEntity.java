@@ -6,11 +6,9 @@ import com.mybatisflex.annotation.KeyType;
 import com.mybatisflex.annotation.Table;
 import com.mybatisflex.core.keygen.KeyGenerators;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.dows.rade.crud.BaseEntity;
+import org.dows.uim.AutoFillDataListener;
 
 import java.util.Date;
 
@@ -20,12 +18,13 @@ import java.util.Date;
  * @author lait.zhang@gmail.com
  * @since 1.0
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(name = "账号用户表")
-@Table(value = "account_user")
+@Table(value = "account_user", onUpdate = AutoFillDataListener.class, onInsert = AutoFillDataListener.class)
 public class AccountUserEntity extends BaseEntity<AccountUserEntity> {
 
     /**
@@ -60,15 +59,15 @@ public class AccountUserEntity extends BaseEntity<AccountUserEntity> {
      * 应用ID
      */
     @Schema(description = "应用ID")
-    @Column(value = "app_id")
+    @Column(value = "app_id", tenantId = true)
     private String appId;
 
     /**
      * 乐观锁，默认为0
      */
     @Schema(description = "乐观锁，默认为0")
-    @Column(value = "ver")
-    private Integer ver;
+    @Column(value = "ver", version = true)
+    private Integer ver = 0;
 
     /**
      * 逻辑删除，0未删除，1删除

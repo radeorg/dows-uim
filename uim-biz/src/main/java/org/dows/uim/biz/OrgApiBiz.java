@@ -213,8 +213,18 @@ public class OrgApiBiz {
             throw new UimException(orgRegisterRequest.getOrgName() + "， 组织名称已存在，无法保存");
         }
 
+        AccountInstanceEntity accountInstanceEntity = new AccountInstanceEntity();
+        accountInstanceEntity.setTelephone(orgRegisterRequest.getTelephone());
+        // todo 设置密码 需要加密
+        accountInstanceEntity.setPassword(encryptApi.getBCryptPassword(orgRegisterRequest.getPassword()));
+        // 超级账号
+        accountInstanceEntity.setNickname(orgRegisterRequest.getContacts());
+        accountInstanceEntity.setSuperAccount(1);
+        accountInstanceService.save(accountInstanceEntity);
+
         // 批量保存组织树
         OrgTreeEntity orgTreeEntity = BeanUtil.copyProperties(orgRegisterRequest, OrgTreeEntity.class);
+        orgTreeEntity.setOperatorId(accountInstanceEntity.getAccountInstanceId());
         orgTreeService.save(orgTreeEntity);
 
         // 构建企业邮箱
@@ -225,28 +235,20 @@ public class OrgApiBiz {
         // 批量保存企业邮箱
         orgEmailService.save(orgEmailEntity);
 
-        AccountInstanceEntity accountInstanceEntity = new AccountInstanceEntity();
-        accountInstanceEntity.setTelephone(orgRegisterRequest.getTelephone());
-        // todo 设置密码 需要加密
-        accountInstanceEntity.setPassword(encryptApi.getBCryptPassword(orgRegisterRequest.getPassword()));
-        // 超级账号
-        accountInstanceEntity.setNickname(orgRegisterRequest.getContacts());
-        accountInstanceEntity.setSuperAccount(1);
-        accountInstanceService.save(accountInstanceEntity);
-
-
         List<AccountIdentifierEntity> accountIdentifierEntities = new ArrayList<>();
         // create account identifier for phone
         AccountIdentifierEntity accountIdentifierEntity = new AccountIdentifierEntity();
         accountIdentifierEntity.setAccountInstanceId(accountInstanceEntity.getAccountInstanceId());
         accountIdentifierEntity.setIdentifier(accountInstanceEntity.getTelephone());
         accountIdentifierEntity.setIdentifierType(IdentifierType.PHONE.getType());
+        accountIdentifierEntity.setOperatorId(accountInstanceEntity.getAccountInstanceId());
         accountIdentifierEntities.add(accountIdentifierEntity);
         // create account identifier for email
         accountIdentifierEntity = new AccountIdentifierEntity();
         accountIdentifierEntity.setAccountInstanceId(accountInstanceEntity.getAccountInstanceId());
         accountIdentifierEntity.setIdentifier(orgRegisterRequest.getEmail());
         accountIdentifierEntity.setIdentifierType(IdentifierType.EMAIL.getType());
+        accountIdentifierEntity.setOperatorId(accountInstanceEntity.getAccountInstanceId());
         accountIdentifierEntities.add(accountIdentifierEntity);
         // batch save account identifier
         accountIdentifierService.saveBatch(accountIdentifierEntities);
@@ -264,6 +266,7 @@ public class OrgApiBiz {
         orgNodeEntity.setOrgRootId(orgTreeEntity.getOrgTreeId());
         orgNodeEntity.setOrgTreeId(orgTreeEntity.getOrgTreeId());
         orgNodeEntity.setAccountInstanceId(accountInstanceEntity.getAccountInstanceId());
+        orgNodeEntity.setOperatorId(accountInstanceEntity.getAccountInstanceId());
         // batch save org node
         orgNodeService.save(orgNodeEntity);
         return BeanUtil.copyProperties(orgRegisterEntity, OrgRegisterResponse.class);

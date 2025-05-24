@@ -171,8 +171,10 @@ public class AccountHandler {
 
                 accountInstanceEntity = new AccountInstanceEntity();
                 accountInstanceEntity.setAccountInstanceId(accountInstanceId);
-                accountInstanceEntity.setPassword(bCryptPassword);
                 accountInstanceEntity.setDeleted(CommonDelEnum.NORMAL.getCode());
+                if (!StrUtil.isBlank(bCryptPassword)){
+                    accountInstanceEntity.setPassword(bCryptPassword);
+                }
                 // todo 如果变更手机号，需要重写一个接口
 //            accountInstanceEntity.setTelephone();
                 accountInstanceService.updateById(accountInstanceEntity);

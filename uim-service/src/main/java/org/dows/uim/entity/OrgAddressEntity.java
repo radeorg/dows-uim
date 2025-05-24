@@ -6,11 +6,9 @@ import com.mybatisflex.annotation.KeyType;
 import com.mybatisflex.annotation.Table;
 import com.mybatisflex.core.keygen.KeyGenerators;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.dows.rade.crud.BaseEntity;
+import org.dows.uim.AutoFillDataListener;
 
 import java.util.Date;
 
@@ -19,12 +17,13 @@ import java.util.Date;
  *
  * @since 2025-04-22 11:31:50
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(name = "组织地址")
-@Table(value = "org_address")
+@Table(value = "org_address", onUpdate = AutoFillDataListener.class, onInsert = AutoFillDataListener.class)
 public class OrgAddressEntity extends BaseEntity<OrgAddressEntity> {
     /**
      * 地址维度ID
@@ -52,8 +51,8 @@ public class OrgAddressEntity extends BaseEntity<OrgAddressEntity> {
     /**
      * 乐观锁，默认为0
      */
-    @Column(value = "ver")
-    private Integer ver;
+    @Column(value = "ver", version = true)
+    private Integer ver = 0;
     /**
      * 状态
      */
@@ -67,17 +66,15 @@ public class OrgAddressEntity extends BaseEntity<OrgAddressEntity> {
      * 逻辑删除，0未删除，1删除
      */
     private Integer deleted;
-    /**
-     * 应用ID
-     */
+
+    @Schema(description = "应用ID")
+    @Column(value = "app_id", tenantId = true)
     private String appId;
-    /**
-     * 时间戳
-     */
+    @Schema(description = "时间戳")
+    @Column(value = "ts")
     private Date ts;
-    /**
-     * 更新时间
-     */
+
+    @Column(value = "ut")
     private Date ut;
 
     @Column(value = "owner_id")

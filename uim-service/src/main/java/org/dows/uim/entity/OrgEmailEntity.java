@@ -6,11 +6,9 @@ import com.mybatisflex.annotation.KeyType;
 import com.mybatisflex.annotation.Table;
 import com.mybatisflex.core.keygen.KeyGenerators;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.dows.rade.crud.BaseEntity;
+import org.dows.uim.AutoFillDataListener;
 
 import java.util.Date;
 
@@ -20,12 +18,13 @@ import java.util.Date;
  * @author lait.zhang@gmail.com
  * @since 1.0
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(name = "组织邮箱表")
-@Table(value = "org_email")
+@Table(value = "org_email", onUpdate = AutoFillDataListener.class, onInsert = AutoFillDataListener.class)
 public class OrgEmailEntity extends BaseEntity<OrgEmailEntity> {
 
     /**
@@ -79,7 +78,7 @@ public class OrgEmailEntity extends BaseEntity<OrgEmailEntity> {
      * 应用ID
      */
     @Schema(description = "应用ID")
-    @Column(value = "app_id")
+    @Column(value = "app_id", tenantId = true)
     private String appId;
 
     /**
@@ -93,8 +92,8 @@ public class OrgEmailEntity extends BaseEntity<OrgEmailEntity> {
      * 版本
      */
     @Schema(description = "版本")
-    @Column(value = "ver")
-    private Integer ver;
+    @Column(value = "ver", version = true)
+    private Integer ver = 0;
 
     /**
      * 逻辑删除，0未删除，1删除
