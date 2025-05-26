@@ -321,6 +321,7 @@ public class AccountApiBiz {
         AccountIdentifierEntity one = new AccountIdentifierEntity();
         one.setAccountIdentifierId(relevancyAccountInstanceIdByTelephoneRequest.getAccountIdentifierId());
         one.setAccountInstanceId(relevancyAccountInstanceIdByTelephoneRequest.getAccountInstanceId());
+        one.setOperatorId(relevancyAccountInstanceIdByTelephoneRequest.getAccountInstanceId());
         accountIdentifierService.updateById(one, true);
 
     }
