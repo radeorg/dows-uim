@@ -91,6 +91,42 @@ public class OrgJdEntity extends BaseEntity<OrgJdEntity> {
     private String jdName;
 
     /**
+     * 岗位名称
+     */
+    @Schema(description = "性别要求0：不限1:男；2：女；3：优先男性；4：优先女性")
+    @Column(value = "gender")
+    private Integer gender;
+
+    /**
+     * 岗位名称
+     */
+    @Schema(description = "年龄范围 0：\"不限\",1： \"25-30岁\",2： \"30-35岁\",3： \"35-40岁\", 4：\"40岁以上\"")
+    @Column(value = "age_range")
+    private Integer ageRange;
+
+    /**
+     * 岗位名称
+     */
+    @Schema(description = "工作经验 0\"不限\", 1\"应届\",2 \"1-3年\",3 \"3-5年\", 4\"5-10年\",5 \"10年以上\"")
+    @Column(value = "work_exper")
+    private Integer workExper;
+
+    /**
+     * 岗位名称
+     */
+    @Schema(description = "最低学历0\"不限\",1 \"大专及以上\", 2\"本科及以上\",3 \"硕士及以上\", 4\"博士及以上\"")
+    @Column(value = "min_education")
+    private Integer minEducation;
+
+    /**
+     * 岗位名称
+     */
+    @Schema(description = "其他要求")
+    @Column(value = "other_require")
+    private String otherRequire;
+
+
+    /**
      * 岗位描述
      */
     @Schema(description = "岗位描述")
