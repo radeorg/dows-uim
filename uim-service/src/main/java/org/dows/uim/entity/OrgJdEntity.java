@@ -91,35 +91,49 @@ public class OrgJdEntity extends BaseEntity<OrgJdEntity> {
     private String jdName;
 
     /**
-     * 岗位名称
+     * 性别要求
      */
-    @Schema(description = "性别要求0：不限1:男；2：女；3：优先男性；4：优先女性")
+    @Schema(description = "性别要求 0：不限1:男；2：女；3：优先男性；4：优先女性")
     @Column(value = "gender")
     private Integer gender;
 
     /**
-     * 岗位名称
+     * 年龄范围
      */
     @Schema(description = "年龄范围 0：\"不限\",1： \"25-30岁\",2： \"30-35岁\",3： \"35-40岁\", 4：\"40岁以上\"")
     @Column(value = "age_range")
     private Integer ageRange;
 
     /**
-     * 岗位名称
+     * 工作经验
      */
     @Schema(description = "工作经验 0\"不限\", 1\"应届\",2 \"1-3年\",3 \"3-5年\", 4\"5-10年\",5 \"10年以上\"")
     @Column(value = "work_exper")
     private Integer workExper;
 
     /**
-     * 岗位名称
+     * 最低学历
      */
-    @Schema(description = "最低学历0\"不限\",1 \"大专及以上\", 2\"本科及以上\",3 \"硕士及以上\", 4\"博士及以上\"")
+    @Schema(description = "最低学历 0\"不限\",1 \"大专及以上\", 2\"本科及以上\",3 \"硕士及以上\", 4\"博士及以上\"")
     @Column(value = "min_education")
     private Integer minEducation;
 
     /**
-     * 岗位名称
+     * 月薪范围
+     */
+    @Schema(description = "月薪范围[1 \"1：万以下\",2 ：\"1-1.5万\", 3：\"1.5-2万\", 4：\"2-2.5万\", 5：\"2.5-3万\",6：\"面议\"]")
+    @Column(value = "monthly_salary_range")
+    private Integer monthlySalaryRange;
+
+    /**
+     * 工作模式
+     */
+    @Schema(description = "工作模式[1\"全职坐班\", 2\"混合办公\",3 \"全员远程\"]")
+    @Column(value = "work_mode")
+    private Integer workMode;
+
+    /**
+     * 其他要求
      */
     @Schema(description = "其他要求")
     @Column(value = "other_require")
