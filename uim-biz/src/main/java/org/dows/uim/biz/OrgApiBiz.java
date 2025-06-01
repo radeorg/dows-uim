@@ -17,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.dows.rade.aac.AacContext;
 import org.dows.rade.constant.IdentifierType;
+import org.dows.rade.context.AppContext;
 import org.dows.rade.encrypt.EncryptApi;
 import org.dows.rade.util.DateUtil;
 import org.dows.uim.constant.CommonDelEnum;
@@ -438,6 +439,58 @@ public class OrgApiBiz {
         return response;
     }
 
+    @Operation(summary = "JDCode增加")
+    public JdCodeResponse addJdCode(HrmJdCodeQueryRequest hrmJdCodeQueryRequest) throws UnavailableException {
+        if (Objects.isNull(hrmJdCodeQueryRequest.getValue())) {
+            throw new UnavailableException("value 必填");
+        }
+        if (Objects.isNull(hrmJdCodeQueryRequest.getCodeType())) {
+            throw new UnavailableException("codeType 必填");
+        }
+        List<HrmJdCodeEntity> jdCodeEntities =  QueryChain.of(HrmJdCodeEntity.class)
+                .select(HrmJdCodeEntity::getCode, HrmJdCodeEntity::getValue)
+                .eq(HrmJdCodeEntity::getCodeType, hrmJdCodeQueryRequest.getCodeType())
+                .eq(HrmJdCodeEntity::getAppId, AppContext.getAppId())
+                .eq(HrmJdCodeEntity::getDeleted, CommonDelEnum.NORMAL.getCode())
+                .orderBy(HrmJdCodeEntity::getCode,false)
+                .list();
+        if (CollectionUtil.isNotEmpty(jdCodeEntities)) {
+            // 检查是否存在匹配的 value（忽略大小写）
+            boolean exists =
+                    jdCodeEntities.stream()
+                            .map(HrmJdCodeEntity::getValue)
+                            .filter(Objects::nonNull)
+                            .anyMatch(value -> value.equalsIgnoreCase(hrmJdCodeQueryRequest.getValue()));
+
+            if (exists) {
+                throw new UnavailableException("值 '" + hrmJdCodeQueryRequest.getValue() + "' 已存在");
+            }
+            Integer  nextCode = jdCodeEntities.get(0).getCode() + 1;
+            HrmJdCodeEntity newEntity = HrmJdCodeEntity.builder()
+                    .code(nextCode)
+                    .value(hrmJdCodeQueryRequest.getValue())
+                    .codeType(hrmJdCodeQueryRequest.getCodeType())
+                    .appId(AppContext.getAppId())
+                    .ut(new Date())
+                    .ts(new Date())
+                    .ownerId(aacContext.getAacUser().getUserId())
+                    .deleted(CommonDelEnum.NORMAL.getCode())
+                    .build();
+
+            boolean flag = newEntity.save();
+            if(flag) {
+                return JdCodeResponse.builder().code(nextCode).value(hrmJdCodeQueryRequest.getValue()).codeType(hrmJdCodeQueryRequest.getCodeType()).build();
+            }else {
+                throw new UnavailableException("自定义类型保存失败");
+            }
+
+
+        }else {
+            throw new UnavailableException("暂不支持创建新类型码表值");
+        }
+
+
+    }
 
     @Operation(summary = "JD删除")
     @Transactional
@@ -647,6 +700,30 @@ public class OrgApiBiz {
         response.setJdList(jdList);
 
         return response;
+    }
+
+    @Operation(summary = "获取JD码值列表")
+    public List<JdCodeResponse> getJdCodeList(HrmJdCodeQueryRequest hrmJdCodeQueryRequest) throws UnavailableException {
+        if (Objects.isNull(hrmJdCodeQueryRequest.getCodeType())) {
+            throw new UnavailableException("CodeType 必填");
+        }
+
+        return QueryChain.of(HrmJdCodeEntity.class)
+                .select(HrmJdCodeEntity::getCode, HrmJdCodeEntity::getValue)
+                .eq(HrmJdCodeEntity::getCodeType, hrmJdCodeQueryRequest.getCodeType())
+                .like(HrmJdCodeEntity::getValue,hrmJdCodeQueryRequest.getValue(),Objects.nonNull(hrmJdCodeQueryRequest.getValue()))
+                .eq(HrmJdCodeEntity::getAppId, AppContext.getAppId())
+                .eq(HrmJdCodeEntity::getDeleted, CommonDelEnum.NORMAL.getCode())
+                .list()
+                .stream()
+                .map(entity -> JdCodeResponse.builder()
+                        .code(entity.getCode())
+                        .value(entity.getValue())
+                        .codeType(entity.getCodeType())
+                        .build())
+                .collect(Collectors.toList());
+
+
     }
 
     @Operation(summary = "保存岗位规则")
