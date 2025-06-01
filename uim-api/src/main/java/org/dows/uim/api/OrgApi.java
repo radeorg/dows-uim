@@ -60,6 +60,16 @@ public interface OrgApi {
         throw new UnsupportedOperationException("not class implement");
     }
 
+    @PostMapping("/v1/open/uim/org/jdCode/list")
+    default List<JdCodeResponse> getJdCodeList(HrmJdCodeQueryRequest hrmJdCodeQueryRequest) throws UnavailableException {
+        throw new UnsupportedOperationException("not class implement");
+    }
+
+    @PostMapping("/v1/open/uim/org/jdCode/add")
+    default JdCodeResponse addJdCode(HrmJdCodeQueryRequest hrmJdCodeQueryRequest) throws UnavailableException {
+        throw new UnsupportedOperationException("not class implement");
+    }
+
     @GetMapping("/v1/uim/org/jd/page")
     default Page<OrgJobJDDetailResponse> getJdPage(OrgJdPageQueryRequest orgJdQueryRequest) throws UnavailableException{
         throw new UnsupportedOperationException("not class implement");

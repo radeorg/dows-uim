@@ -63,6 +63,16 @@ public class OrgApiRest implements OrgApi, OrgAccountApi, OrgEmailApi {
         return orgApiBiz.getJdList(orgJdQueryRequest);
     }
 
+    @Operation(summary = "获取JDCode列表")
+    public List<JdCodeResponse> getJdCodeList(@RequestBody HrmJdCodeQueryRequest hrmJdCodeQueryRequest) throws UnavailableException {
+        return orgApiBiz.getJdCodeList(hrmJdCodeQueryRequest);
+    }
+
+    @Operation(summary = "保存JDCode信息")
+    public JdCodeResponse addJdCode(@RequestBody HrmJdCodeQueryRequest hrmJdCodeQueryRequest) throws UnavailableException {
+        return orgApiBiz.addJdCode(hrmJdCodeQueryRequest);
+    }
+
     @Operation(summary = "保存岗位规则")
     public OrgRuleResponse saveOrgRule(@RequestBody OrgRuleSaveRequest orgRuleSaveRequest) {
         return orgApiBiz.saveOrgRule(orgRuleSaveRequest);
