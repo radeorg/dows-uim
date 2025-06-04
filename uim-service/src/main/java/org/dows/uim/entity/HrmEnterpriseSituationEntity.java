@@ -4,6 +4,7 @@ import com.mybatisflex.annotation.Column;
 import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.KeyType;
 import com.mybatisflex.annotation.Table;
+import com.mybatisflex.core.keygen.KeyGenerators;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +14,12 @@ import org.dows.rade.crud.BaseEntity;
 
 import java.util.Date;
 
-
+/**
+ *@ClassName HrmFeatureBenefitsEntity
+ *@Description TODO
+ *@Author jack.china.ye
+ *@Date 2025/6/1 14:54
+ */
 @Data
 @Builder
 @NoArgsConstructor
@@ -26,7 +32,7 @@ public class HrmEnterpriseSituationEntity extends BaseEntity<HrmEnterpriseSituat
      * 企业情况ID
      */
     @Schema(description = "企业情况ID")
-    @Id(keyType = KeyType.Auto)
+    @Id(keyType = KeyType.Generator, value = KeyGenerators.snowFlakeId)
     private Long hrmEnterpriseSituationId;
 
     /**
@@ -63,6 +69,7 @@ public class HrmEnterpriseSituationEntity extends BaseEntity<HrmEnterpriseSituat
     @Schema(description = "项目进展")
     @Column(value = "project_progress")
     private Integer projectProgress;
+
 
     /**
      * 已有同类岗位

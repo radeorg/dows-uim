@@ -119,18 +119,13 @@ public class OrgJdEntity extends BaseEntity<OrgJdEntity> {
     private Integer minEducation;
 
     /**
-     * 月薪范围
+     * 项目进展
      */
-    @Schema(description = "月薪范围[1 \"1：万以下\",2 ：\"1-1.5万\", 3：\"1.5-2万\", 4：\"2-2.5万\", 5：\"2.5-3万\",6：\"面议\"]")
-    @Column(value = "monthly_salary_range")
-    private Integer monthlySalaryRange;
+    @Schema(description = "招聘目的")
+    @Column(value = "recruitment_purpose")
+    private String recruitmentPurpose;
 
-    /**
-     * 工作模式
-     */
-    @Schema(description = "工作模式[1\"全职坐班\", 2\"混合办公\",3 \"全员远程\"]")
-    @Column(value = "work_mode")
-    private Integer workMode;
+
 
     /**
      * 其他要求
@@ -138,6 +133,14 @@ public class OrgJdEntity extends BaseEntity<OrgJdEntity> {
     @Schema(description = "其他要求")
     @Column(value = "other_require")
     private String otherRequire;
+
+    @Schema(description = "企业情况id")
+    @Column(value = "enterprise_situation_id")
+    private Long enterpriseSituationId;
+
+    @Schema(description = "福利特色id")
+    @Column(value = "hrm_feature_benefits_id")
+    private Long hrmFeatureBenefitsId;
 
 
     /**
