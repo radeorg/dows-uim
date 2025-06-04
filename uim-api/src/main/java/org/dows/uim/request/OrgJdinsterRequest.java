@@ -71,6 +71,15 @@ public class OrgJdinsterRequest  {
     @Schema(description = "岗位描述")
     private String description;
 
+    @Schema(description = "招聘目的")
+    private String recruitmentPurpose;
+
+    @Schema(description = "企业情况id")
+    private Long enterpriseSituationId;
+
+    @Schema(description = "福利特色id")
+    private Long hrmFeatureBenefitsId;
+
 
     /**
      * 发布渠道集合
