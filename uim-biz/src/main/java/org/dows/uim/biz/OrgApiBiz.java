@@ -29,7 +29,6 @@ import org.dows.uim.service.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 import java.util.function.Function;
@@ -725,6 +724,58 @@ public class OrgApiBiz {
 
 
     }
+    @Operation(summary = "获取JD码值列表")
+    public List<JdCodeResponse> getJdCodeByList(HrmJdCodeQueryListRequest hrmJdCodeQueryRequest) throws UnavailableException {
+        if (Objects.isNull(hrmJdCodeQueryRequest.getCodeType())) {
+            throw new UnavailableException("CodeType 必填");
+        }
+
+        return QueryChain.of(HrmJdCodeEntity.class)
+                .select(HrmJdCodeEntity::getCode, HrmJdCodeEntity::getValue)
+                .eq(HrmJdCodeEntity::getCodeType, hrmJdCodeQueryRequest.getCodeType())
+                .in(HrmJdCodeEntity::getValue,hrmJdCodeQueryRequest.getValues(),CollectionUtil.isNotEmpty(hrmJdCodeQueryRequest.getValues()))
+                .in(HrmJdCodeEntity::getCode,hrmJdCodeQueryRequest.getCodes(),CollectionUtil.isNotEmpty(hrmJdCodeQueryRequest.getCodes()))
+                .eq(HrmJdCodeEntity::getAppId, AppContext.getAppId())
+                .eq(HrmJdCodeEntity::getDeleted, CommonDelEnum.NORMAL.getCode())
+                .list()
+                .stream()
+                .map(entity -> JdCodeResponse.builder()
+                        .code(entity.getCode())
+                        .value(entity.getValue())
+                        .codeType(entity.getCodeType())
+                        .build())
+                .collect(Collectors.toList());
+
+
+    }
+
+    @Operation(summary = "获取单个JD码值")
+    public JdCodeResponse getJdCodeOne(HrmJdCodeQueryRequest hrmJdCodeQueryRequest) throws UnavailableException {
+        if (Objects.isNull(hrmJdCodeQueryRequest.getCodeType())) {
+            throw new UnavailableException("CodeType 必填");
+        }
+        if (Objects.isNull(hrmJdCodeQueryRequest.getValue())) {
+            throw new UnavailableException("value 必填");
+        }
+
+        HrmJdCodeEntity entity = QueryChain.of(HrmJdCodeEntity.class)
+                .select(HrmJdCodeEntity::getCode, HrmJdCodeEntity::getValue)
+                .eq(HrmJdCodeEntity::getCodeType, hrmJdCodeQueryRequest.getCodeType())
+                .eq(HrmJdCodeEntity::getValue, hrmJdCodeQueryRequest.getValue(), Objects.nonNull(hrmJdCodeQueryRequest.getValue()))
+                .eq(HrmJdCodeEntity::getAppId, AppContext.getAppId())
+                .eq(HrmJdCodeEntity::getDeleted, CommonDelEnum.NORMAL.getCode())
+                .one(); // 查询单条
+        JdCodeResponse response = null;
+        if (entity != null) {
+            response = JdCodeResponse.builder()
+                    .code(entity.getCode())
+                    .value(entity.getValue())
+                    .codeType(entity.getCodeType())
+                    .build();
+        }
+    return response;
+
+    }
 
     @Operation(summary = "保存岗位规则")
     public OrgRuleResponse saveOrgRule(OrgRuleSaveRequest orgRuleSaveRequest) {
@@ -801,7 +852,7 @@ public class OrgApiBiz {
     }
 
     public List<OrgJdOrgRegisterInfoListResponse> getOrgJdOrgRegisterInfoList(OrgJdOrgRegisterInfoListRequest request) {
-        if (Objects.isNull(request) || CollectionUtils.isEmpty(request.getOrgJdIds())) {
+        if (Objects.isNull(request) || CollectionUtil.isEmpty(request.getOrgJdIds())) {
             return null;
         }
         List<OrgJdEntity> jdEntities = QueryChain.of(OrgJdEntity.class)
