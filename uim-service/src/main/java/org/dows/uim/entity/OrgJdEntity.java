@@ -121,7 +121,7 @@ public class OrgJdEntity extends BaseEntity<OrgJdEntity> {
     /**
      * 项目进展
      */
-    @Schema(description = "招聘目的")
+    @Schema(description = "招聘目的[1填补岗位空缺 2业务扩张3新增技术升级需求]")
     @Column(value = "recruitment_purpose")
     private String recruitmentPurpose;
 

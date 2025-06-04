@@ -1,9 +1,12 @@
 package org.dows.uim.api;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mybatisflex.core.paginate.Page;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.UnavailableException;
+import org.dows.rade.web.Response;
 import org.dows.uim.request.*;
+import org.dows.uim.request.JdKeyWord.JDSaveRequest;
 import org.dows.uim.response.*;
 import org.springframework.web.bind.annotation.*;
 
@@ -135,7 +138,7 @@ public interface OrgApi {
     }
 
     @PostMapping("/v1/open/uim/org/jdinfo/save")
-    default OrgJobJDResponse saveOrgJd(OrgJdSaveRequest orgJdSaveRequest) throws UnavailableException {
+    default Response saveOrgJd(JDSaveRequest saveRequest) throws UnavailableException, JsonProcessingException {
         throw new UnsupportedOperationException("not class implement");
     }
 
@@ -143,4 +146,5 @@ public interface OrgApi {
     default List<JdCodeResponse> getJdCodeByList(HrmJdCodeQueryListRequest hrmJdCodeQueryRequest) throws UnavailableException {
         throw new UnsupportedOperationException("not class implement");
     }
+
 }

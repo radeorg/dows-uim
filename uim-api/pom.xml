@@ -23,6 +23,11 @@
         </dependency>
 
         <dependency>
+            <groupId>org.dows.framework</groupId>
+            <artifactId>rade-core</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-core-jakarta</artifactId>
         </dependency>

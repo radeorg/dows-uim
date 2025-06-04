@@ -57,11 +57,19 @@ public class HrmFeatureBenefitsEntity extends BaseEntity<HrmFeatureBenefitsEntit
     private Integer workMode;
 
     /**
-     * 码值编号
+     * 福利
      */
     @Schema(description = "福利")
     @Column(value = "benefit")
     private String benefit;
+
+    /**
+     * 自定义福利
+     */
+    @Schema(description = "自定义福利")
+    @Column(value = "benefit_ustomize")
+    private String benefitUstomize;
+
 
     /**
      * 1:福利；2：特色
@@ -69,6 +77,13 @@ public class HrmFeatureBenefitsEntity extends BaseEntity<HrmFeatureBenefitsEntit
     @Schema(description = "特色")
     @Column(value = "feature")
     private String feature;
+
+    /**
+     * 自定义特色
+     */
+    @Schema(description = "自定义特色")
+    @Column(value = "feature_ustomize")
+    private String featureUstomize;
 
     /**
      * 应用ID

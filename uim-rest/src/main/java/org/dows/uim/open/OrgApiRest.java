@@ -1,16 +1,19 @@
 package org.dows.uim.open;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mybatisflex.core.paginate.Page;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.UnavailableException;
 import lombok.RequiredArgsConstructor;
+import org.dows.rade.web.Response;
 import org.dows.uim.api.OrgApi;
 import org.dows.uim.api.OrgEmailApi;
 import org.dows.uim.biz.AccountApiBiz;
 import org.dows.uim.biz.OrgApiBiz;
 import org.dows.uim.biz.OrgEmailBiz;
 import org.dows.uim.request.*;
+import org.dows.uim.request.JdKeyWord.JDSaveRequest;
 import org.dows.uim.response.*;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -142,6 +145,12 @@ public class OrgApiRest implements OrgApi, OrgAccountApi, OrgEmailApi {
     @Operation(summary = "通过码值列表或编码列表获取码值")
     public List<JdCodeResponse> getJdCodeByList(HrmJdCodeQueryListRequest hrmJdCodeQueryRequest) throws UnavailableException {
         return orgApiBiz.getJdCodeByList(hrmJdCodeQueryRequest);
+    }
+
+    @Operation(summary = "保存jd信息")
+    public Response saveOrgJd(JDSaveRequest saveRequest) throws UnavailableException, JsonProcessingException {
+
+        return orgApiBiz.saveOrgJd(saveRequest);
     }
 }
 

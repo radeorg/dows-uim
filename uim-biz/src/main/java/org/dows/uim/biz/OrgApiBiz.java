@@ -4,6 +4,8 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mybatisflex.core.paginate.Page;
 import com.mybatisflex.core.query.QueryChain;
 import com.mybatisflex.core.query.QueryWrapper;
@@ -15,15 +17,21 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.dows.pojo.enums.*;
 import org.dows.rade.aac.AacContext;
+import org.dows.rade.cache.RadeCache;
 import org.dows.rade.constant.IdentifierType;
 import org.dows.rade.context.AppContext;
 import org.dows.rade.encrypt.EncryptApi;
 import org.dows.rade.util.DateUtil;
+import org.dows.rade.web.Response;
 import org.dows.uim.constant.CommonDelEnum;
 import org.dows.uim.entity.*;
 import org.dows.uim.exception.UimException;
 import org.dows.uim.request.*;
+import org.dows.uim.request.JdKeyWord.CompanyInfo;
+import org.dows.uim.request.JdKeyWord.JDSaveRequest;
+import org.dows.uim.request.JdKeyWord.SalaryBenefitInfo;
 import org.dows.uim.response.*;
 import org.dows.uim.service.*;
 import org.springframework.beans.BeanUtils;
@@ -52,6 +60,14 @@ public class OrgApiBiz {
 
     private final EncryptApi encryptApi;
     private final AacContext aacContext;
+
+    private enum ChangeField {
+        SCALE, FUNDING_STAGE, PROJECT_TYPE, PROJECT_PROGRESS, SIMILAR_POSITIONS
+    }
+
+    private final RadeCache radeCache;
+
+    private final ObjectMapper objectMapper;
 
 //    private final PasswordEncoder passwordEncoder;
 
@@ -748,6 +764,203 @@ public class OrgApiBiz {
 
 
     }
+    @Operation(summary = "获取JD码值列表")
+    public Response saveOrgJd(JDSaveRequest saveRequest) throws UnavailableException, JsonProcessingException {
+        CompanyInfo companyInfo =saveRequest.getCompanyInfo();
+        Integer scale = CompanyScaleEnum.getCodeByDescription(companyInfo.getScale());
+        Integer fundingStage = FinancingStageEnum.getCodeByDescription(companyInfo.getFundingStage());
+        HrmJdCodeQueryRequest hrmJdCodeQueryRequest = new HrmJdCodeQueryRequest();
+        hrmJdCodeQueryRequest.setCodeType("projectType");
+        hrmJdCodeQueryRequest.setValue(companyInfo.getProjectType());
+        JdCodeResponse jdCodeResponse = getJdCodeOne(hrmJdCodeQueryRequest);
+        Long enterpriseSituationId = companyInfo.getHrmEnterpriseSituationId();
+        Integer projectType = jdCodeResponse.getCode();
+        Integer projectProgress = ProjectProgressEnum.getCodeByDescription(companyInfo.getProjectProgress());
+        if(!Objects.isNull(enterpriseSituationId)){
+            HrmEnterpriseSituationEntity situationEntity = QueryChain.of(HrmEnterpriseSituationEntity.class)
+                    .select()
+                    .eq(HrmEnterpriseSituationEntity::getAppId,AppContext.getAppId())
+                    .eq(HrmEnterpriseSituationEntity::getDeleted,CommonDelEnum.NORMAL.getCode())
+                    .one();
+            if(Objects.nonNull(situationEntity)){
+                Map<ChangeField, String> changes = new HashMap<>();
+
+                // 比较并记录变更字段
+                if (!Objects.equals(situationEntity.getCompanyScale(), scale)) {
+                    changes.put(ChangeField.SCALE, companyInfo.getScale());
+                }
+                if (!Objects.equals(situationEntity.getFinancingStage(), fundingStage)) {
+                    changes.put(ChangeField.FUNDING_STAGE, companyInfo.getFundingStage());
+                }
+                if (!Objects.equals(situationEntity.getProjectType(), projectType)) {
+                    changes.put(ChangeField.PROJECT_TYPE, companyInfo.getProjectType());
+                }
+                if (!Objects.equals(situationEntity.getProjectProgress(), projectProgress)) {
+                    changes.put(ChangeField.PROJECT_PROGRESS, companyInfo.getProjectProgress());
+                }
+                if (!Objects.equals(situationEntity.getSimilarPositions(), companyInfo.getSimilarPositions())) {
+                    changes.put(ChangeField.SIMILAR_POSITIONS, companyInfo.getSimilarPositions());
+                }
+                //3. 如果有变更，创建新记录
+                if (!changes.isEmpty()) {
+                    // 创建新实体（使用Builder模式）
+                    HrmEnterpriseSituationEntity newEntity = HrmEnterpriseSituationEntity.builder()
+                            // 设置变更字段
+                            .companyScale(scale)
+                            .financingStage(fundingStage)
+                            .projectType(projectType)
+                            .projectProgress(projectProgress)
+                            .similarPositions(companyInfo.getSimilarPositions())
+
+                            // 继承未变更字段
+                            .appId(AppContext.getAppId())
+                            .deleted(0)
+                            .ownerId(aacContext.getAacUser().getUserId())
+
+                            // 设置变更关系
+                            .oldEnterpriseSituationId(enterpriseSituationId)
+
+                            // 设置变更备注
+                            .remark(generateChangeRemark(changes, situationEntity))
+
+                            // 时间戳
+                            .ts(new Date())
+                            .ut(new Date())
+                            .build();
+                            newEntity.save();
+                            enterpriseSituationId = newEntity.getHrmEnterpriseSituationId();
+                }
+            }else {
+
+                // 创建新实体（使用Builder模式）
+                enterpriseSituationId = saveJd(scale,fundingStage,projectType,projectProgress,companyInfo.getSimilarPositions());
+            }
+        }else {
+            enterpriseSituationId = saveJd(scale,fundingStage,projectType,projectProgress,companyInfo.getSimilarPositions());
+        }
+        SalaryBenefitInfo salaryBenefitInfo = saveRequest.getSalaryBenefitInfo();
+
+        HrmFeatureBenefitsEntity benefitsEntity = new HrmFeatureBenefitsEntity();
+
+        benefitsEntity.setMonthlySalaryRange(MonthlySalaryRangeEnum.getCodeByDescription(salaryBenefitInfo.getMonthlySalaryRange()));
+        benefitsEntity.setWorkMode(WorkModeEnum.getCodeByDescription(salaryBenefitInfo.getWorkMode()));
+        benefitsEntity.setBenefit(salaryBenefitInfo.getCoreBenefits().stream().map(CoreBenefitsEnum::getCodeByDescription).map(String::valueOf)                             // 转为字符串
+                .collect(Collectors.joining(",")));
+        salaryBenefitInfo.getCoreBenefits().forEach(description -> {
+            String benefitUstomize = CoreBenefitsEnum.getUstomizeByDescription(description);
+            if(StringUtils.isNotBlank(benefitUstomize)){
+                benefitsEntity.setBenefitUstomize(benefitUstomize);
+            }
+        });
+        benefitsEntity.setFeature(salaryBenefitInfo.getTeamFeatures().stream().map(TeamFeaturesEnum::getCodeByDescription).map(String::valueOf)                             // 转为字符串
+                .collect(Collectors.joining(",")));
+        salaryBenefitInfo.getTeamFeatures().forEach(description -> {
+            String featureUstomize = TeamFeaturesEnum.getUstomizeByDescription(description);
+            if(StringUtils.isNotBlank(featureUstomize)){
+                benefitsEntity.setFeatureUstomize(featureUstomize);
+            }
+        });
+        benefitsEntity.setAppId(AppContext.getAppId());
+        benefitsEntity.setDeleted(0);
+        benefitsEntity.setTs(new Date());
+        benefitsEntity.setUt(new Date());
+        benefitsEntity.setOwnerId(aacContext.getAacUser().getUserId());
+        benefitsEntity.save();
+
+        OrgJdEntity jdEntity = new OrgJdEntity();
+        jdEntity.setOrgRootId(aacContext.getAacUser().getOrgRootId());
+        jdEntity.setOrgTreeId(aacContext.getAacUser().getOrgTreeId());
+        jdEntity.setOrgAddress(companyInfo.getOrgAddress());
+        jdEntity.setOrgJdCategoryId(saveRequest.getOrgJdCategoryId());
+        if(Objects.isNull(saveRequest.getOwnerId())) {
+            jdEntity.setOwnerId(saveRequest.getOwnerId());
+        }
+        jdEntity.setOperatorId(aacContext.getAacUser().getUserId());
+        jdEntity.setJdNo("JD"+UUID.randomUUID().toString().replace("-", ""));
+        jdEntity.setJdName(saveRequest.getJdNo());
+        jdEntity.setGender(GenderRequirementEnum.getCodeByDescription(saveRequest.getBasicInfo().getGenderRequirement()));
+        jdEntity.setAgeRange(AgeRangeEnum.getCodeByDescription(saveRequest.getBasicInfo().getAgeRange()));
+        jdEntity.setWorkExper(WorkExperienceEnum.getCodeByDescription(saveRequest.getBasicInfo().getExperienceRequirement()));
+        jdEntity.setMinEducation(EducationRequirementEnum.getCodeByDescription(saveRequest.getBasicInfo().getEducationRequirement()));
+        jdEntity.setRecruitmentPurpose(saveRequest.getBasicInfo().getRecruitmentPurpose().stream().map(RecruitmentPurposeEnum::getCodeByDescription) // 直接通过描述获取 code
+                .map(String::valueOf)                             // 转为字符串
+                .collect(Collectors.joining(",")));
+        jdEntity.setOtherRequire(saveRequest.getOtherRequirements());
+        jdEntity.setEnterpriseSituationId(enterpriseSituationId);
+        jdEntity.setHrmFeatureBenefitsId(benefitsEntity.getHrmFeatureBenefitsId());
+        jdEntity.setDescription(saveRequest.getRequirements());
+        jdEntity.setState(1);
+        jdEntity.setAppId(AppContext.getAppId());
+        jdEntity.setTs(new Date());
+        jdEntity.setUt(new Date());
+        jdEntity.save();
+        // 用前缀隔离 key
+        String cacheKey = "jd-task-id:" + jdEntity.getJdNo();
+        radeCache.set(cacheKey, objectMapper.writeValueAsString(saveRequest)); // 设置 10分钟过期（秒为单位）
+      return Response.ok();
+    }
+
+    private Long  saveJd(Integer scale,Integer fundingStage,Integer projectType,Integer projectProgress,String similarPositions){
+        // 创建新实体（使用Builder模式）
+        HrmEnterpriseSituationEntity newEntity = HrmEnterpriseSituationEntity.builder()
+                // 设置变更字段
+                .companyScale(scale)
+                .financingStage(fundingStage)
+                .projectType(projectType)
+                .projectProgress(projectProgress)
+                .similarPositions(similarPositions)
+                // 继承未变更字段
+                .appId(AppContext.getAppId())
+                .deleted(0)
+                .ownerId(aacContext.getAacUser().getUserId())
+                // 时间戳
+                .ts(new Date())
+                .ut(new Date())
+                .build();
+        newEntity.save();
+        return newEntity.getHrmEnterpriseSituationId();
+    }
+
+    private String generateChangeRemark(Map<ChangeField, String> changes, HrmEnterpriseSituationEntity existing) {
+        StringBuilder remark = new StringBuilder("企业信息变更：");
+
+        for (Map.Entry<ChangeField, String> entry : changes.entrySet()) {
+            String fieldName = getFieldChineseName(entry.getKey());
+            String oldValue = getFieldValue(entry.getKey(), existing);
+            String newValue = entry.getValue();
+
+            remark.append(String.format("\n【%s】 %s → %s",
+                    fieldName, oldValue, newValue));
+        }
+
+        return remark.toString();
+    }
+
+    // 辅助方法：获取字段中文名
+    private String getFieldChineseName(ChangeField field) {
+        switch (field) {
+            case SCALE: return "公司规模";
+            case FUNDING_STAGE: return "融资阶段";
+            case PROJECT_TYPE: return "项目类型";
+            case PROJECT_PROGRESS: return "项目进展";
+            case SIMILAR_POSITIONS: return "相似岗位";
+            default: return field.name();
+        }
+    }
+
+    // 辅助方法：获取字段旧值
+    private String getFieldValue(ChangeField field, HrmEnterpriseSituationEntity entity) {
+        switch (field) {
+            case SCALE: return CompanyScaleEnum.getByCode(entity.getCompanyScale()).getDescription();
+            case FUNDING_STAGE: return FinancingStageEnum.getByCode(entity.getFinancingStage()).getDescription();
+            case PROJECT_TYPE: return ProjectProgressEnum.getByCode(entity.getProjectType()).getDescription();
+            case PROJECT_PROGRESS: return ProjectProgressEnum.getByCode(entity.getProjectProgress()).getDescription();
+            case SIMILAR_POSITIONS: return entity.getSimilarPositions();
+            default: return "";
+        }
+    }
+
+
 
     @Operation(summary = "获取单个JD码值")
     public JdCodeResponse getJdCodeOne(HrmJdCodeQueryRequest hrmJdCodeQueryRequest) throws UnavailableException {
