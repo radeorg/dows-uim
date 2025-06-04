@@ -80,8 +80,8 @@ public class OrgNodeEntity extends BaseEntity<OrgNodeEntity> {
      * 版本
      */
     @Schema(description = "版本")
-    @Column(value = "ver", version = true)
-    private Integer ver = 0;
+    @Column(value = "ver", onUpdateValue = "ver+1")
+    private Integer ver;
 
     /**
      * 操作者ID

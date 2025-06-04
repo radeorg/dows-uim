@@ -51,8 +51,8 @@ public class OrgAddressEntity extends BaseEntity<OrgAddressEntity> {
     /**
      * 乐观锁，默认为0
      */
-    @Column(value = "ver", version = true)
-    private Integer ver = 0;
+    @Column(value = "ver", onUpdateValue = "ver+1")
+    private Integer ver;
     /**
      * 状态
      */

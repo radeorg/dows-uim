@@ -101,8 +101,8 @@ public class OrgTreeEntity extends BaseEntity<OrgTreeEntity> {
      * 版本
      */
     @Schema(description = "版本")
-    @Column(value = "ver", version = true)
-    private Integer ver = 0;
+    @Column(value = "ver", onUpdateValue = "ver+1")
+    private Integer ver;
 
     /**
      * 逻辑删除，0未删除，1删除

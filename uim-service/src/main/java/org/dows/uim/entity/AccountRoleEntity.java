@@ -59,8 +59,8 @@ public class AccountRoleEntity extends BaseEntity<AccountRoleEntity> {
      * 乐观锁，默认为0
      */
     @Schema(description = "乐观锁，默认为0")
-    @Column(value = "ver", version = true)
-    private Integer ver = 0;
+    @Column(value = "ver", onUpdateValue = "ver+1")
+    private Integer ver;
 
     /**
      * 应用ID
