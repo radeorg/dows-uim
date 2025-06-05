@@ -960,6 +960,21 @@ public class OrgApiBiz {
         }
     }
 
+    @Operation(summary = "查询企业情况")
+    public CompanyInfoResponse queryCompany(){
+        CompanyInfoResponse response = new CompanyInfoResponse();
+        List<HrmEnterpriseSituationEntity> situationEntitys = QueryChain.of(HrmEnterpriseSituationEntity.class)
+                .eq(HrmEnterpriseSituationEntity::getAppId, AppContext.getAppId())
+                .eq(HrmEnterpriseSituationEntity::getDeleted, CommonDelEnum.NORMAL.getCode())
+                .orderBy(HrmEnterpriseSituationEntity::getUt,false)
+                .list();
+        if(CollectionUtil.isNotEmpty(situationEntitys)){
+             BeanUtils.copyProperties(situationEntitys.get(0),response);
+        }
+        return response;
+
+    }
+
 
 
     @Operation(summary = "获取单个JD码值")

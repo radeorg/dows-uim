@@ -147,4 +147,9 @@ public interface OrgApi {
         throw new UnsupportedOperationException("not class implement");
     }
 
+    @PostMapping("/v1/open/uim/org/company/query")
+    default CompanyInfoResponse queryCompany() throws UnavailableException, JsonProcessingException {
+        throw new UnsupportedOperationException("not class implement");
+    }
+
 }

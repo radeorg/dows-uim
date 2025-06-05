@@ -152,5 +152,9 @@ public class OrgApiRest implements OrgApi, OrgAccountApi, OrgEmailApi {
 
         return orgApiBiz.saveOrgJd(saveRequest);
     }
+    @Operation(summary = "查询企业信息")
+    public CompanyInfoResponse queryCompany(){
+        return orgApiBiz.queryCompany();
+    }
 }
 
