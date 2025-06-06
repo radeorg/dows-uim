@@ -13,8 +13,8 @@ import lombok.Getter;
 public enum RecruitmentPurposeEnum {
 
     FILL(1, "填补岗位空缺"),
-    EXPAND(2, "业务扩张"),
-    NEWLY_ADDED(3, "新增技术升级需求");
+    EXPAND(2, "业务扩张新增"),
+    NEWLY_ADDED(3, "技术升级需求");
 
     private final int code;
     private final String description;
