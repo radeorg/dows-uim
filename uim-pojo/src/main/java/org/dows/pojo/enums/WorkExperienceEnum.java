@@ -9,7 +9,9 @@ import lombok.Getter;
  * @Date 2025/6/3 22:14
  */
 
-
+/**
+ * 工作经验
+ */
 @Getter
 public enum WorkExperienceEnum {
 

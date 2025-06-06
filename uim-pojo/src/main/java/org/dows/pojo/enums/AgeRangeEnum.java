@@ -9,6 +9,9 @@ import lombok.Getter;
  */
 
 
+/**
+ * 年龄范围
+ */
 @Getter
 public enum AgeRangeEnum {
 

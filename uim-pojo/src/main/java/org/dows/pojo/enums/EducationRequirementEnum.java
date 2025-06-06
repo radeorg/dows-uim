@@ -8,7 +8,9 @@ import lombok.Getter;
  * @Date 2025/6/3 22:15
  */
 
-
+/**
+ * 最低学历
+ */
 @Getter
 public enum EducationRequirementEnum {
 
