@@ -887,7 +887,7 @@ public class OrgApiBiz {
         }
         jdEntity.setOperatorId(aacContext.getAacUser().getUserId());
         jdEntity.setJdNo("JD"+UUID.randomUUID().toString().replace("-", ""));
-        jdEntity.setJdName(saveRequest.getJdNo());
+        jdEntity.setJdName(saveRequest.getBasicInfo().getJdName());
         //jdEntity.setGender(GenderRequirementEnum.getCodeByDescription(saveRequest.getBasicInfo().getGenderRequirement()));
         jdEntity.setAgeRange(AgeRangeEnum.getCodeByDescription(saveRequest.getBasicInfo().getAgeRange()));
         jdEntity.setWorkExper(WorkExperienceEnum.getCodeByDescription(saveRequest.getBasicInfo().getExperienceRequirement()));
