@@ -50,8 +50,8 @@ public enum TeamFeaturesEnum {
     }
 
     public static String getUstomizeByDescription(String description) {
-        for (CoreBenefitsEnum benefit : CoreBenefitsEnum.values()) {
-            if (benefit.getDescription().equals(description)) {
+        for (TeamFeaturesEnum feature : TeamFeaturesEnum.values()) {
+            if (feature.getDescription().equals(description)) {
                 return "";
             }
         }
