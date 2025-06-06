@@ -119,11 +119,25 @@ public class OrgJdEntity extends BaseEntity<OrgJdEntity> {
     private Integer minEducation;
 
     /**
-     * 项目进展
+     * 招聘目的
      */
     @Schema(description = "招聘目的[1填补岗位空缺 2业务扩张3新增技术升级需求]")
     @Column(value = "recruitment_purpose")
     private String recruitmentPurpose;
+
+    /**
+     * 技术栈
+     */
+    @Schema(description = "技术栈")
+    @Column(value = "tech_stack")
+    private String techStack;
+
+    /**
+     * 技术栈
+     */
+    @Schema(description = "语言要求")
+    @Column(value = "language_requirements")
+    private String languageRequirements;
 
 
 

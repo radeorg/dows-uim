@@ -764,11 +764,17 @@ public class OrgApiBiz {
 
 
     }
-    @Operation(summary = "获取JD码值列表")
+    @Operation(summary = "存储JD内容")
     public Response saveOrgJd(JDSaveRequest saveRequest) throws UnavailableException, JsonProcessingException {
         CompanyInfo companyInfo =saveRequest.getCompanyInfo();
-        Integer scale = CompanyScaleEnum.getCodeByDescription(companyInfo.getScale());
-        Integer fundingStage = FinancingStageEnum.getCodeByDescription(companyInfo.getFundingStage());
+        Integer scale = null;
+        if(StringUtils.isNotBlank(companyInfo.getScale())){
+            scale = CompanyScaleEnum.getCodeByDescription(companyInfo.getScale());
+        }
+        Integer fundingStage = null;
+        if(StringUtils.isNotBlank(companyInfo.getFundingStage())){
+            fundingStage = FinancingStageEnum.getCodeByDescription(companyInfo.getFundingStage());
+        }
         HrmJdCodeQueryRequest hrmJdCodeQueryRequest = new HrmJdCodeQueryRequest();
         hrmJdCodeQueryRequest.setCodeType("projectType");
         hrmJdCodeQueryRequest.setValue(companyInfo.getProjectType());
@@ -844,22 +850,26 @@ public class OrgApiBiz {
 
         benefitsEntity.setMonthlySalaryRange(MonthlySalaryRangeEnum.getCodeByDescription(salaryBenefitInfo.getMonthlySalaryRange()));
         benefitsEntity.setWorkMode(WorkModeEnum.getCodeByDescription(salaryBenefitInfo.getWorkMode()));
-        benefitsEntity.setBenefit(salaryBenefitInfo.getCoreBenefits().stream().map(CoreBenefitsEnum::getCodeByDescription).map(String::valueOf)                             // 转为字符串
-                .collect(Collectors.joining(",")));
-        salaryBenefitInfo.getCoreBenefits().forEach(description -> {
-            String benefitUstomize = CoreBenefitsEnum.getUstomizeByDescription(description);
-            if(StringUtils.isNotBlank(benefitUstomize)){
-                benefitsEntity.setBenefitUstomize(benefitUstomize);
-            }
-        });
-        benefitsEntity.setFeature(salaryBenefitInfo.getTeamFeatures().stream().map(TeamFeaturesEnum::getCodeByDescription).map(String::valueOf)                             // 转为字符串
-                .collect(Collectors.joining(",")));
-        salaryBenefitInfo.getTeamFeatures().forEach(description -> {
-            String featureUstomize = TeamFeaturesEnum.getUstomizeByDescription(description);
-            if(StringUtils.isNotBlank(featureUstomize)){
-                benefitsEntity.setFeatureUstomize(featureUstomize);
-            }
-        });
+        if(CollectionUtil.isNotEmpty(salaryBenefitInfo.getCoreBenefits())){
+            benefitsEntity.setBenefit(salaryBenefitInfo.getCoreBenefits().stream().map(CoreBenefitsEnum::getCodeByDescription).map(String::valueOf)                             // 转为字符串
+                    .collect(Collectors.joining(",")));
+            salaryBenefitInfo.getCoreBenefits().forEach(description -> {
+                String benefitUstomize = CoreBenefitsEnum.getUstomizeByDescription(description);
+                if(StringUtils.isNotBlank(benefitUstomize)){
+                    benefitsEntity.setBenefitUstomize(benefitUstomize);
+                }
+            });
+        }
+        if(CollectionUtil.isNotEmpty(salaryBenefitInfo.getTeamFeatures())){
+            benefitsEntity.setFeature(salaryBenefitInfo.getTeamFeatures().stream().map(TeamFeaturesEnum::getCodeByDescription).map(String::valueOf)                             // 转为字符串
+                    .collect(Collectors.joining(",")));
+            salaryBenefitInfo.getTeamFeatures().forEach(description -> {
+                String featureUstomize = TeamFeaturesEnum.getUstomizeByDescription(description);
+                if(StringUtils.isNotBlank(featureUstomize)){
+                    benefitsEntity.setFeatureUstomize(featureUstomize);
+                }
+            });
+        }
         benefitsEntity.setAppId(AppContext.getAppId());
         benefitsEntity.setDeleted(0);
         benefitsEntity.setTs(new Date());
@@ -878,14 +888,22 @@ public class OrgApiBiz {
         jdEntity.setOperatorId(aacContext.getAacUser().getUserId());
         jdEntity.setJdNo("JD"+UUID.randomUUID().toString().replace("-", ""));
         jdEntity.setJdName(saveRequest.getJdNo());
-        jdEntity.setGender(GenderRequirementEnum.getCodeByDescription(saveRequest.getBasicInfo().getGenderRequirement()));
+        //jdEntity.setGender(GenderRequirementEnum.getCodeByDescription(saveRequest.getBasicInfo().getGenderRequirement()));
         jdEntity.setAgeRange(AgeRangeEnum.getCodeByDescription(saveRequest.getBasicInfo().getAgeRange()));
         jdEntity.setWorkExper(WorkExperienceEnum.getCodeByDescription(saveRequest.getBasicInfo().getExperienceRequirement()));
         jdEntity.setMinEducation(EducationRequirementEnum.getCodeByDescription(saveRequest.getBasicInfo().getEducationRequirement()));
         jdEntity.setRecruitmentPurpose(saveRequest.getBasicInfo().getRecruitmentPurpose().stream().map(RecruitmentPurposeEnum::getCodeByDescription) // 直接通过描述获取 code
                 .map(String::valueOf)                             // 转为字符串
                 .collect(Collectors.joining(",")));
-        jdEntity.setOtherRequire(saveRequest.getOtherRequirements());
+        if(StringUtils.isNotBlank(saveRequest.getOtherRequirements())){
+            jdEntity.setOtherRequire(saveRequest.getOtherRequirements());
+        }
+        if(StringUtils.isNotBlank(saveRequest.getJdRequire().getLanguageRequirements())){
+            jdEntity.setLanguageRequirements(saveRequest.getJdRequire().getLanguageRequirements());
+        }
+        if (StringUtils.isNotBlank(saveRequest.getJdRequire().getTechStack())) {
+            jdEntity.setTechStack(saveRequest.getJdRequire().getTechStack());
+        }
         jdEntity.setEnterpriseSituationId(enterpriseSituationId);
         jdEntity.setHrmFeatureBenefitsId(benefitsEntity.getHrmFeatureBenefitsId());
         jdEntity.setDescription(saveRequest.getRequirements());

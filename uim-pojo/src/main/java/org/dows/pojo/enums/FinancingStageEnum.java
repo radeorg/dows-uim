@@ -9,7 +9,9 @@ import lombok.Getter;
  * @Date 2025/6/3 22:17
  */
 
-
+/**
+ * 融资阶段
+ */
 @Getter
 public enum FinancingStageEnum {
 

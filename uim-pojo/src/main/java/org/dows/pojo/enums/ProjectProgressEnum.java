@@ -15,8 +15,8 @@ public enum ProjectProgressEnum {
 
     DESIGN_PHASE(1, "设计阶段"),
     DEVELOPMENT_PHASE(2, "开发阶段"),
-    ONLINE_NOT_PROFITABLE(3, "已上线(未盈利)"),
-    ONLINE_PROFITABLE(4, "已上线(盈利)"),
+    ONLINE_NOT_PROFITABLE(3, "已上线（未盈利）)"),
+    ONLINE_PROFITABLE(4, "已上线（盈利）"),
     MARKET_VALIDATION_PHASE(5, "市场验证阶段");
 
     private final int code;

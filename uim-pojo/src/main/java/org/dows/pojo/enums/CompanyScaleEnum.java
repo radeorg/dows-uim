@@ -9,7 +9,9 @@ import lombok.Getter;
  * @Date 2025/6/3 22:16
  */
 
-
+/**
+ * 企业规模
+ */
 @Getter
 public enum CompanyScaleEnum {
 
