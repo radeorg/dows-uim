@@ -163,7 +163,7 @@ public class OrgApiRest implements OrgApi, OrgAccountApi, OrgEmailApi {
     }
 
     @Operation(summary = "更新JD详情")
-    public Response updateOrgJd(JDSaveRequest saveRequest){
+    public Response updateOrgJd(JDSaveRequest saveRequest) throws JsonProcessingException {
         return orgApiBiz.updateJdInfo(saveRequest);
 
     }

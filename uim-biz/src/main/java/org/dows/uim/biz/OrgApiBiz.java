@@ -917,7 +917,7 @@ public class OrgApiBiz {
         saveRequest.setOrgjdId(jdEntity.getOrgJdId());
         saveRequest.setJdNo(jdEntity.getJdNo());
         saveRequest.getSalaryBenefitInfo().setHrmFeatureBenefitsId(benefitsEntity.getHrmFeatureBenefitsId());
-        radeCache.set(cacheKey, objectMapper.writeValueAsString(saveRequest)); // 设置 10分钟过期（秒为单位）
+        radeCache.set(cacheKey, objectMapper.writeValueAsString(saveRequest));
       return Response.ok();
     }
 
@@ -1093,7 +1093,7 @@ public class OrgApiBiz {
     }
 
     @Transactional
-    public Response updateJdInfo(JDSaveRequest saveRequest){
+    public Response updateJdInfo(JDSaveRequest saveRequest) throws JsonProcessingException {
         String cacheKey = "jd:detail:id:" + saveRequest.getOrgjdId();
 
         JDInfoResponse jdInfoResponse = radeCache.get(cacheKey,JDInfoResponse.class);
@@ -1178,8 +1178,10 @@ public class OrgApiBiz {
                 benefitsEntity.update();
                 benefitsEntity.setMonthlySalaryRange(MonthlySalaryRangeEnum.getCodeByDescription(saveRequest.getSalaryBenefitInfo().getMonthlySalaryRange()));
                 benefitsEntity.update();
+                radeCache.set(cacheKey, objectMapper.writeValueAsString(saveRequest));
                 return Response.ok();
             }
+            radeCache.set(cacheKey, objectMapper.writeValueAsString(saveRequest));
             return Response.ok();
 
         }else {
@@ -1191,6 +1193,7 @@ public class OrgApiBiz {
                 benefitsEntity.update();
                 benefitsEntity.setMonthlySalaryRange(MonthlySalaryRangeEnum.getCodeByDescription(saveRequest.getSalaryBenefitInfo().getMonthlySalaryRange()));
                 benefitsEntity.update();
+                radeCache.set(cacheKey, objectMapper.writeValueAsString(saveRequest));
                 return Response.ok();
             }else {
                 return Response.failed("未修改请勿提交");
