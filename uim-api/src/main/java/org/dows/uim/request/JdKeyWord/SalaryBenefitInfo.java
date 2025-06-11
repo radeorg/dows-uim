@@ -13,6 +13,9 @@ import java.util.List;
 
 @Data
 public class SalaryBenefitInfo {
+
+    private Long hrmFeatureBenefitsId;
+
     // 月薪范围，例如“15k-25k”
     private String monthlySalaryRange;
 

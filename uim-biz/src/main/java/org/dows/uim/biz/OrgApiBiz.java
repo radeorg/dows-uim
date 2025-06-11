@@ -913,7 +913,10 @@ public class OrgApiBiz {
         jdEntity.setUt(new Date());
         jdEntity.save();
         // 用前缀隔离 key
-        String cacheKey = "jd-task-id:" + jdEntity.getJdNo();
+        String cacheKey = "jd:detail:id:" + jdEntity.getOrgJdId();
+        saveRequest.setOrgjdId(jdEntity.getOrgJdId());
+        saveRequest.setJdNo(jdEntity.getJdNo());
+        saveRequest.getSalaryBenefitInfo().setHrmFeatureBenefitsId(benefitsEntity.getHrmFeatureBenefitsId());
         radeCache.set(cacheKey, objectMapper.writeValueAsString(saveRequest)); // 设置 10分钟过期（秒为单位）
       return Response.ok();
     }
@@ -1081,6 +1084,123 @@ public class OrgApiBiz {
         response.setIndicatorList(responseList);
         return response;
     }
+
+
+
+    public JDInfoResponse queryJdInfo(Long orgJdId){
+        String cacheKey = "jd:detail:id:" + orgJdId;
+        return radeCache.get(cacheKey,JDInfoResponse.class);
+    }
+
+    @Transactional
+    public Response updateJdInfo(JDSaveRequest saveRequest){
+        String cacheKey = "jd:detail:id:" + saveRequest.getOrgjdId();
+
+        JDInfoResponse jdInfoResponse = radeCache.get(cacheKey,JDInfoResponse.class);
+
+        OrgJdEntity jdEntity = null;
+        if(!saveRequest.getBasicInfo().getJdName().equals(jdInfoResponse.getBasicInfo().getJdName())){
+            jdEntity = new OrgJdEntity();
+            jdEntity.setJdName(saveRequest.getBasicInfo().getJdName());
+        }
+        if (saveRequest.getOrgJdCategoryId() != jdInfoResponse.getOrgJdCategoryId()){
+            if (jdEntity == null) {
+                jdEntity = new OrgJdEntity();
+            }
+            jdEntity.setOrgJdCategoryId(saveRequest.getOrgJdCategoryId());
+        }
+
+        if(saveRequest.getOwnerId() != jdInfoResponse.getOwnerId()){
+            if (jdEntity == null) {
+                jdEntity = new OrgJdEntity();
+            }
+            jdEntity.setOwnerId(saveRequest.getOwnerId());
+        }
+
+        if(!saveRequest.getRequirements().equals(jdInfoResponse.getRequirements())){
+            if (jdEntity == null) {
+                jdEntity = new OrgJdEntity();
+            }
+            jdEntity.setDescription(saveRequest.getRequirements());
+        }
+        if(!saveRequest.getBasicInfo().getEducationRequirement().equals(jdInfoResponse.getBasicInfo().getEducationRequirement())){
+            if (jdEntity == null) {
+                jdEntity = new OrgJdEntity();
+            }
+            jdEntity.setMinEducation(EducationRequirementEnum.getCodeByDescription(saveRequest.getBasicInfo().getEducationRequirement()));
+        }
+
+        if(!saveRequest.getBasicInfo().getExperienceRequirement().equals(jdInfoResponse.getBasicInfo().getExperienceRequirement())){
+            if (jdEntity == null) {
+                jdEntity = new OrgJdEntity();
+            }
+            jdEntity.setWorkExper(WorkExperienceEnum.getCodeByDescription(saveRequest.getBasicInfo().getExperienceRequirement()));
+        }
+
+        if (StringUtils.isNotBlank(saveRequest.getJdRequire().getTechStack())) {
+            if (!saveRequest.getJdRequire().getTechStack().equals(jdInfoResponse.getJdRequire().getTechStack())) {
+                if (jdEntity == null) {
+                    jdEntity = new OrgJdEntity();
+                }
+                jdEntity.setTechStack(saveRequest.getJdRequire().getTechStack());
+            }
+
+        }
+        if(StringUtils.isNotBlank(saveRequest.getJdRequire().getLanguageRequirements())){
+            if(!saveRequest.getJdRequire().getLanguageRequirements().equals(jdInfoResponse.getJdRequire().getLanguageRequirements())){
+                if (jdEntity == null) {
+                    jdEntity = new OrgJdEntity();
+                }
+                jdEntity.setLanguageRequirements(saveRequest.getJdRequire().getLanguageRequirements());
+            }
+
+        }
+
+        if(StringUtils.isNotBlank(saveRequest.getOtherRequirements())){
+            if(!saveRequest.getOtherRequirements().equals(jdInfoResponse.getOtherRequirements())){
+                if (jdEntity == null) {
+                    jdEntity = new OrgJdEntity();
+                }
+                jdEntity.setOtherRequire(saveRequest.getOtherRequirements());
+            }
+
+        }
+        if(jdEntity != null){
+            jdEntity.setOrgJdId(saveRequest.getOrgjdId());
+            jdEntity.setUt(new Date());
+            jdEntity.setOperatorId(aacContext.getAacUser().getUserId());
+            jdEntity.update();
+            if (!saveRequest.getSalaryBenefitInfo().getMonthlySalaryRange().equals(jdInfoResponse.getSalaryBenefitInfo().getMonthlySalaryRange())) {
+                HrmFeatureBenefitsEntity benefitsEntity = new HrmFeatureBenefitsEntity();
+                benefitsEntity.setHrmFeatureBenefitsId(saveRequest.getSalaryBenefitInfo().getHrmFeatureBenefitsId());
+                benefitsEntity.setUt(new Date());
+                benefitsEntity.setOwnerId(aacContext.getAacUser().getUserId());
+                benefitsEntity.update();
+                benefitsEntity.setMonthlySalaryRange(MonthlySalaryRangeEnum.getCodeByDescription(saveRequest.getSalaryBenefitInfo().getMonthlySalaryRange()));
+                benefitsEntity.update();
+                return Response.ok();
+            }
+            return Response.ok();
+
+        }else {
+            if (!saveRequest.getSalaryBenefitInfo().getMonthlySalaryRange().equals(jdInfoResponse.getSalaryBenefitInfo().getMonthlySalaryRange())) {
+                HrmFeatureBenefitsEntity benefitsEntity = new HrmFeatureBenefitsEntity();
+                benefitsEntity.setHrmFeatureBenefitsId(saveRequest.getSalaryBenefitInfo().getHrmFeatureBenefitsId());
+                benefitsEntity.setUt(new Date());
+                benefitsEntity.setOwnerId(aacContext.getAacUser().getUserId());
+                benefitsEntity.update();
+                benefitsEntity.setMonthlySalaryRange(MonthlySalaryRangeEnum.getCodeByDescription(saveRequest.getSalaryBenefitInfo().getMonthlySalaryRange()));
+                benefitsEntity.update();
+                return Response.ok();
+            }else {
+                return Response.failed("未修改请勿提交");
+            }
+        }
+
+
+    }
+
+
 
     /**
      * 根据账号实例ID获取其所在的组织列表

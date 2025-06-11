@@ -152,4 +152,14 @@ public interface OrgApi {
         throw new UnsupportedOperationException("not class implement");
     }
 
+    @GetMapping("/v1/open/uim/org/jdinfo/query")
+    default JDInfoResponse queryJdInfo(Long orgJdId) {
+        throw new UnsupportedOperationException("not class implement");
+    }
+
+    @PostMapping("/v1/open/uim/org/jdinfo/update")
+    default Response updateOrgJd(JDSaveRequest saveRequest) throws UnavailableException, JsonProcessingException {
+        throw new UnsupportedOperationException("not class implement");
+    }
+
 }
