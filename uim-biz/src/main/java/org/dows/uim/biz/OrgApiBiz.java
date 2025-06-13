@@ -882,7 +882,7 @@ public class OrgApiBiz {
         jdEntity.setOrgTreeId(aacContext.getAacUser().getOrgTreeId());
         jdEntity.setOrgAddress(companyInfo.getOrgAddress());
         jdEntity.setOrgJdCategoryId(saveRequest.getOrgJdCategoryId());
-        if(Objects.isNull(saveRequest.getOwnerId())) {
+        if(Objects.nonNull(saveRequest.getOwnerId())) {
             jdEntity.setOwnerId(saveRequest.getOwnerId());
         }
         jdEntity.setOperatorId(aacContext.getAacUser().getUserId());
@@ -1200,6 +1200,83 @@ public class OrgApiBiz {
             }
         }
 
+
+    }
+
+
+    private JDInfoResponse queryJdInfoFromDb(Long orgJdId){
+        JDInfoResponse response = null;
+
+        OrgJdEntity jdEntity = QueryChain.of(OrgJdEntity.class)
+                .eq(OrgJdEntity::getOrgJdId,orgJdId)
+                .eq(OrgJdEntity::getDeleted, CommonDelEnum.NORMAL.getCode())
+                .one();
+        if(Objects.nonNull(jdEntity)){
+            response = new JDInfoResponse();
+            response.setOrgjdId(orgJdId);
+            // jdEntity.setOrgAddress(companyInfo.getOrgAddress());
+            response.getCompanyInfo().setOrgAddress(jdEntity.getOrgAddress());
+            //jdEntity.setOrgJdCategoryId(saveRequest.getOrgJdCategoryId());
+            response.setOrgJdCategoryId(jdEntity.getOrgJdCategoryId());
+            if (Objects.nonNull(jdEntity.getOwnerId())) {
+                response.setOwnerId(jdEntity.getOwnerId());
+            }
+            // jdEntity.setJdNo("JD"+UUID.randomUUID().toString().replace("-", ""));
+            response.setJdNo(jdEntity.getJdNo());
+            // jdEntity.setJdName(saveRequest.getBasicInfo().getJdName());
+            response.getBasicInfo().setJdName(jdEntity.getJdName());
+            //jdEntity.setAgeRange(AgeRangeEnum.getCodeByDescription(saveRequest.getBasicInfo().getAgeRange()));
+            response.getBasicInfo().setAgeRange(AgeRangeEnum.getByCode(jdEntity.getAgeRange()).getDescription());
+            // jdEntity.setWorkExper(WorkExperienceEnum.getCodeByDescription(saveRequest.getBasicInfo().getExperienceRequirement()));
+            response.getBasicInfo().setExperienceRequirement(WorkExperienceEnum.getByCode(jdEntity.getWorkExper()).getDescription());
+            // jdEntity.setMinEducation(EducationRequirementEnum.getCodeByDescription(saveRequest.getBasicInfo().getEducationRequirement()));
+            response.getBasicInfo().setEducationRequirement(EducationRequirementEnum.getByCode(jdEntity.getMinEducation()).getDescription());
+//            jdEntity.setRecruitmentPurpose(saveRequest.getBasicInfo().getRecruitmentPurpose().stream().map(RecruitmentPurposeEnum::getCodeByDescription) // 直接通过描述获取 code
+//                    .map(String::valueOf)                             // 转为字符串
+//                    .collect(Collectors.joining(",")));
+            String recruitmentPurposeStr = jdEntity.getRecruitmentPurpose();
+            List<Integer> recruitmentPurposeList = recruitmentPurposeStr == null ? Collections.emptyList() : Arrays.stream(recruitmentPurposeStr.split(","))
+                    .filter(StringUtils::isNotBlank)
+                    .map(Integer::parseInt)
+                    .toList();
+            List<String> purposeEnums = recruitmentPurposeList.stream()
+                    .map(code -> {
+                        try {
+                            return RecruitmentPurposeEnum.getByCode(code).getDescription();
+                        } catch (IllegalArgumentException e) {
+                            // 记录无效 code（可选）
+                            log.warn("无效的 recruitmentPurpose code: {}", code);
+                            return null;
+                        }
+                    })
+                    .filter(Objects::nonNull)
+                    .toList();
+            response.getBasicInfo().setRecruitmentPurpose(purposeEnums);
+
+//            if(StringUtils.isNotBlank(saveRequest.getOtherRequirements())){
+//                jdEntity.setOtherRequire(saveRequest.getOtherRequirements());
+//            }
+            if(StringUtils.isNotBlank(jdEntity.getOtherRequire())){
+                response.setOtherRequirements(jdEntity.getOtherRequire());
+            }
+//            if(StringUtils.isNotBlank(saveRequest.getJdRequire().getLanguageRequirements())){
+//                jdEntity.setLanguageRequirements(saveRequest.getJdRequire().getLanguageRequirements());
+//            }
+            if(StringUtils.isNotBlank(jdEntity.getLanguageRequirements())){
+                response.getJdRequire().setLanguageRequirements(jdEntity.getLanguageRequirements());
+            }
+           /* if (StringUtils.isNotBlank(saveRequest.getJdRequire().getTechStack())) {
+                jdEntity.setTechStack(saveRequest.getJdRequire().getTechStack());
+            }
+
+            jdEntity.setEnterpriseSituationId(enterpriseSituationId);
+            jdEntity.setHrmFeatureBenefitsId(benefitsEntity.getHrmFeatureBenefitsId());
+            jdEntity.setDescription(saveRequest.getRequirements());*/
+            return response;
+
+        }else {
+            return response;
+        }
 
     }
 
