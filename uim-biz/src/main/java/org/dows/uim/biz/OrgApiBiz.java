@@ -1011,8 +1011,19 @@ public class OrgApiBiz {
                 .eq(HrmEnterpriseSituationEntity::getDeleted, CommonDelEnum.NORMAL.getCode())
                 .orderBy(HrmEnterpriseSituationEntity::getUt,false)
                 .list();
+
         if(CollectionUtil.isNotEmpty(situationEntitys)){
-             BeanUtils.copyProperties(situationEntitys.get(0),response);
+            HrmEnterpriseSituationEntity situationEntity = situationEntitys.get(0);
+            if(Objects.nonNull(situationEntity.getCompanyScale())){
+                response.setScale(CompanyScaleEnum.getByCode(situationEntity.getCompanyScale()).getDescription());
+            }
+            if(Objects.nonNull(situationEntity.getFinancingStage())){
+                response.setFundingStage(FinancingStageEnum.getByCode(situationEntity.getFinancingStage()).getDescription());
+            }
+            response.setProjectType(getProjectTypeDescription(situationEntity.getProjectType()));
+            response.setProjectProgress(ProjectProgressEnum.getByCode(situationEntity.getProjectProgress()).getDescription());
+            response.setSimilarPositions(situationEntity.getSimilarPositions());
+
         }
         return response;
 
