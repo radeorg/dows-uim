@@ -1014,6 +1014,7 @@ public class OrgApiBiz {
 
         if(CollectionUtil.isNotEmpty(situationEntitys)){
             HrmEnterpriseSituationEntity situationEntity = situationEntitys.get(0);
+            response.setHrmEnterpriseSituationId(situationEntity.getHrmEnterpriseSituationId());
             if(Objects.nonNull(situationEntity.getCompanyScale())){
                 response.setScale(CompanyScaleEnum.getByCode(situationEntity.getCompanyScale()).getDescription());
             }
