@@ -494,7 +494,23 @@ public class OrgApiBiz {
 
             boolean flag = newEntity.save();
             if(flag) {
+                if("projectType".equals(hrmJdCodeQueryRequest.getCodeType())){
+                Map<Integer,String> projectTypeMap = QueryChain.of(HrmJdCodeEntity.class)
+                        .eq(HrmJdCodeEntity::getCodeType, hrmJdCodeQueryRequest.getCodeType())
+                        .eq(HrmJdCodeEntity::getAppId, AppContext.getAppId())
+                        .eq(HrmJdCodeEntity::getDeleted, CommonDelEnum.NORMAL.getCode())
+                        .list()
+                        .stream()
+                        .collect(Collectors.toMap(
+                                HrmJdCodeEntity::getCode,
+                                HrmJdCodeEntity::getValue
+                        ));
+                String  projectTypeKey = "JD:projectType:"+AppContext.getAppId();
+                radeCache.set(projectTypeKey, projectTypeMap);
+                }
+
                 return JdCodeResponse.builder().code(nextCode).value(hrmJdCodeQueryRequest.getValue()).codeType(hrmJdCodeQueryRequest.getCodeType()).build();
+
             }else {
                 throw new UnavailableException("自定义类型保存失败");
             }
@@ -974,11 +990,17 @@ public class OrgApiBiz {
         switch (field) {
             case SCALE: return CompanyScaleEnum.getByCode(entity.getCompanyScale()).getDescription();
             case FUNDING_STAGE: return FinancingStageEnum.getByCode(entity.getFinancingStage()).getDescription();
-            case PROJECT_TYPE: return ProjectProgressEnum.getByCode(entity.getProjectType()).getDescription();
+            case PROJECT_TYPE: return getProjectTypeDescription(entity.getProjectType());
             case PROJECT_PROGRESS: return ProjectProgressEnum.getByCode(entity.getProjectProgress()).getDescription();
             case SIMILAR_POSITIONS: return entity.getSimilarPositions();
             default: return "";
         }
+    }
+
+    private String getProjectTypeDescription(Integer code){
+        String  projectTypeKey = "JD:projectType:"+AppContext.getAppId();
+        Map<Integer,String> map = (Map<Integer,String>)radeCache.get(projectTypeKey);
+        return  map.get(code);
     }
 
     @Operation(summary = "查询企业情况")
@@ -1087,16 +1109,26 @@ public class OrgApiBiz {
 
 
 
-    public JDInfoResponse queryJdInfo(Long orgJdId){
+    public JDInfoResponse queryJdInfo(Long orgJdId) throws JsonProcessingException {
         String cacheKey = "jd:detail:id:" + orgJdId;
-        return radeCache.get(cacheKey,JDInfoResponse.class);
+        JDInfoResponse jdInfoResponse = radeCache.get(cacheKey,JDInfoResponse.class);
+        if (jdInfoResponse== null || jdInfoResponse.getOrgjdId() == null) {
+            jdInfoResponse = queryJdInfoFromDb(orgJdId);
+        }
+        return jdInfoResponse;
     }
 
     @Transactional
     public Response updateJdInfo(JDSaveRequest saveRequest) throws JsonProcessingException {
         String cacheKey = "jd:detail:id:" + saveRequest.getOrgjdId();
-
         JDInfoResponse jdInfoResponse = radeCache.get(cacheKey,JDInfoResponse.class);
+        if (jdInfoResponse== null || jdInfoResponse.getOrgjdId() == null) {
+            jdInfoResponse = queryJdInfoFromDb(saveRequest.getOrgjdId());
+            if(jdInfoResponse == null){
+                return Response.failed("JD详情不存在");
+            }
+        }
+
 
         OrgJdEntity jdEntity = null;
         if(!saveRequest.getBasicInfo().getJdName().equals(jdInfoResponse.getBasicInfo().getJdName())){
@@ -1175,7 +1207,6 @@ public class OrgApiBiz {
                 benefitsEntity.setHrmFeatureBenefitsId(saveRequest.getSalaryBenefitInfo().getHrmFeatureBenefitsId());
                 benefitsEntity.setUt(new Date());
                 benefitsEntity.setOwnerId(aacContext.getAacUser().getUserId());
-                benefitsEntity.update();
                 benefitsEntity.setMonthlySalaryRange(MonthlySalaryRangeEnum.getCodeByDescription(saveRequest.getSalaryBenefitInfo().getMonthlySalaryRange()));
                 benefitsEntity.update();
                 radeCache.set(cacheKey, objectMapper.writeValueAsString(saveRequest));
@@ -1204,7 +1235,7 @@ public class OrgApiBiz {
     }
 
 
-    private JDInfoResponse queryJdInfoFromDb(Long orgJdId){
+    private JDInfoResponse queryJdInfoFromDb(Long orgJdId) throws JsonProcessingException {
         JDInfoResponse response = null;
 
         OrgJdEntity jdEntity = QueryChain.of(OrgJdEntity.class)
@@ -1267,11 +1298,82 @@ public class OrgApiBiz {
             }
            /* if (StringUtils.isNotBlank(saveRequest.getJdRequire().getTechStack())) {
                 jdEntity.setTechStack(saveRequest.getJdRequire().getTechStack());
+            }*/
+            if (StringUtils.isNotBlank(jdEntity.getTechStack())){
+                response.getJdRequire().setTechStack(jdEntity.getTechStack());
             }
-
-            jdEntity.setEnterpriseSituationId(enterpriseSituationId);
-            jdEntity.setHrmFeatureBenefitsId(benefitsEntity.getHrmFeatureBenefitsId());
-            jdEntity.setDescription(saveRequest.getRequirements());*/
+            response.setRequirements(jdEntity.getDescription());
+            HrmEnterpriseSituationEntity situationEntity = QueryChain.of(HrmEnterpriseSituationEntity.class)
+                    .eq(HrmEnterpriseSituationEntity::getHrmEnterpriseSituationId,jdEntity.getEnterpriseSituationId())
+                    .eq(HrmEnterpriseSituationEntity::getDeleted,CommonDelEnum.NORMAL.getCode())
+                    .eq(HrmEnterpriseSituationEntity::getAppId,jdEntity.getAppId())
+                    .one();
+            if(Objects.nonNull(situationEntity.getCompanyScale())){
+                response.getCompanyInfo().setScale(CompanyScaleEnum.getByCode(situationEntity.getCompanyScale()).getDescription());
+            }
+            if(Objects.nonNull(situationEntity.getFinancingStage())){
+                response.getCompanyInfo().setFundingStage(FinancingStageEnum.getByCode(situationEntity.getFinancingStage()).getDescription());
+            }
+            response.getCompanyInfo().setHrmEnterpriseSituationId(jdEntity.getEnterpriseSituationId());
+            response.getCompanyInfo().setProjectType(getProjectTypeDescription(situationEntity.getProjectType()));
+            response.getCompanyInfo().setProjectProgress(ProjectProgressEnum.getByCode(situationEntity.getProjectProgress()).getDescription());
+            response.getCompanyInfo().setSimilarPositions(situationEntity.getSimilarPositions());
+            HrmFeatureBenefitsEntity benefitsEntity = QueryChain.of(HrmFeatureBenefitsEntity.class)
+                    .eq(HrmFeatureBenefitsEntity::getHrmFeatureBenefitsId,jdEntity.getHrmFeatureBenefitsId())
+                    .eq(HrmFeatureBenefitsEntity::getDeleted,CommonDelEnum.NORMAL.getCode())
+                    .eq(HrmFeatureBenefitsEntity::getAppId,jdEntity.getAppId())
+                    .one();
+            response.getSalaryBenefitInfo().setMonthlySalaryRange(MonthlySalaryRangeEnum.getByCode(benefitsEntity.getMonthlySalaryRange()).getDescription());
+            response.getSalaryBenefitInfo().setWorkMode(WorkModeEnum.getByCode(benefitsEntity.getWorkMode()).getDescription());
+            if(StringUtils.isNotBlank(benefitsEntity.getBenefit())){
+                String benefitsStr = benefitsEntity.getBenefit();
+                List<Integer> benefits = Arrays.stream(benefitsStr.split(","))
+                        .filter(StringUtils::isNotBlank)
+                        .map(Integer::parseInt)
+                        .toList();
+                List<String> benefitDescs = benefits.stream()
+                        .map(code -> {
+                            try {
+                                if(code ==6){
+                                    return benefitsEntity.getBenefitUstomize();
+                                }
+                                return CoreBenefitsEnum.getByCode(code).getDescription();
+                            } catch (IllegalArgumentException e) {
+                                // 记录无效 code（可选）
+                                log.warn("无效的 CoreBenefitsEnum code: {}", code);
+                                return null;
+                            }
+                        })
+                        .filter(Objects::nonNull)
+                        .toList();
+                response.getSalaryBenefitInfo().setCoreBenefits(benefitDescs);
+            }
+            if(StringUtils.isNotBlank(benefitsEntity.getFeature())){
+                String featuresStr = benefitsEntity.getFeature();
+                List<Integer> features = Arrays.stream(featuresStr.split(","))
+                        .filter(StringUtils::isNotBlank)
+                        .map(Integer::parseInt)
+                        .toList();
+                List<String> benefitDescs = features.stream()
+                        .map(code -> {
+                            try {
+                                if(code ==5){
+                                    return benefitsEntity.getFeatureUstomize();
+                                }
+                                return TeamFeaturesEnum.getByCode(code).getDescription();
+                            } catch (IllegalArgumentException e) {
+                                // 记录无效 code（可选）
+                                log.warn("无效的 TeamFeaturesEnum code: {}", code);
+                                return null;
+                            }
+                        })
+                        .filter(Objects::nonNull)
+                        .toList();
+                response.getSalaryBenefitInfo().setCoreBenefits(benefitDescs);
+            }
+            response.getSalaryBenefitInfo().setHrmFeatureBenefitsId(benefitsEntity.getHrmFeatureBenefitsId());
+            String cacheKey = "jd:detail:id:" + response.getOrgjdId();
+            radeCache.set(cacheKey, objectMapper.writeValueAsString(response));
             return response;
 
         }else {

@@ -153,7 +153,7 @@ public interface OrgApi {
     }
 
     @GetMapping("/v1/open/uim/org/jdinfo/query")
-    default JDInfoResponse queryJdInfo(Long orgJdId) {
+    default JDInfoResponse queryJdInfo(Long orgJdId) throws JsonProcessingException {
         throw new UnsupportedOperationException("not class implement");
     }
 
