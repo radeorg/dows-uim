@@ -971,7 +971,7 @@ public class OrgApiBiz {
         log.info("queryJdInfo_cacheKey:{}", cacheKey);
         JDInfoResponse jdInfoResponse = radeCache.get(cacheKey,JDInfoResponse.class);
         log.info("queryJdInfo_jdInfoResponse1:{}", jdInfoResponse);
-        if (jdInfoResponse== null || jdInfoResponse.getOrgjdId() == null) {
+        if (jdInfoResponse== null || jdInfoResponse.getOrgJdId() == null) {
             jdInfoResponse = queryJdInfoFromDb(orgJdId);
             log.info("queryJdInfo_jdInfoResponse2:{}", jdInfoResponse);
 
@@ -1129,7 +1129,7 @@ public class OrgApiBiz {
         jdEntity.save();
         // 用前缀隔离 key
         String cacheKey = "jd:detail:id:" + jdEntity.getOrgJdId();
-        saveRequest.setOrgjdId(jdEntity.getOrgJdId());
+        saveRequest.setOrgJdId(jdEntity.getOrgJdId());
         saveRequest.setJdNo(jdEntity.getJdNo());
         saveRequest.getSalaryBenefitInfo().setHrmFeatureBenefitsId(benefitsEntity.getHrmFeatureBenefitsId());
         radeCache.set(cacheKey, objectMapper.writeValueAsString(saveRequest));
@@ -1153,10 +1153,10 @@ public class OrgApiBiz {
 
     @Transactional
     public Response updateJdInfo(JDSaveRequest saveRequest) throws JsonProcessingException {
-        String cacheKey = "jd:detail:id:" + saveRequest.getOrgjdId();
+        String cacheKey = "jd:detail:id:" + saveRequest.getOrgJdId();
         JDInfoResponse jdInfoResponse = radeCache.get(cacheKey,JDInfoResponse.class);
-        if (jdInfoResponse== null || jdInfoResponse.getOrgjdId() == null) {
-            jdInfoResponse = queryJdInfoFromDb(saveRequest.getOrgjdId());
+        if (jdInfoResponse== null || jdInfoResponse.getOrgJdId() == null) {
+            jdInfoResponse = queryJdInfoFromDb(saveRequest.getOrgJdId());
             if(jdInfoResponse == null){
                 return Response.failed("JD详情不存在");
             }
@@ -1231,7 +1231,7 @@ public class OrgApiBiz {
 
         }
         if(jdEntity != null){
-            jdEntity.setOrgJdId(saveRequest.getOrgjdId());
+            jdEntity.setOrgJdId(saveRequest.getOrgJdId());
             jdEntity.setUt(new Date());
             jdEntity.setOperatorId(aacContext.getAacUser().getUserId());
             jdEntity.updateById();
@@ -1276,9 +1276,10 @@ public class OrgApiBiz {
                 .one();
         if(Objects.nonNull(jdEntity)){
             response = new JDInfoResponse();
-            response.setOrgjdId(orgJdId);
+            response.setOrgJdId(orgJdId);
             // jdEntity.setOrgAddress(companyInfo.getOrgAddress());
-            response.getCompanyInfo().setOrgAddress(jdEntity.getOrgAddress());
+            CompanyInfo companyInfo = new CompanyInfo();
+            companyInfo.setOrgAddress(jdEntity.getOrgAddress());
             //jdEntity.setOrgJdCategoryId(saveRequest.getOrgJdCategoryId());
             response.setOrgJdCategoryId(jdEntity.getOrgJdCategoryId());
             if (Objects.nonNull(jdEntity.getOwnerId())) {
@@ -1341,22 +1342,23 @@ public class OrgApiBiz {
                     .eq(HrmEnterpriseSituationEntity::getAppId,jdEntity.getAppId())
                     .one();
             if(Objects.nonNull(situationEntity.getCompanyScale())){
-                response.getCompanyInfo().setScale(CompanyScaleEnum.getByCode(situationEntity.getCompanyScale()).getDescription());
+                companyInfo.setScale(CompanyScaleEnum.getByCode(situationEntity.getCompanyScale()).getDescription());
             }
             if(Objects.nonNull(situationEntity.getFinancingStage())){
-                response.getCompanyInfo().setFundingStage(FinancingStageEnum.getByCode(situationEntity.getFinancingStage()).getDescription());
+                companyInfo.setFundingStage(FinancingStageEnum.getByCode(situationEntity.getFinancingStage()).getDescription());
             }
-            response.getCompanyInfo().setHrmEnterpriseSituationId(jdEntity.getEnterpriseSituationId());
-            response.getCompanyInfo().setProjectType(getProjectTypeDescription(situationEntity.getProjectType()));
-            response.getCompanyInfo().setProjectProgress(ProjectProgressEnum.getByCode(situationEntity.getProjectProgress()).getDescription());
-            response.getCompanyInfo().setSimilarPositions(situationEntity.getSimilarPositions());
+            companyInfo.setHrmEnterpriseSituationId(jdEntity.getEnterpriseSituationId());
+            companyInfo.setProjectType(getProjectTypeDescription(situationEntity.getProjectType()));
+            companyInfo.setProjectProgress(ProjectProgressEnum.getByCode(situationEntity.getProjectProgress()).getDescription());
+           response.setCompanyInfo(companyInfo);
             HrmFeatureBenefitsEntity benefitsEntity = QueryChain.of(HrmFeatureBenefitsEntity.class)
                     .eq(HrmFeatureBenefitsEntity::getHrmFeatureBenefitsId,jdEntity.getHrmFeatureBenefitsId())
                     .eq(HrmFeatureBenefitsEntity::getDeleted,CommonDelEnum.NORMAL.getCode())
                     .eq(HrmFeatureBenefitsEntity::getAppId,jdEntity.getAppId())
                     .one();
-            response.getSalaryBenefitInfo().setMonthlySalaryRange(MonthlySalaryRangeEnum.getByCode(benefitsEntity.getMonthlySalaryRange()).getDescription());
-            response.getSalaryBenefitInfo().setWorkMode(WorkModeEnum.getByCode(benefitsEntity.getWorkMode()).getDescription());
+            SalaryBenefitInfo benefitInfo = new SalaryBenefitInfo();
+            benefitInfo.setMonthlySalaryRange(MonthlySalaryRangeEnum.getByCode(benefitsEntity.getMonthlySalaryRange()).getDescription());
+            benefitInfo.setWorkMode(WorkModeEnum.getByCode(benefitsEntity.getWorkMode()).getDescription());
             if(StringUtils.isNotBlank(benefitsEntity.getBenefit())){
                 String benefitsStr = benefitsEntity.getBenefit();
                 List<Integer> benefits = Arrays.stream(benefitsStr.split(","))
@@ -1378,7 +1380,7 @@ public class OrgApiBiz {
                         })
                         .filter(Objects::nonNull)
                         .toList();
-                response.getSalaryBenefitInfo().setCoreBenefits(benefitDescs);
+                benefitInfo.setCoreBenefits(benefitDescs);
             }
             if(StringUtils.isNotBlank(benefitsEntity.getFeature())){
                 String featuresStr = benefitsEntity.getFeature();
@@ -1401,10 +1403,11 @@ public class OrgApiBiz {
                         })
                         .filter(Objects::nonNull)
                         .toList();
-                response.getSalaryBenefitInfo().setCoreBenefits(benefitDescs);
+                benefitInfo.setCoreBenefits(benefitDescs);
             }
-            response.getSalaryBenefitInfo().setHrmFeatureBenefitsId(benefitsEntity.getHrmFeatureBenefitsId());
-            String cacheKey = "jd:detail:id:" + response.getOrgjdId();
+            benefitInfo.setHrmFeatureBenefitsId(benefitsEntity.getHrmFeatureBenefitsId());
+            response.setSalaryBenefitInfo(benefitInfo);
+            String cacheKey = "jd:detail:id:" + response.getOrgJdId();
             radeCache.set(cacheKey, objectMapper.writeValueAsString(response));
             return response;
 

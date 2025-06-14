@@ -14,7 +14,7 @@ import java.util.List;
 @Data
 public class JDSaveRequest {
 
-    private Long orgjdId;
+    private Long orgJdId;
 
     // 关联hr
     private Long ownerId;
