@@ -1132,6 +1132,21 @@ public class OrgApiBiz {
         return Response.ok();
     }
 
+    @Operation(summary ="JD详情列表")
+    public List<JDInfoResponse> queryJdInfoList(List<Long> orgJdIds){
+        List<JDInfoResponse> jdList = new ArrayList<>();
+        orgJdIds.forEach(orgJdId -> {
+            JDInfoResponse response = null;
+            try {
+                response = queryJdInfo(orgJdId);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+            jdList.add(response);
+        });
+        return jdList;
+    }
+
     @Transactional
     public Response updateJdInfo(JDSaveRequest saveRequest) throws JsonProcessingException {
         String cacheKey = "jd:detail:id:" + saveRequest.getOrgjdId();
