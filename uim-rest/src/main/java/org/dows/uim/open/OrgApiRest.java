@@ -66,20 +66,7 @@ public class OrgApiRest implements OrgApi, OrgAccountApi, OrgEmailApi {
         return orgApiBiz.getJdList(orgJdQueryRequest);
     }
 
-    @Operation(summary = "获取JDCode列表")
-    public List<JdCodeResponse> getJdCodeList(@RequestBody HrmJdCodeQueryRequest hrmJdCodeQueryRequest) throws UnavailableException {
-        return orgApiBiz.getJdCodeList(hrmJdCodeQueryRequest);
-    }
 
-    @Operation(summary = "获取JDCode列表")
-    public JdCodeResponse getJdCodeOne(@RequestBody HrmJdCodeQueryRequest hrmJdCodeQueryRequest) throws UnavailableException {
-        return orgApiBiz.getJdCodeOne(hrmJdCodeQueryRequest);
-    }
-
-    @Operation(summary = "保存JDCode信息")
-    public JdCodeResponse addJdCode(@RequestBody HrmJdCodeQueryRequest hrmJdCodeQueryRequest) throws UnavailableException {
-        return orgApiBiz.addJdCode(hrmJdCodeQueryRequest);
-    }
 
     @Operation(summary = "保存岗位规则")
     public OrgRuleResponse saveOrgRule(@RequestBody OrgRuleSaveRequest orgRuleSaveRequest) {
@@ -145,6 +132,21 @@ public class OrgApiRest implements OrgApi, OrgAccountApi, OrgEmailApi {
     @Operation(summary = "通过码值列表或编码列表获取码值")
     public List<JdCodeResponse> getJdCodeByList(HrmJdCodeQueryListRequest hrmJdCodeQueryRequest) throws UnavailableException {
         return orgApiBiz.getJdCodeByList(hrmJdCodeQueryRequest);
+    }
+
+    @Operation(summary = "获取JDCode列表")
+    public List<JdCodeResponse> getJdCodeList(@RequestBody HrmJdCodeQueryRequest hrmJdCodeQueryRequest) throws UnavailableException {
+        return orgApiBiz.getJdCodeList(hrmJdCodeQueryRequest);
+    }
+
+    @Operation(summary = "获取JDCode列表")
+    public JdCodeResponse getJdCodeOne(@RequestBody HrmJdCodeQueryRequest hrmJdCodeQueryRequest) throws UnavailableException {
+        return orgApiBiz.getJdCodeOne(hrmJdCodeQueryRequest);
+    }
+
+    @Operation(summary = "保存JDCode信息")
+    public JdCodeResponse addJdCode(@RequestBody HrmJdCodeQueryRequest hrmJdCodeQueryRequest) throws UnavailableException {
+        return orgApiBiz.addJdCode(hrmJdCodeQueryRequest);
     }
 
     @Operation(summary = "保存jd信息")

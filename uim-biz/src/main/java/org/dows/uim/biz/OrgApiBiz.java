@@ -842,7 +842,21 @@ public class OrgApiBiz {
 
     private String getProjectTypeDescription(Integer code){
         String  projectTypeKey = "JD:projectType:"+AppContext.getAppId();
+        log.info("projectTypeKey:{}",projectTypeKey);
         Map<Integer,String> map = (Map<Integer,String>)radeCache.get(projectTypeKey);
+        if (map == null){
+            map = QueryChain.of(HrmJdCodeEntity.class)
+                    .eq(HrmJdCodeEntity::getCodeType, "projectType")
+                    .eq(HrmJdCodeEntity::getAppId, AppContext.getAppId())
+                    .eq(HrmJdCodeEntity::getDeleted, CommonDelEnum.NORMAL.getCode())
+                    .list()
+                    .stream()
+                    .collect(Collectors.toMap(
+                            HrmJdCodeEntity::getCode,
+                            HrmJdCodeEntity::getValue
+                    ));
+            radeCache.set(projectTypeKey, map);
+        }
         return  map.get(code);
     }
 
