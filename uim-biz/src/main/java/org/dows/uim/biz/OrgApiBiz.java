@@ -968,9 +968,13 @@ public class OrgApiBiz {
 
     public JDInfoResponse queryJdInfo(Long orgJdId) throws JsonProcessingException {
         String cacheKey = "jd:detail:id:" + orgJdId;
+        log.info("queryJdInfo_cacheKey:{}", cacheKey);
         JDInfoResponse jdInfoResponse = radeCache.get(cacheKey,JDInfoResponse.class);
+        log.info("queryJdInfo_jdInfoResponse1:{}", jdInfoResponse);
         if (jdInfoResponse== null || jdInfoResponse.getOrgjdId() == null) {
             jdInfoResponse = queryJdInfoFromDb(orgJdId);
+            log.info("queryJdInfo_jdInfoResponse2:{}", jdInfoResponse);
+
         }
         return jdInfoResponse;
     }
