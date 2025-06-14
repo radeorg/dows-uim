@@ -780,162 +780,7 @@ public class OrgApiBiz {
 
 
     }
-    @Operation(summary = "存储JD内容")
-    public Response saveOrgJd(JDSaveRequest saveRequest) throws UnavailableException, JsonProcessingException {
-        CompanyInfo companyInfo =saveRequest.getCompanyInfo();
-        Integer scale = null;
-        if(StringUtils.isNotBlank(companyInfo.getScale())){
-            scale = CompanyScaleEnum.getCodeByDescription(companyInfo.getScale());
-        }
-        Integer fundingStage = null;
-        if(StringUtils.isNotBlank(companyInfo.getFundingStage())){
-            fundingStage = FinancingStageEnum.getCodeByDescription(companyInfo.getFundingStage());
-        }
-        HrmJdCodeQueryRequest hrmJdCodeQueryRequest = new HrmJdCodeQueryRequest();
-        hrmJdCodeQueryRequest.setCodeType("projectType");
-        hrmJdCodeQueryRequest.setValue(companyInfo.getProjectType());
-        JdCodeResponse jdCodeResponse = getJdCodeOne(hrmJdCodeQueryRequest);
-        Long enterpriseSituationId = companyInfo.getHrmEnterpriseSituationId();
-        Integer projectType = jdCodeResponse.getCode();
-        Integer projectProgress = ProjectProgressEnum.getCodeByDescription(companyInfo.getProjectProgress());
-        if(!Objects.isNull(enterpriseSituationId)){
-            HrmEnterpriseSituationEntity situationEntity = QueryChain.of(HrmEnterpriseSituationEntity.class)
-                    .select()
-                    .eq(HrmEnterpriseSituationEntity::getAppId,AppContext.getAppId())
-                    .eq(HrmEnterpriseSituationEntity::getDeleted,CommonDelEnum.NORMAL.getCode())
-                    .one();
-            if(Objects.nonNull(situationEntity)){
-                Map<ChangeField, String> changes = new HashMap<>();
 
-                // 比较并记录变更字段
-                if (!Objects.equals(situationEntity.getCompanyScale(), scale)) {
-                    changes.put(ChangeField.SCALE, companyInfo.getScale());
-                }
-                if (!Objects.equals(situationEntity.getFinancingStage(), fundingStage)) {
-                    changes.put(ChangeField.FUNDING_STAGE, companyInfo.getFundingStage());
-                }
-                if (!Objects.equals(situationEntity.getProjectType(), projectType)) {
-                    changes.put(ChangeField.PROJECT_TYPE, companyInfo.getProjectType());
-                }
-                if (!Objects.equals(situationEntity.getProjectProgress(), projectProgress)) {
-                    changes.put(ChangeField.PROJECT_PROGRESS, companyInfo.getProjectProgress());
-                }
-                if (!Objects.equals(situationEntity.getSimilarPositions(), companyInfo.getSimilarPositions())) {
-                    changes.put(ChangeField.SIMILAR_POSITIONS, companyInfo.getSimilarPositions());
-                }
-                //3. 如果有变更，创建新记录
-                if (!changes.isEmpty()) {
-                    // 创建新实体（使用Builder模式）
-                    HrmEnterpriseSituationEntity newEntity = HrmEnterpriseSituationEntity.builder()
-                            // 设置变更字段
-                            .companyScale(scale)
-                            .financingStage(fundingStage)
-                            .projectType(projectType)
-                            .projectProgress(projectProgress)
-                            .similarPositions(companyInfo.getSimilarPositions())
-
-                            // 继承未变更字段
-                            .appId(AppContext.getAppId())
-                            .deleted(0)
-                            .ownerId(aacContext.getAacUser().getUserId())
-
-                            // 设置变更关系
-                            .oldEnterpriseSituationId(enterpriseSituationId)
-
-                            // 设置变更备注
-                            .remark(generateChangeRemark(changes, situationEntity))
-
-                            // 时间戳
-                            .ts(new Date())
-                            .ut(new Date())
-                            .build();
-                            newEntity.save();
-                            enterpriseSituationId = newEntity.getHrmEnterpriseSituationId();
-                }
-            }else {
-
-                // 创建新实体（使用Builder模式）
-                enterpriseSituationId = saveJd(scale,fundingStage,projectType,projectProgress,companyInfo.getSimilarPositions());
-            }
-        }else {
-            enterpriseSituationId = saveJd(scale,fundingStage,projectType,projectProgress,companyInfo.getSimilarPositions());
-        }
-        SalaryBenefitInfo salaryBenefitInfo = saveRequest.getSalaryBenefitInfo();
-
-        HrmFeatureBenefitsEntity benefitsEntity = new HrmFeatureBenefitsEntity();
-
-        benefitsEntity.setMonthlySalaryRange(MonthlySalaryRangeEnum.getCodeByDescription(salaryBenefitInfo.getMonthlySalaryRange()));
-        benefitsEntity.setWorkMode(WorkModeEnum.getCodeByDescription(salaryBenefitInfo.getWorkMode()));
-        if(CollectionUtil.isNotEmpty(salaryBenefitInfo.getCoreBenefits())){
-            benefitsEntity.setBenefit(salaryBenefitInfo.getCoreBenefits().stream().map(CoreBenefitsEnum::getCodeByDescription).map(String::valueOf)                             // 转为字符串
-                    .collect(Collectors.joining(",")));
-            salaryBenefitInfo.getCoreBenefits().forEach(description -> {
-                String benefitUstomize = CoreBenefitsEnum.getUstomizeByDescription(description);
-                if(StringUtils.isNotBlank(benefitUstomize)){
-                    benefitsEntity.setBenefitUstomize(benefitUstomize);
-                }
-            });
-        }
-        if(CollectionUtil.isNotEmpty(salaryBenefitInfo.getTeamFeatures())){
-            benefitsEntity.setFeature(salaryBenefitInfo.getTeamFeatures().stream().map(TeamFeaturesEnum::getCodeByDescription).map(String::valueOf)                             // 转为字符串
-                    .collect(Collectors.joining(",")));
-            salaryBenefitInfo.getTeamFeatures().forEach(description -> {
-                String featureUstomize = TeamFeaturesEnum.getUstomizeByDescription(description);
-                if(StringUtils.isNotBlank(featureUstomize)){
-                    benefitsEntity.setFeatureUstomize(featureUstomize);
-                }
-            });
-        }
-        benefitsEntity.setAppId(AppContext.getAppId());
-        benefitsEntity.setDeleted(0);
-        benefitsEntity.setTs(new Date());
-        benefitsEntity.setUt(new Date());
-        benefitsEntity.setOwnerId(aacContext.getAacUser().getUserId());
-        benefitsEntity.save();
-
-        OrgJdEntity jdEntity = new OrgJdEntity();
-        jdEntity.setOrgRootId(aacContext.getAacUser().getOrgRootId());
-        jdEntity.setOrgTreeId(aacContext.getAacUser().getOrgTreeId());
-        jdEntity.setOrgAddress(companyInfo.getOrgAddress());
-        jdEntity.setOrgJdCategoryId(saveRequest.getOrgJdCategoryId());
-        if(Objects.nonNull(saveRequest.getOwnerId())) {
-            jdEntity.setOwnerId(saveRequest.getOwnerId());
-        }
-        jdEntity.setOperatorId(aacContext.getAacUser().getUserId());
-        jdEntity.setJdNo("JD"+UUID.randomUUID().toString().replace("-", ""));
-        jdEntity.setJdName(saveRequest.getBasicInfo().getJdName());
-        //jdEntity.setGender(GenderRequirementEnum.getCodeByDescription(saveRequest.getBasicInfo().getGenderRequirement()));
-        jdEntity.setAgeRange(AgeRangeEnum.getCodeByDescription(saveRequest.getBasicInfo().getAgeRange()));
-        jdEntity.setWorkExper(WorkExperienceEnum.getCodeByDescription(saveRequest.getBasicInfo().getExperienceRequirement()));
-        jdEntity.setMinEducation(EducationRequirementEnum.getCodeByDescription(saveRequest.getBasicInfo().getEducationRequirement()));
-        jdEntity.setRecruitmentPurpose(saveRequest.getBasicInfo().getRecruitmentPurpose().stream().map(RecruitmentPurposeEnum::getCodeByDescription) // 直接通过描述获取 code
-                .map(String::valueOf)                             // 转为字符串
-                .collect(Collectors.joining(",")));
-        if(StringUtils.isNotBlank(saveRequest.getOtherRequirements())){
-            jdEntity.setOtherRequire(saveRequest.getOtherRequirements());
-        }
-        if(StringUtils.isNotBlank(saveRequest.getJdRequire().getLanguageRequirements())){
-            jdEntity.setLanguageRequirements(saveRequest.getJdRequire().getLanguageRequirements());
-        }
-        if (StringUtils.isNotBlank(saveRequest.getJdRequire().getTechStack())) {
-            jdEntity.setTechStack(saveRequest.getJdRequire().getTechStack());
-        }
-        jdEntity.setEnterpriseSituationId(enterpriseSituationId);
-        jdEntity.setHrmFeatureBenefitsId(benefitsEntity.getHrmFeatureBenefitsId());
-        jdEntity.setDescription(saveRequest.getRequirements());
-        jdEntity.setState(1);
-        jdEntity.setAppId(AppContext.getAppId());
-        jdEntity.setTs(new Date());
-        jdEntity.setUt(new Date());
-        jdEntity.save();
-        // 用前缀隔离 key
-        String cacheKey = "jd:detail:id:" + jdEntity.getOrgJdId();
-        saveRequest.setOrgjdId(jdEntity.getOrgJdId());
-        saveRequest.setJdNo(jdEntity.getJdNo());
-        saveRequest.getSalaryBenefitInfo().setHrmFeatureBenefitsId(benefitsEntity.getHrmFeatureBenefitsId());
-        radeCache.set(cacheKey, objectMapper.writeValueAsString(saveRequest));
-      return Response.ok();
-    }
 
     private Long  saveJd(Integer scale,Integer fundingStage,Integer projectType,Integer projectProgress,String similarPositions){
         // 创建新实体（使用Builder模式）
@@ -1130,6 +975,163 @@ public class OrgApiBiz {
         return jdInfoResponse;
     }
 
+    @Operation(summary = "存储JD内容")
+    public Response saveOrgJd(JDSaveRequest saveRequest) throws UnavailableException, JsonProcessingException {
+        CompanyInfo companyInfo =saveRequest.getCompanyInfo();
+        Integer scale = null;
+        if(StringUtils.isNotBlank(companyInfo.getScale())){
+            scale = CompanyScaleEnum.getCodeByDescription(companyInfo.getScale());
+        }
+        Integer fundingStage = null;
+        if(StringUtils.isNotBlank(companyInfo.getFundingStage())){
+            fundingStage = FinancingStageEnum.getCodeByDescription(companyInfo.getFundingStage());
+        }
+        HrmJdCodeQueryRequest hrmJdCodeQueryRequest = new HrmJdCodeQueryRequest();
+        hrmJdCodeQueryRequest.setCodeType("projectType");
+        hrmJdCodeQueryRequest.setValue(companyInfo.getProjectType());
+        JdCodeResponse jdCodeResponse = getJdCodeOne(hrmJdCodeQueryRequest);
+        Long enterpriseSituationId = companyInfo.getHrmEnterpriseSituationId();
+        Integer projectType = jdCodeResponse.getCode();
+        Integer projectProgress = ProjectProgressEnum.getCodeByDescription(companyInfo.getProjectProgress());
+        if(!Objects.isNull(enterpriseSituationId)){
+            HrmEnterpriseSituationEntity situationEntity = QueryChain.of(HrmEnterpriseSituationEntity.class)
+                    .select()
+                    .eq(HrmEnterpriseSituationEntity::getAppId,AppContext.getAppId())
+                    .eq(HrmEnterpriseSituationEntity::getDeleted,CommonDelEnum.NORMAL.getCode())
+                    .one();
+            if(Objects.nonNull(situationEntity)){
+                Map<ChangeField, String> changes = new HashMap<>();
+
+                // 比较并记录变更字段
+                if (!Objects.equals(situationEntity.getCompanyScale(), scale)) {
+                    changes.put(ChangeField.SCALE, companyInfo.getScale());
+                }
+                if (!Objects.equals(situationEntity.getFinancingStage(), fundingStage)) {
+                    changes.put(ChangeField.FUNDING_STAGE, companyInfo.getFundingStage());
+                }
+                if (!Objects.equals(situationEntity.getProjectType(), projectType)) {
+                    changes.put(ChangeField.PROJECT_TYPE, companyInfo.getProjectType());
+                }
+                if (!Objects.equals(situationEntity.getProjectProgress(), projectProgress)) {
+                    changes.put(ChangeField.PROJECT_PROGRESS, companyInfo.getProjectProgress());
+                }
+                if (!Objects.equals(situationEntity.getSimilarPositions(), companyInfo.getSimilarPositions())) {
+                    changes.put(ChangeField.SIMILAR_POSITIONS, companyInfo.getSimilarPositions());
+                }
+                //3. 如果有变更，创建新记录
+                if (!changes.isEmpty()) {
+                    // 创建新实体（使用Builder模式）
+                    HrmEnterpriseSituationEntity newEntity = HrmEnterpriseSituationEntity.builder()
+                            // 设置变更字段
+                            .companyScale(scale)
+                            .financingStage(fundingStage)
+                            .projectType(projectType)
+                            .projectProgress(projectProgress)
+                            .similarPositions(companyInfo.getSimilarPositions())
+
+                            // 继承未变更字段
+                            .appId(AppContext.getAppId())
+                            .deleted(0)
+                            .ownerId(aacContext.getAacUser().getUserId())
+
+                            // 设置变更关系
+                            .oldEnterpriseSituationId(enterpriseSituationId)
+
+                            // 设置变更备注
+                            .remark(generateChangeRemark(changes, situationEntity))
+
+                            // 时间戳
+                            .ts(new Date())
+                            .ut(new Date())
+                            .build();
+                    newEntity.save();
+                    enterpriseSituationId = newEntity.getHrmEnterpriseSituationId();
+                }
+            }else {
+
+                // 创建新实体（使用Builder模式）
+                enterpriseSituationId = saveJd(scale,fundingStage,projectType,projectProgress,companyInfo.getSimilarPositions());
+            }
+        }else {
+            enterpriseSituationId = saveJd(scale,fundingStage,projectType,projectProgress,companyInfo.getSimilarPositions());
+        }
+        SalaryBenefitInfo salaryBenefitInfo = saveRequest.getSalaryBenefitInfo();
+
+        HrmFeatureBenefitsEntity benefitsEntity = new HrmFeatureBenefitsEntity();
+
+        benefitsEntity.setMonthlySalaryRange(MonthlySalaryRangeEnum.getCodeByDescription(salaryBenefitInfo.getMonthlySalaryRange()));
+        benefitsEntity.setWorkMode(WorkModeEnum.getCodeByDescription(salaryBenefitInfo.getWorkMode()));
+        if(CollectionUtil.isNotEmpty(salaryBenefitInfo.getCoreBenefits())){
+            benefitsEntity.setBenefit(salaryBenefitInfo.getCoreBenefits().stream().map(CoreBenefitsEnum::getCodeByDescription).map(String::valueOf)                             // 转为字符串
+                    .collect(Collectors.joining(",")));
+            salaryBenefitInfo.getCoreBenefits().forEach(description -> {
+                String benefitUstomize = CoreBenefitsEnum.getUstomizeByDescription(description);
+                if(StringUtils.isNotBlank(benefitUstomize)){
+                    benefitsEntity.setBenefitUstomize(benefitUstomize);
+                }
+            });
+        }
+        if(CollectionUtil.isNotEmpty(salaryBenefitInfo.getTeamFeatures())){
+            benefitsEntity.setFeature(salaryBenefitInfo.getTeamFeatures().stream().map(TeamFeaturesEnum::getCodeByDescription).map(String::valueOf)                             // 转为字符串
+                    .collect(Collectors.joining(",")));
+            salaryBenefitInfo.getTeamFeatures().forEach(description -> {
+                String featureUstomize = TeamFeaturesEnum.getUstomizeByDescription(description);
+                if(StringUtils.isNotBlank(featureUstomize)){
+                    benefitsEntity.setFeatureUstomize(featureUstomize);
+                }
+            });
+        }
+        benefitsEntity.setAppId(AppContext.getAppId());
+        benefitsEntity.setDeleted(0);
+        benefitsEntity.setTs(new Date());
+        benefitsEntity.setUt(new Date());
+        benefitsEntity.setOwnerId(aacContext.getAacUser().getUserId());
+        benefitsEntity.save();
+
+        OrgJdEntity jdEntity = new OrgJdEntity();
+        jdEntity.setOrgRootId(aacContext.getAacUser().getOrgRootId());
+        jdEntity.setOrgTreeId(aacContext.getAacUser().getOrgTreeId());
+        jdEntity.setOrgAddress(companyInfo.getOrgAddress());
+        jdEntity.setOrgJdCategoryId(saveRequest.getOrgJdCategoryId());
+        if(Objects.nonNull(saveRequest.getOwnerId())) {
+            jdEntity.setOwnerId(saveRequest.getOwnerId());
+        }
+        jdEntity.setOperatorId(aacContext.getAacUser().getUserId());
+        jdEntity.setJdNo("JD"+UUID.randomUUID().toString().replace("-", ""));
+        jdEntity.setJdName(saveRequest.getBasicInfo().getJdName());
+        //jdEntity.setGender(GenderRequirementEnum.getCodeByDescription(saveRequest.getBasicInfo().getGenderRequirement()));
+        jdEntity.setAgeRange(AgeRangeEnum.getCodeByDescription(saveRequest.getBasicInfo().getAgeRange()));
+        jdEntity.setWorkExper(WorkExperienceEnum.getCodeByDescription(saveRequest.getBasicInfo().getExperienceRequirement()));
+        jdEntity.setMinEducation(EducationRequirementEnum.getCodeByDescription(saveRequest.getBasicInfo().getEducationRequirement()));
+        jdEntity.setRecruitmentPurpose(saveRequest.getBasicInfo().getRecruitmentPurpose().stream().map(RecruitmentPurposeEnum::getCodeByDescription) // 直接通过描述获取 code
+                .map(String::valueOf)                             // 转为字符串
+                .collect(Collectors.joining(",")));
+        if(StringUtils.isNotBlank(saveRequest.getOtherRequirements())){
+            jdEntity.setOtherRequire(saveRequest.getOtherRequirements());
+        }
+        if(StringUtils.isNotBlank(saveRequest.getJdRequire().getLanguageRequirements())){
+            jdEntity.setLanguageRequirements(saveRequest.getJdRequire().getLanguageRequirements());
+        }
+        if (StringUtils.isNotBlank(saveRequest.getJdRequire().getTechStack())) {
+            jdEntity.setTechStack(saveRequest.getJdRequire().getTechStack());
+        }
+        jdEntity.setEnterpriseSituationId(enterpriseSituationId);
+        jdEntity.setHrmFeatureBenefitsId(benefitsEntity.getHrmFeatureBenefitsId());
+        jdEntity.setDescription(saveRequest.getRequirements());
+        jdEntity.setState(1);
+        jdEntity.setAppId(AppContext.getAppId());
+        jdEntity.setTs(new Date());
+        jdEntity.setUt(new Date());
+        jdEntity.save();
+        // 用前缀隔离 key
+        String cacheKey = "jd:detail:id:" + jdEntity.getOrgJdId();
+        saveRequest.setOrgjdId(jdEntity.getOrgJdId());
+        saveRequest.setJdNo(jdEntity.getJdNo());
+        saveRequest.getSalaryBenefitInfo().setHrmFeatureBenefitsId(benefitsEntity.getHrmFeatureBenefitsId());
+        radeCache.set(cacheKey, objectMapper.writeValueAsString(saveRequest));
+        return Response.ok();
+    }
+
     @Transactional
     public Response updateJdInfo(JDSaveRequest saveRequest) throws JsonProcessingException {
         String cacheKey = "jd:detail:id:" + saveRequest.getOrgjdId();
@@ -1213,14 +1215,14 @@ public class OrgApiBiz {
             jdEntity.setOrgJdId(saveRequest.getOrgjdId());
             jdEntity.setUt(new Date());
             jdEntity.setOperatorId(aacContext.getAacUser().getUserId());
-            jdEntity.update();
+            jdEntity.updateById();
             if (!saveRequest.getSalaryBenefitInfo().getMonthlySalaryRange().equals(jdInfoResponse.getSalaryBenefitInfo().getMonthlySalaryRange())) {
                 HrmFeatureBenefitsEntity benefitsEntity = new HrmFeatureBenefitsEntity();
                 benefitsEntity.setHrmFeatureBenefitsId(saveRequest.getSalaryBenefitInfo().getHrmFeatureBenefitsId());
                 benefitsEntity.setUt(new Date());
                 benefitsEntity.setOwnerId(aacContext.getAacUser().getUserId());
                 benefitsEntity.setMonthlySalaryRange(MonthlySalaryRangeEnum.getCodeByDescription(saveRequest.getSalaryBenefitInfo().getMonthlySalaryRange()));
-                benefitsEntity.update();
+                benefitsEntity.updateById();
                 radeCache.set(cacheKey, objectMapper.writeValueAsString(saveRequest));
                 return Response.ok();
             }
@@ -1233,9 +1235,8 @@ public class OrgApiBiz {
                 benefitsEntity.setHrmFeatureBenefitsId(saveRequest.getSalaryBenefitInfo().getHrmFeatureBenefitsId());
                 benefitsEntity.setUt(new Date());
                 benefitsEntity.setOwnerId(aacContext.getAacUser().getUserId());
-                benefitsEntity.update();
                 benefitsEntity.setMonthlySalaryRange(MonthlySalaryRangeEnum.getCodeByDescription(saveRequest.getSalaryBenefitInfo().getMonthlySalaryRange()));
-                benefitsEntity.update();
+                benefitsEntity.updateById();
                 radeCache.set(cacheKey, objectMapper.writeValueAsString(saveRequest));
                 return Response.ok();
             }else {
