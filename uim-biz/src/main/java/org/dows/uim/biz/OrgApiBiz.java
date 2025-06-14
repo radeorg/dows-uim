@@ -1133,6 +1133,7 @@ public class OrgApiBiz {
         saveRequest.setJdNo(jdEntity.getJdNo());
         saveRequest.getSalaryBenefitInfo().setHrmFeatureBenefitsId(benefitsEntity.getHrmFeatureBenefitsId());
         radeCache.set(cacheKey, objectMapper.writeValueAsString(saveRequest));
+        log.info("cacheKey以保存:{}",cacheKey);
         return Response.ok();
     }
 
