@@ -29,9 +29,7 @@ import org.dows.uim.constant.CommonDelEnum;
 import org.dows.uim.entity.*;
 import org.dows.uim.exception.UimException;
 import org.dows.uim.request.*;
-import org.dows.uim.request.JdKeyWord.CompanyInfo;
-import org.dows.uim.request.JdKeyWord.JDSaveRequest;
-import org.dows.uim.request.JdKeyWord.SalaryBenefitInfo;
+import org.dows.uim.request.JdKeyWord.*;
 import org.dows.uim.response.*;
 import org.dows.uim.service.*;
 import org.springframework.beans.BeanUtils;
@@ -1286,19 +1284,12 @@ public class OrgApiBiz {
             if (Objects.nonNull(jdEntity.getOwnerId())) {
                 response.setOwnerId(jdEntity.getOwnerId());
             }
-            // jdEntity.setJdNo("JD"+UUID.randomUUID().toString().replace("-", ""));
             response.setJdNo(jdEntity.getJdNo());
-            // jdEntity.setJdName(saveRequest.getBasicInfo().getJdName());
-            response.getBasicInfo().setJdName(jdEntity.getJdName());
-            //jdEntity.setAgeRange(AgeRangeEnum.getCodeByDescription(saveRequest.getBasicInfo().getAgeRange()));
-            response.getBasicInfo().setAgeRange(AgeRangeEnum.getByCode(jdEntity.getAgeRange()).getDescription());
-            // jdEntity.setWorkExper(WorkExperienceEnum.getCodeByDescription(saveRequest.getBasicInfo().getExperienceRequirement()));
-            response.getBasicInfo().setExperienceRequirement(WorkExperienceEnum.getByCode(jdEntity.getWorkExper()).getDescription());
-            // jdEntity.setMinEducation(EducationRequirementEnum.getCodeByDescription(saveRequest.getBasicInfo().getEducationRequirement()));
-            response.getBasicInfo().setEducationRequirement(EducationRequirementEnum.getByCode(jdEntity.getMinEducation()).getDescription());
-//            jdEntity.setRecruitmentPurpose(saveRequest.getBasicInfo().getRecruitmentPurpose().stream().map(RecruitmentPurposeEnum::getCodeByDescription) // 直接通过描述获取 code
-//                    .map(String::valueOf)                             // 转为字符串
-//                    .collect(Collectors.joining(",")));
+            BasicInfo basicInfo = new BasicInfo();
+            basicInfo.setJdName(jdEntity.getJdName());
+            basicInfo.setAgeRange(AgeRangeEnum.getByCode(jdEntity.getAgeRange()).getDescription());
+            basicInfo.setExperienceRequirement(WorkExperienceEnum.getByCode(jdEntity.getWorkExper()).getDescription());
+            basicInfo.setEducationRequirement(EducationRequirementEnum.getByCode(jdEntity.getMinEducation()).getDescription());
             String recruitmentPurposeStr = jdEntity.getRecruitmentPurpose();
             List<Integer> recruitmentPurposeList = recruitmentPurposeStr == null ? Collections.emptyList() : Arrays.stream(recruitmentPurposeStr.split(","))
                     .filter(StringUtils::isNotBlank)
@@ -1316,26 +1307,19 @@ public class OrgApiBiz {
                     })
                     .filter(Objects::nonNull)
                     .toList();
-            response.getBasicInfo().setRecruitmentPurpose(purposeEnums);
-
-//            if(StringUtils.isNotBlank(saveRequest.getOtherRequirements())){
-//                jdEntity.setOtherRequire(saveRequest.getOtherRequirements());
-//            }
+            basicInfo.setRecruitmentPurpose(purposeEnums);
+            response.setBasicInfo(basicInfo);
             if(StringUtils.isNotBlank(jdEntity.getOtherRequire())){
                 response.setOtherRequirements(jdEntity.getOtherRequire());
             }
-//            if(StringUtils.isNotBlank(saveRequest.getJdRequire().getLanguageRequirements())){
-//                jdEntity.setLanguageRequirements(saveRequest.getJdRequire().getLanguageRequirements());
-//            }
+            JdRequire jdRequire = new JdRequire();
             if(StringUtils.isNotBlank(jdEntity.getLanguageRequirements())){
-                response.getJdRequire().setLanguageRequirements(jdEntity.getLanguageRequirements());
+                jdRequire.setLanguageRequirements(jdEntity.getLanguageRequirements());
             }
-           /* if (StringUtils.isNotBlank(saveRequest.getJdRequire().getTechStack())) {
-                jdEntity.setTechStack(saveRequest.getJdRequire().getTechStack());
-            }*/
             if (StringUtils.isNotBlank(jdEntity.getTechStack())){
-                response.getJdRequire().setTechStack(jdEntity.getTechStack());
+                jdRequire.setTechStack(jdEntity.getTechStack());
             }
+            response.setJdRequire(jdRequire);
             response.setRequirements(jdEntity.getDescription());
             HrmEnterpriseSituationEntity situationEntity = QueryChain.of(HrmEnterpriseSituationEntity.class)
                     .eq(HrmEnterpriseSituationEntity::getHrmEnterpriseSituationId,jdEntity.getEnterpriseSituationId())
