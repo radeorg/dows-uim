@@ -102,7 +102,7 @@ public class OrgJdEntity extends BaseEntity<OrgJdEntity> {
      */
     @Schema(description = "年龄范围 0：\"不限\",1： \"25-30岁\",2： \"30-35岁\",3： \"35-40岁\", 4：\"40岁以上\"")
     @Column(value = "age_range")
-    private Integer ageRange;
+    private String ageRange;
 
     /**
      * 工作经验

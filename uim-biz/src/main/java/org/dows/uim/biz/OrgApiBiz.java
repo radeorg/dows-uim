@@ -1116,7 +1116,7 @@ public class OrgApiBiz {
         jdEntity.setJdNo("JD"+UUID.randomUUID().toString().replace("-", ""));
         jdEntity.setJdName(saveRequest.getBasicInfo().getJdName());
         //jdEntity.setGender(GenderRequirementEnum.getCodeByDescription(saveRequest.getBasicInfo().getGenderRequirement()));
-        jdEntity.setAgeRange(AgeRangeEnum.getCodeByDescription(saveRequest.getBasicInfo().getAgeRange()));
+        jdEntity.setAgeRange(saveRequest.getBasicInfo().getAgeRange());
         jdEntity.setWorkExper(WorkExperienceEnum.getCodeByDescription(saveRequest.getBasicInfo().getExperienceRequirement()));
         jdEntity.setMinEducation(EducationRequirementEnum.getCodeByDescription(saveRequest.getBasicInfo().getEducationRequirement()));
         jdEntity.setRecruitmentPurpose(saveRequest.getBasicInfo().getRecruitmentPurpose().stream().map(RecruitmentPurposeEnum::getCodeByDescription) // 直接通过描述获取 code
@@ -1200,6 +1200,12 @@ public class OrgApiBiz {
                 jdEntity = new OrgJdEntity();
             }
             jdEntity.setDescription(saveRequest.getRequirements());
+        }
+        if(!saveRequest.getBasicInfo().getAgeRange().equals(jdInfoResponse.getBasicInfo().getAgeRange())){
+            if (jdEntity == null) {
+                jdEntity = new OrgJdEntity();
+            }
+            jdEntity.setAgeRange(saveRequest.getBasicInfo().getAgeRange());
         }
         if(!saveRequest.getBasicInfo().getEducationRequirement().equals(jdInfoResponse.getBasicInfo().getEducationRequirement())){
             if (jdEntity == null) {
@@ -1301,7 +1307,7 @@ public class OrgApiBiz {
             response.setJdNo(jdEntity.getJdNo());
             BasicInfo basicInfo = new BasicInfo();
             basicInfo.setJdName(jdEntity.getJdName());
-            basicInfo.setAgeRange(AgeRangeEnum.getByCode(jdEntity.getAgeRange()).getDescription());
+            basicInfo.setAgeRange(jdEntity.getAgeRange());
             basicInfo.setExperienceRequirement(WorkExperienceEnum.getByCode(jdEntity.getWorkExper()).getDescription());
             basicInfo.setEducationRequirement(EducationRequirementEnum.getByCode(jdEntity.getMinEducation()).getDescription());
             String recruitmentPurposeStr = jdEntity.getRecruitmentPurpose();
