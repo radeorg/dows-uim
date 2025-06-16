@@ -269,6 +269,47 @@ public class AccountApiBiz {
         return accountInstanceEntity.getAccountInstanceId();
     }
 
+    @Transactional
+    public Long getAccountByTelephone(String telephone,String email) {
+        // 查询账号标识（手机号）是否存在
+        AccountIdentifierEntity onePhone = accountIdentifierService.getOne(QueryWrapper.create()
+                .eq(AccountIdentifierEntity::getIdentifierType, IdentifierType.PHONE.getType())
+                .eq(AccountIdentifierEntity::getIdentifier, telephone, Objects.nonNull(telephone)));
+        // 存在则返回账号实例ID，不存在则创建账号实例并返回账号实例ID
+        if (onePhone != null) {
+            AccountIdentifierEntity oneEmail = accountIdentifierService.getOne(QueryWrapper.create()
+                    .eq(AccountIdentifierEntity::getIdentifierType, IdentifierType.EMAIL.getType())
+                    .eq(AccountIdentifierEntity::getIdentifier, email, Objects.nonNull(email)));
+            if (oneEmail == null) {
+            // 保存账号标识;
+                AccountIdentifierEntity oneEmailEntity = new AccountIdentifierEntity();
+                oneEmailEntity.setAccountInstanceId(onePhone.getAccountInstanceId());
+                oneEmailEntity.setIdentifier(telephone);
+                oneEmailEntity.setIdentifierType(IdentifierType.EMAIL.getType());
+                accountIdentifierService.save(oneEmailEntity);
+            }
+
+            return onePhone.getAccountInstanceId();
+
+        }
+        // 创建账号实例
+        AccountInstanceEntity accountInstanceEntity = new AccountInstanceEntity();
+        accountInstanceEntity.setTelephone(telephone);
+        accountInstanceService.save(accountInstanceEntity);
+        // 保存账号标识;
+        AccountIdentifierEntity telephoneEntity = new AccountIdentifierEntity();
+        telephoneEntity.setAccountInstanceId(accountInstanceEntity.getAccountInstanceId());
+        telephoneEntity.setIdentifier(telephone);
+        telephoneEntity.setIdentifierType(IdentifierType.PHONE.getType());
+        accountIdentifierService.save(telephoneEntity);
+        AccountIdentifierEntity emailEntity = new AccountIdentifierEntity();
+        emailEntity.setAccountInstanceId(accountInstanceEntity.getAccountInstanceId());
+        emailEntity.setIdentifier(telephone);
+        emailEntity.setIdentifierType(IdentifierType.EMAIL.getType());
+        accountIdentifierService.save(emailEntity);
+        return accountInstanceEntity.getAccountInstanceId();
+    }
+
     /**
      * 根据账号ID列表获取账号实例列表
      *

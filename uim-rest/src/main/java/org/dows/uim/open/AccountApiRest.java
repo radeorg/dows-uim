@@ -46,6 +46,17 @@ public class AccountApiRest implements AccountApi{
         return accountApiBiz.getAccountByTelephone(telephone);
     }
 
+    /**
+     * 根据手机号注册即创建账号，如果账号已存在，则直接返回账号实例ID，不存在则创建账号并返回账号实例ID
+     *
+     * @param telephone
+     * @return
+     */
+    @Operation(summary = "根据手机号注册即创建账号，如果账号已存在，则直接返回账号实例ID，不存在则创建账号并返回账号实例ID")
+    public Long getAccountByTelephone(String telephone,String email) {
+        return accountApiBiz.getAccountByTelephone(telephone,email);
+    }
+
 
     @Operation(summary = "通过账户标识符获取账户实例")
     public AccountInstanceResponse getAccountInstanceByIdentifier(@RequestParam String appId, @RequestParam String accountIdentifier) {
