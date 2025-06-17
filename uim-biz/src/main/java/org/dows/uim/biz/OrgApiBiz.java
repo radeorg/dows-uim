@@ -1113,7 +1113,13 @@ public class OrgApiBiz {
             jdEntity.setOwnerId(saveRequest.getOwnerId());
         }
         jdEntity.setOperatorId(aacContext.getAacUser().getUserId());
-        jdEntity.setJdNo("JD"+UUID.randomUUID().toString().replace("-", ""));
+        if(StringUtils.isNotBlank(saveRequest.getJdNo()))
+        {
+            jdEntity.setJdNo(saveRequest.getJdNo());
+        }else {
+            jdEntity.setJdNo("JD"+UUID.randomUUID().toString().replace("-", ""));
+        }
+
         jdEntity.setJdName(saveRequest.getBasicInfo().getJdName());
         //jdEntity.setGender(GenderRequirementEnum.getCodeByDescription(saveRequest.getBasicInfo().getGenderRequirement()));
         jdEntity.setAgeRange(saveRequest.getBasicInfo().getAgeRange());
