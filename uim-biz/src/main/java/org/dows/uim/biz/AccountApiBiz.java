@@ -284,7 +284,7 @@ public class AccountApiBiz {
             // 保存账号标识;
                 AccountIdentifierEntity oneEmailEntity = new AccountIdentifierEntity();
                 oneEmailEntity.setAccountInstanceId(onePhone.getAccountInstanceId());
-                oneEmailEntity.setIdentifier(telephone);
+                oneEmailEntity.setIdentifier(email);
                 oneEmailEntity.setIdentifierType(IdentifierType.EMAIL.getType());
                 accountIdentifierService.save(oneEmailEntity);
             }
