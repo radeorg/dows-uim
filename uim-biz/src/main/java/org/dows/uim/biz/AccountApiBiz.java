@@ -304,7 +304,7 @@ public class AccountApiBiz {
         accountIdentifierService.save(telephoneEntity);
         AccountIdentifierEntity emailEntity = new AccountIdentifierEntity();
         emailEntity.setAccountInstanceId(accountInstanceEntity.getAccountInstanceId());
-        emailEntity.setIdentifier(telephone);
+        emailEntity.setIdentifier(email);
         emailEntity.setIdentifierType(IdentifierType.EMAIL.getType());
         accountIdentifierService.save(emailEntity);
         return accountInstanceEntity.getAccountInstanceId();
