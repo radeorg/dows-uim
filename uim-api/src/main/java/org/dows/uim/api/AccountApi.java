@@ -11,6 +11,7 @@ import org.dows.uim.response.AccountOrgIdsResponse;
 import org.dows.uim.response.AccountRoleRelationResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -19,12 +20,14 @@ public interface AccountApi {
 
     /**
      * 绑定信息到账号
+     *
      * @param bindingAccountRequest
      */
     @PostMapping("/v1/open/uim/account/binding")
-    default void bindingAccount(BindingAccountRequest bindingAccountRequest){
+    default void bindingAccount(BindingAccountRequest bindingAccountRequest) {
 
     }
+
     /**
      * 注册即创建
      *
@@ -110,7 +113,6 @@ public interface AccountApi {
     }
 
 
-
     default AccountInstanceResponse getAccountInstanceById(Long accountInstanceId) {
         throw new UnsupportedOperationException("not class implement");
     }
@@ -125,8 +127,6 @@ public interface AccountApi {
     default List<Long> getRoleIdsByAccountId(String appId, Long accountId) {
         throw new UnsupportedOperationException("not class implement");
     }
-
-
 
 
     /**
@@ -171,9 +171,8 @@ public interface AccountApi {
     }
 
 
-    default AccountIdentifierResponse saveAccountIdentifier(String identifier, IdentifierType identifierType) {
-        throw new UnsupportedOperationException("not class implement");
-    }
+    @GetMapping("/v1/open/uim/account/identifier/save")
+    AccountIdentifierResponse saveAccountIdentifier(@RequestParam String identifier, @RequestParam IdentifierType identifierType);
 
     default void relevancyAccountInstanceIdForOpenidByTelephone(RelevancyAccountInstanceIdForOpenidByTelephoneRequest
                                                                         relevancyAccountInstanceIdByTelephoneRequest) {
@@ -182,12 +181,13 @@ public interface AccountApi {
 
     /**
      * 根据账号实例ID修改账号密码
+     *
      * @param accountInstanceId 账号实例ID
-     * @param newPassword 新密码
+     * @param newPassword       新密码
      */
 //    @PostMapping("/v1/open/uim/account/password/update")
 //    void updateInstancePasswordByAccountInstanceId(@RequestParam Long accountInstanceId, @RequestParam String newPassword);
-    default void updateInstancePasswordByAccountInstanceId(Long accountInstanceId, String newPassword){
+    default void updateInstancePasswordByAccountInstanceId(Long accountInstanceId, String newPassword) {
         throw new UnsupportedOperationException("not class implement");
     }
 }
