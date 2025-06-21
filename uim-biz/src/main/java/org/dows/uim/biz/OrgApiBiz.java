@@ -36,6 +36,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.SecureRandom;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -55,6 +56,12 @@ public class OrgApiBiz {
 
     private final AccountInstanceService accountInstanceService;
     private final AccountIdentifierService accountIdentifierService;
+
+    // 使用安全的随机数生成器
+    private static final Random RANDOM = new SecureRandom();
+
+    // 可用的字符集：大写字母 A-Z 和数字 0-9
+    private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
     private final EncryptApi encryptApi;
     private final AacContext aacContext;
@@ -1113,13 +1120,7 @@ public class OrgApiBiz {
             jdEntity.setOwnerId(saveRequest.getOwnerId());
         }
         jdEntity.setOperatorId(aacContext.getAacUser().getUserId());
-        if(StringUtils.isNotBlank(saveRequest.getJdNo()))
-        {
-            jdEntity.setJdNo(saveRequest.getJdNo());
-        }else {
-            jdEntity.setJdNo("JD"+UUID.randomUUID().toString().replace("-", ""));
-        }
-
+        jdEntity.setJdNo(generateJdNo());
         jdEntity.setJdName(saveRequest.getBasicInfo().getJdName());
         //jdEntity.setGender(GenderRequirementEnum.getCodeByDescription(saveRequest.getBasicInfo().getGenderRequirement()));
         jdEntity.setAgeRange(saveRequest.getBasicInfo().getAgeRange());
@@ -1477,5 +1478,27 @@ public class OrgApiBiz {
         OrgRegisterEntity orgRegisterEntity = orgRegisterService.getOne(QueryWrapper.create()
                 .eq(OrgRegisterEntity::getOrgRootId, aacContext.getAacUser().getOrgRootId()));
         return BeanUtil.copyProperties(orgRegisterEntity, OrgRegisterResponse.class);
+    }
+
+    /**
+     * 生成符合 BL_[A-Z0-9]{6} 格式的随机 JDNo
+     * @return 生成的 JDNo 字符串
+     */
+    private  String generateJdNo() {
+        // 固定前缀
+        String prefix = "BL_";
+
+        // 生成6位随机字符
+        StringBuilder sb = new StringBuilder(9); // 9 = "BL_".length() + 6
+        sb.append(prefix);
+
+        for (int i = 0; i < 6; i++) {
+            // 从字符集中随机选取一个字符
+            int index = RANDOM.nextInt(CHARACTERS.length());
+            char randomChar = CHARACTERS.charAt(index);
+            sb.append(randomChar);
+        }
+
+        return sb.toString();
     }
 }
