@@ -1115,7 +1115,7 @@ public class OrgApiBiz {
         jdEntity.setOrgRootId(aacContext.getAacUser().getOrgRootId());
         jdEntity.setOrgTreeId(aacContext.getAacUser().getOrgTreeId());
         jdEntity.setOrgAddress(companyInfo.getOrgAddress());
-        jdEntity.setOrgJdCategoryId(saveRequest.getOrgJdCategoryId());
+        jdEntity.setOrgJdCategory(saveRequest.getBasicInfo().getOrgJdCategory());
         if(Objects.nonNull(saveRequest.getOwnerId())) {
             jdEntity.setOwnerId(saveRequest.getOwnerId());
         }
@@ -1188,11 +1188,11 @@ public class OrgApiBiz {
             jdEntity = new OrgJdEntity();
             jdEntity.setJdName(saveRequest.getBasicInfo().getJdName());
         }
-        if (saveRequest.getOrgJdCategoryId() != jdInfoResponse.getOrgJdCategoryId()){
+        if (saveRequest.getBasicInfo().getOrgJdCategory() != jdInfoResponse.getBasicInfo().getOrgJdCategory()){
             if (jdEntity == null) {
                 jdEntity = new OrgJdEntity();
             }
-            jdEntity.setOrgJdCategoryId(saveRequest.getOrgJdCategoryId());
+            jdEntity.setOrgJdCategory(saveRequest.getBasicInfo().getOrgJdCategory());
         }
 
         if(saveRequest.getOwnerId() != jdInfoResponse.getOwnerId()){
@@ -1303,20 +1303,15 @@ public class OrgApiBiz {
         if(Objects.nonNull(jdEntity)){
             response = new JDInfoResponse();
             response.setOrgJdId(orgJdId);
-            // jdEntity.setOrgAddress(companyInfo.getOrgAddress());
             CompanyInfo companyInfo = new CompanyInfo();
             companyInfo.setOrgAddress(jdEntity.getOrgAddress());
-            //jdEntity.setOrgJdCategoryId(saveRequest.getOrgJdCategoryId());
-            response.setOrgJdCategoryId(jdEntity.getOrgJdCategoryId());
-            if (Objects.nonNull(jdEntity.getOwnerId())) {
-                response.setOwnerId(jdEntity.getOwnerId());
-            }
             response.setJdNo(jdEntity.getJdNo());
             BasicInfo basicInfo = new BasicInfo();
             basicInfo.setJdName(jdEntity.getJdName());
             basicInfo.setAgeRange(jdEntity.getAgeRange());
             basicInfo.setExperienceRequirement(WorkExperienceEnum.getByCode(jdEntity.getWorkExper()).getDescription());
             basicInfo.setEducationRequirement(EducationRequirementEnum.getByCode(jdEntity.getMinEducation()).getDescription());
+            basicInfo.setOrgJdCategory(jdEntity.getOrgJdCategory());
             String recruitmentPurposeStr = jdEntity.getRecruitmentPurpose();
             List<Integer> recruitmentPurposeList = recruitmentPurposeStr == null ? Collections.emptyList() : Arrays.stream(recruitmentPurposeStr.split(","))
                     .filter(StringUtils::isNotBlank)

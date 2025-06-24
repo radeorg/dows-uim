@@ -23,8 +23,6 @@ public class JDInfoResponse {
     // 关联hr
     private Long ownerId;
 
-    // 职位类别
-    private Long orgJdCategoryId;
 
     // 岗位编码，用于内部标识
     private String jdNo;
