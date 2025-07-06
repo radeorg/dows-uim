@@ -998,6 +998,15 @@ public class OrgApiBiz {
         return jdInfoResponse;
     }
 
+    public OrgJobJDResponse queryJdEntity(String jdNo) throws JsonProcessingException {
+        OrgJdEntity jdEntity = QueryChain.of(OrgJdEntity.class)
+                .eq(OrgJdEntity::getJdNo,jdNo)
+                .eq(OrgJdEntity::getDeleted, CommonDelEnum.NORMAL.getCode())
+                .one();
+
+        return BeanUtil.copyProperties(jdEntity, OrgJobJDResponse.class);
+    }
+
     @Operation(summary = "存储JD内容")
     public Response saveOrgJd(JDSaveRequest saveRequest) throws UnavailableException, JsonProcessingException {
         CompanyInfo companyInfo =saveRequest.getCompanyInfo();
