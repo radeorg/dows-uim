@@ -10,6 +10,9 @@ public class BasicInfo {
     // 岗位名称，例如“Java高级开发工程师”
     private String jdName;
 
+    // 职位类别
+    private String orgJdCategory;
+
     // 性别要求，如“不限”“男”“女”
     private String genderRequirement;
 

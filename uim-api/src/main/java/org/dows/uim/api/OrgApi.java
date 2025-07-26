@@ -157,6 +157,11 @@ public interface OrgApi {
         throw new UnsupportedOperationException("not class implement");
     }
 
+    @GetMapping("/v1/open/uim/org/jdinfo/queryEntity")
+    default OrgJobJDResponse queryJdEntity(String jdNo) throws JsonProcessingException {
+        throw new UnsupportedOperationException("not class implement");
+    }
+
     @PostMapping("/v1/open/uim/org/jdinfo/list")
     default List<JDInfoResponse> queryJdInfoList(List<Long> orgJdIds) throws JsonProcessingException {
         throw new UnsupportedOperationException("not class implement");

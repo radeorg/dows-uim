@@ -164,6 +164,11 @@ public class OrgApiRest implements OrgApi, OrgAccountApi, OrgEmailApi {
         return orgApiBiz.queryJdInfo(orgJdId);
     }
 
+    @Operation(summary = "查询JD单表")
+    public OrgJobJDResponse queryJdEntity(String jdNo) throws JsonProcessingException {
+        return orgApiBiz.queryJdEntity(jdNo);
+    }
+
     @Operation(summary = "查询JD详情列表")
     public List<JDInfoResponse> queryJdInfoList(List<Long> orgJdIds){
         return orgApiBiz.queryJdInfoList(orgJdIds);
