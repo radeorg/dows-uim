@@ -13,7 +13,7 @@ import org.dows.rade.crud.BaseEntity;
 import java.util.Date;
 
 /**
- * 租户应用表 实体类。
+ * 租户实例表 实体类。
  *
  */
 @EqualsAndHashCode(callSuper = true)
@@ -21,37 +21,30 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(name = "租户应用表")
-@Table(value = "tenant_app", onUpdate = AutoFillDataListener.class, onInsert = AutoFillDataListener.class)
-public class TenantAppEntity extends BaseEntity<TenantAppEntity> {
-
-    /**
-     * 租户应用ID
-     */
-    @Schema(description = "租户应用ID")
-    @Id(keyType = KeyType.Generator, value = KeyGenerators.snowFlakeId)
-    private Long tenantAppId;
+@Schema(name = "租户实例表")
+@Table(value = "tenant_instance", onUpdate = AutoFillDataListener.class, onInsert = AutoFillDataListener.class)
+public class TenantInstanceEntity extends BaseEntity<TenantInstanceEntity> {
 
     /**
      * 租户实例ID
      */
     @Schema(description = "租户实例ID")
-    @Column(value = "tenant_instance_id")
+    @Id(keyType = KeyType.Generator, value = KeyGenerators.snowFlakeId)
     private Long tenantInstanceId;
 
     /**
-     * 组织登记ID
+     * 账号实例ID
      */
-    @Schema(description = "组织登记ID")
-    @Column(value = "org_register_id")
-    private Long orgRegisterId;
+    @Schema(description = "账号实例ID")
+    @Column(value = "account_instance_id")
+    private Long accountInstanceId;
 
     /**
-     * 组织空间
+     * 租户名称
      */
-    @Schema(description = "组织空间")
-    @Column(value = "namespace")
-    private String namespace;
+    @Schema(description = "租户名称")
+    @Column(value = "tenant_name")
+    private String tenantName;
 
     /**
      * 操作者ID

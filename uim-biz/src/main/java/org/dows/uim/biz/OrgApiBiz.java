@@ -22,6 +22,7 @@ import org.dows.rade.aac.AacContext;
 import org.dows.rade.cache.RadeCache;
 import org.dows.rade.constant.IdentifierType;
 import org.dows.rade.context.AppContext;
+import org.dows.rade.crud.AppIdIgnoreUtils;
 import org.dows.rade.encrypt.EncryptApi;
 import org.dows.rade.util.DateUtil;
 import org.dows.rade.web.Response;
@@ -38,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -195,7 +197,6 @@ public class OrgApiBiz {
         return response;
     }
 
-
     /**
      * 注册企业账号
      *
@@ -216,21 +217,17 @@ public class OrgApiBiz {
         if (StringUtils.isEmpty(orgRegisterRequest.getTelephone())) {
             throw new UimException(" 手机号为空，无法保存");
         }
-        List<OrgEmailEntity> orgEmailEntities = QueryChain.of(OrgEmailEntity.class)
-                .eq(OrgEmailEntity::getEmail, orgRegisterRequest.getEmail(), Objects.nonNull(orgRegisterRequest.getEmail())).list();
+        List<OrgEmailEntity> orgEmailEntities = listByEmailAndIgnoreAppId(orgRegisterRequest.getEmail());
         if (Objects.nonNull(orgEmailEntities) && !orgEmailEntities.isEmpty()) {
             throw new UimException(orgRegisterRequest.getOrgName() + "， 【" + orgRegisterRequest.getEmail() + "】邮箱已存在，无法保存");
         }
         if (Objects.nonNull(orgRegisterRequest.getTelephone())) {
-            List<AccountIdentifierEntity> accountIdentifierEntities = QueryChain.of(AccountIdentifierEntity.class)
-                    .eq(AccountIdentifierEntity::getIdentifier, orgRegisterRequest.getTelephone(), Objects.nonNull(orgRegisterRequest.getTelephone()))
-                    .eq(AccountIdentifierEntity::getIdentifierType, IdentifierType.PHONE.getType()).list();
+            List<AccountIdentifierEntity> accountIdentifierEntities = listByPhoneAndIgnoreAppId(orgRegisterRequest.getTelephone());
             if (Objects.nonNull(accountIdentifierEntities) && !accountIdentifierEntities.isEmpty()) {
                 throw new UimException(orgRegisterRequest.getOrgName() + "， 【" + orgRegisterRequest.getTelephone() + "】手机号已存在，无法保存");
             }
         }
-        OrgTreeEntity one = orgTreeService
-                .getOne(QueryWrapper.create().eq(OrgTreeEntity::getOrgName, orgRegisterRequest.getOrgName()));
+        OrgTreeEntity one = getByOrgNameAndIgnoreAppId(orgRegisterRequest.getOrgName());
         if (Objects.nonNull(one)) {
             throw new UimException(orgRegisterRequest.getOrgName() + "， 组织名称已存在，无法保存");
         }
@@ -304,6 +301,7 @@ public class OrgApiBiz {
         TenantAppRequest tenantAppRequest = new TenantAppRequest();
         tenantAppRequest.setOrgRegisterId(orgRegisterEntity.getOrgRegisterId());
         tenantAppRequest.setCompanyName(orgRegisterEntity.getOrgName());
+        tenantAppRequest.setAccountInstanceId(accountInstanceEntity.getAccountInstanceId());
         tenantAppRequest.setAppId(appId);
         TenantAppResponse tenantApp = tenantAppBiz.save(tenantAppRequest);
 
@@ -1523,5 +1521,48 @@ public class OrgApiBiz {
         }
 
         return sb.toString();
+    }
+
+    /**
+     * 不带appId查询
+     */
+    private List<OrgEmailEntity> listByEmailAndIgnoreAppId(String email) {
+        AtomicReference<List<OrgEmailEntity>> holder = new AtomicReference<>();
+        AppIdIgnoreUtils.executeWithoutTenant(() -> {
+            List<OrgEmailEntity> orgEmailEntities = QueryChain.of(OrgEmailEntity.class)
+                    .eq(OrgEmailEntity::getEmail, email, Objects.nonNull(email)).list();
+
+            holder.set(orgEmailEntities);
+        });
+        return holder.get();
+    }
+
+    /**
+     * 不带appId查询
+     */
+    private List<AccountIdentifierEntity> listByPhoneAndIgnoreAppId(String telphone) {
+        AtomicReference<List<AccountIdentifierEntity>> holder = new AtomicReference<>();
+        AppIdIgnoreUtils.executeWithoutTenant(() -> {
+            List<AccountIdentifierEntity> entities = QueryChain.of(AccountIdentifierEntity.class)
+                    .eq(AccountIdentifierEntity::getIdentifier, telphone, Objects.nonNull(telphone))
+                    .eq(AccountIdentifierEntity::getIdentifierType, IdentifierType.PHONE.getType()).list();
+
+            holder.set(entities);
+        });
+        return holder.get();
+    }
+
+    /**
+     * 不带appId查询
+     */
+    private OrgTreeEntity getByOrgNameAndIgnoreAppId(String orgName) {
+        AtomicReference<OrgTreeEntity> holder = new AtomicReference<>();
+        AppIdIgnoreUtils.executeWithoutTenant(() -> {
+            OrgTreeEntity entity = orgTreeService
+                    .getOne(QueryWrapper.create().eq(OrgTreeEntity::getOrgName, orgName));
+
+            holder.set(entity);
+        });
+        return holder.get();
     }
 }

@@ -28,6 +28,11 @@ public class TenantAppRest implements TenantAppApi {
     }
 
     @Override
+    public String getNamespaceByAppId(String appId) {
+        return tenantAppBiz.getNamespaceByAppId(appId);
+    }
+
+    @Override
     public List<String> listAppId() {
         return tenantAppBiz.listAppId();
     }

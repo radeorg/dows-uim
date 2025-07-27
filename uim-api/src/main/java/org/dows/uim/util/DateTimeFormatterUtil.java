@@ -10,13 +10,13 @@ import java.time.temporal.ChronoField;
 public class DateTimeFormatterUtil {
 
     /**
-     * 表示2025年第213天12点34分56秒789毫秒
+     * 表示25年第213天12点34分56秒789毫秒
      * @return String
      */
     public static String generateTimestamp() {
         LocalDateTime now = LocalDateTime.now();
-        return String.format("%04d%03d%02d%02d%02d%03d",
-                now.getYear(),
+        return String.format("%02d%03d%02d%02d%02d%03d",
+                now.getYear() % 100,    // 取年份后两位
                 now.getDayOfYear(),
                 now.getHour(),
                 now.getMinute(),

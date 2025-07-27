@@ -14,5 +14,7 @@ public interface TenantAppApi {
 
     String getAppIdByNamespace(String namespace);
 
+    String getNamespaceByAppId(String appId);
+
     List<String> listAppId();
 }

@@ -22,7 +22,12 @@ public class CompanyNameUtil {
         // 1. 过滤公司后缀
         String filteredName = filterSuffix(companyName);
 
-        // 2. 获取拼音首字母
+        // 2. 检查是否为纯英文名称
+        if (isPureEnglish(filteredName)) {
+            return filteredName;
+        }
+
+        // 3. 获取拼音首字母
         StringBuilder result = new StringBuilder();
         HanyuPinyinOutputFormat format = new HanyuPinyinOutputFormat();
         format.setCaseType(HanyuPinyinCaseType.LOWERCASE);
@@ -52,6 +57,15 @@ public class CompanyNameUtil {
             }
         }
         return name;
+    }
+
+    private static boolean isPureEnglish(String name) {
+        for (char c : name.toCharArray()) {
+            if (Character.toString(c).matches("[\\u4E00-\\u9FA5]")) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public static void main(String[] args) {

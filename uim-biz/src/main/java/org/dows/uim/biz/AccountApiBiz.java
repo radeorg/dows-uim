@@ -7,6 +7,7 @@ import com.mybatisflex.core.query.QueryWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.rade.constant.IdentifierType;
+import org.dows.rade.crud.AppIdIgnoreUtils;
 import org.dows.uim.api.AccountTypeRequest;
 import org.dows.uim.api.AccountTypeResponse;
 import org.dows.uim.entity.AccountIdentifierEntity;
@@ -27,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -89,12 +91,14 @@ public class AccountApiBiz {
     }
 
     public AccountIdentifierResponse getAccountIdentifier(FindAccountIdentifierRequest findAccountIdentifierRequest) {
-        AccountIdentifierEntity one = accountIdentifierService.getOne(QueryWrapper.create()
-                .eq(AccountIdentifierEntity::getAccountInstanceId, findAccountIdentifierRequest.getAccountInstanceId(), Objects.nonNull(findAccountIdentifierRequest.getAccountInstanceId()))
-                .eq(AccountIdentifierEntity::getIdentifier, findAccountIdentifierRequest.getIdentifier())
-                .eq(AccountIdentifierEntity::getIdentifierType, findAccountIdentifierRequest.getIdentifierType().getType()));
-
-        return BeanUtil.copyProperties(one, AccountIdentifierResponse.class);
+        AccountIdentifierEntity[] identifierHolder = new AccountIdentifierEntity[1];
+        AppIdIgnoreUtils.executeWithoutTenant(() -> {
+            identifierHolder[0] = accountIdentifierService.getOne(QueryWrapper.create()
+                    .eq(AccountIdentifierEntity::getAccountInstanceId, findAccountIdentifierRequest.getAccountInstanceId(), Objects.nonNull(findAccountIdentifierRequest.getAccountInstanceId()))
+                    .eq(AccountIdentifierEntity::getIdentifier, findAccountIdentifierRequest.getIdentifier())
+                    .eq(AccountIdentifierEntity::getIdentifierType, findAccountIdentifierRequest.getIdentifierType().getType()));
+        });
+        return BeanUtil.copyProperties(identifierHolder[0], AccountIdentifierResponse.class);
     }
 
 
@@ -126,28 +130,22 @@ public class AccountApiBiz {
     }
 
     /**
-     * @param appId
-     * @param accountIdentifier
-     * @return
+     * @param accountIdentifier 账号标识
+     * @return AccountInstanceResponse
      */
-    public AccountInstanceResponse getAccountInstanceByIdentifier(String appId, String accountIdentifier) {
-        //todo ?? 为什么时集合？不应该是只有一个么？
-        List<AccountIdentifierEntity> accountIdentifierEntityList = QueryChain.of(AccountIdentifierEntity.class)
-                .eq(AccountIdentifierEntity::getIdentifier, accountIdentifier, Objects.nonNull(accountIdentifier))
-                .eq(AccountIdentifierEntity::getAppId, appId, Objects.nonNull(appId)).list();
-        if (Objects.isNull(accountIdentifierEntityList) || accountIdentifierEntityList.isEmpty()) {
+    public AccountInstanceResponse getAccountInstanceByIdentifier(String accountIdentifier) {
+        AccountIdentifierEntity accountIdentifierEntity = getByIdentifierAndIgnoreAppId(accountIdentifier);
+        if (accountIdentifierEntity == null) {
             return null;
         }
 
-        Long accountInstanceId = accountIdentifierEntityList.get(0).getAccountInstanceId();
+        Long accountInstanceId = accountIdentifierEntity.getAccountInstanceId();
         if (accountInstanceId == null) {
             log.debug("accountInstanceId is null");
             return null;
         }
-        /*AccountInstanceEntity accountInstanceEntity = QueryChain.of(AccountInstanceEntity.class)
-                .eq(AccountInstanceEntity::getAccountInstanceId, accountInstanceId)
-                .eq(AccountInstanceEntity::getAppId, appId, Objects.nonNull(appId)).one();*/
-        AccountInstanceEntity accountInstanceEntity = accountInstanceService.getById(accountInstanceId);
+
+        AccountInstanceEntity accountInstanceEntity = getByAccountInstanceIdAndIgnoreAppId(accountInstanceId);
         if (Objects.isNull(accountInstanceEntity)) {
             return null;
         }
@@ -155,7 +153,7 @@ public class AccountApiBiz {
                 .copyProperties(accountInstanceEntity, AccountInstanceResponse.class);
         accountInstanceResponse.setIdentifier(accountIdentifier);
         IdentifierType byIdentifierType = IdentifierType
-                .getByIdentifierType(accountIdentifierEntityList.get(0).getIdentifierType());
+                .getByIdentifierType(accountIdentifierEntity.getIdentifierType());
         accountInstanceResponse.setIdentifierType(byIdentifierType);
         return accountInstanceResponse;
     }
@@ -335,13 +333,10 @@ public class AccountApiBiz {
      */
     public AccountIdentifierResponse saveAccountIdentifier(String identifier, IdentifierType identifierType) {
 
-        AccountIdentifierEntity one = accountIdentifierService.getOne(QueryWrapper.create()
-                .eq(AccountIdentifierEntity::getIdentifier, identifier)
-                .eq(AccountIdentifierEntity::getIdentifierType, identifierType.getType()));
+        AccountIdentifierEntity one = getByIdentifierAndIgnoreAppId(identifier, identifierType.getType());
         // 存在则返回账号标识ID，不存在则创建账号标识并返回账号标识ID
         if (one != null) {
             return BeanUtil.copyProperties(one, AccountIdentifierResponse.class);
-            //return one.getAccountIdentifierId();
         }
         // 保存账号标识
         one = new AccountIdentifierEntity();
@@ -377,5 +372,42 @@ public class AccountApiBiz {
             one.setPassword(newPassword);
             accountInstanceService.updateById(one, true);
         }
+    }
+
+    /**
+     * 不带appId查询
+     */
+    private AccountIdentifierEntity getByIdentifierAndIgnoreAppId(String identifier) {
+        AtomicReference<AccountIdentifierEntity> holder = new AtomicReference<>();
+        AppIdIgnoreUtils.executeWithoutTenant(() -> {
+            holder.set(accountIdentifierService.getOne(QueryWrapper.create()
+                    .eq(AccountIdentifierEntity::getIdentifier, identifier)));
+        });
+        return holder.get();
+    }
+
+    /**
+     * 不带appId查询
+     */
+    private AccountIdentifierEntity getByIdentifierAndIgnoreAppId(String identifier, Integer identifierType) {
+        AtomicReference<AccountIdentifierEntity> holder = new AtomicReference<>();
+        AppIdIgnoreUtils.executeWithoutTenant(() -> {
+            AccountIdentifierEntity one = accountIdentifierService.getOne(QueryWrapper.create()
+                    .eq(AccountIdentifierEntity::getIdentifier, identifier)
+                    .eq(AccountIdentifierEntity::getIdentifierType, identifierType));
+            holder.set(one);
+        });
+        return holder.get();
+    }
+
+    /**
+     * 不带appId查询
+     */
+    private AccountInstanceEntity getByAccountInstanceIdAndIgnoreAppId(Long accountInstanceId) {
+        AtomicReference<AccountInstanceEntity> holder = new AtomicReference<>();
+        AppIdIgnoreUtils.executeWithoutTenant(() -> {
+            holder.set(accountInstanceService.getById(accountInstanceId));
+        });
+        return holder.get();
     }
 }
