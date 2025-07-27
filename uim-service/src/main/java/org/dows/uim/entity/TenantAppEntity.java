@@ -7,53 +7,44 @@ import com.mybatisflex.annotation.Table;
 import com.mybatisflex.core.keygen.KeyGenerators;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import org.dows.rade.crud.BaseEntity;
 import org.dows.rade.crud.AutoFillDataListener;
+import org.dows.rade.crud.BaseEntity;
 
 import java.util.Date;
 
 /**
- * 岗位规则表 实体类。
+ * 租户应用表 实体类。
  *
- * @author lait.zhang@gmail.com
- * @since 1.0
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(name = "岗位规则表")
-@Table(value = "org_rule", onUpdate = AutoFillDataListener.class, onInsert = AutoFillDataListener.class)
-public class OrgRuleEntity extends BaseEntity<OrgRuleEntity> {
+@Schema(name = "租户应用表")
+@Table(value = "tenant_app", onUpdate = AutoFillDataListener.class, onInsert = AutoFillDataListener.class)
+public class TenantAppEntity extends BaseEntity<TenantAppEntity> {
 
     /**
-     * 岗位规则ID
+     * 租户应用ID
      */
-    @Schema(description = "岗位规则ID")
+    @Schema(description = "租户应用ID")
     @Id(keyType = KeyType.Generator, value = KeyGenerators.snowFlakeId)
-    private Long orgRuleId;
+    private Long tenantAppId;
 
     /**
-     * 组织树ID
+     * 组织登记ID
      */
-    @Schema(description = "组织树ID")
-    @Column(value = "org_tree_id")
-    private Long orgTreeId;
+    @Schema(description = "组织登记ID")
+    @Column(value = "org_register_id")
+    private Long orgRegisterId;
 
     /**
-     * 规则名称
+     * 组织空间
      */
-    @Schema(description = "规则名称")
-    @Column(value = "rule_name")
-    private String ruleName;
-
-    /**
-     * 规则描述
-     */
-    @Schema(description = "规则描述")
-    @Column(value = "rule_description")
-    private String ruleDescription;
+    @Schema(description = "组织空间")
+    @Column(value = "namespace")
+    private String namespace;
 
     /**
      * 操作者ID
@@ -61,13 +52,6 @@ public class OrgRuleEntity extends BaseEntity<OrgRuleEntity> {
     @Schema(description = "操作者ID")
     @Column(value = "operator_id")
     private Long operatorId;
-
-    /**
-     * 是否可用0-可用，1-不可用
-     */
-    @Schema(description = "是否可用0-可用，1-不可用")
-    @Column(value = "enabled")
-    private Integer enabled;
 
     /**
      * 应用ID
@@ -85,9 +69,4 @@ public class OrgRuleEntity extends BaseEntity<OrgRuleEntity> {
 
     @Column(value = "ut")
     private Date ut;
-
-    @Column(value = "owner_id")
-    private Long ownerId;
-
-
 }

@@ -75,4 +75,16 @@ public class OrgRegisterResponse {
      */
     @Schema(description = "联系人")
     private String contacts;
+
+    /**
+     * 应用ID
+     */
+    @Schema(description = "应用ID")
+    private String appId;
+
+    /**
+     * 组织空间
+     */
+    @Schema(description = "组织空间")
+    private String namespace;
 }

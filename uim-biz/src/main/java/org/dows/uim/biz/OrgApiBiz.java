@@ -73,6 +73,7 @@ public class OrgApiBiz {
     private final RadeCache radeCache;
 
     private final ObjectMapper objectMapper;
+    private final TenantAppBiz tenantAppBiz;
 
 //    private final PasswordEncoder passwordEncoder;
 
@@ -234,6 +235,7 @@ public class OrgApiBiz {
             throw new UimException(orgRegisterRequest.getOrgName() + "， 组织名称已存在，无法保存");
         }
 
+        String appId = tenantAppBiz.initAppId();
         AccountInstanceEntity accountInstanceEntity = new AccountInstanceEntity();
         accountInstanceEntity.setTelephone(orgRegisterRequest.getTelephone());
         // todo 设置密码 需要加密
@@ -241,11 +243,13 @@ public class OrgApiBiz {
         // 超级账号
         accountInstanceEntity.setNickname(orgRegisterRequest.getContacts());
         accountInstanceEntity.setSuperAccount(1);
+        accountInstanceEntity.setAppId(appId);
         accountInstanceService.save(accountInstanceEntity);
 
         // 批量保存组织树
         OrgTreeEntity orgTreeEntity = BeanUtil.copyProperties(orgRegisterRequest, OrgTreeEntity.class);
         orgTreeEntity.setOperatorId(accountInstanceEntity.getAccountInstanceId());
+        orgTreeEntity.setAppId(appId);
         orgTreeService.save(orgTreeEntity);
 
         // 构建企业邮箱
@@ -253,6 +257,7 @@ public class OrgApiBiz {
         orgEmailEntity.setEmail(orgRegisterRequest.getEmail());
         orgEmailEntity.setOrgRootId(orgTreeEntity.getOrgTreeId());
         orgEmailEntity.setOrgTreeId(orgTreeEntity.getOrgTreeId());
+        orgEmailEntity.setAppId(appId);
         // 批量保存企业邮箱
         orgEmailService.save(orgEmailEntity);
 
@@ -263,6 +268,7 @@ public class OrgApiBiz {
         accountIdentifierEntity.setIdentifier(accountInstanceEntity.getTelephone());
         accountIdentifierEntity.setIdentifierType(IdentifierType.PHONE.getType());
         accountIdentifierEntity.setOperatorId(accountInstanceEntity.getAccountInstanceId());
+        accountIdentifierEntity.setAppId(appId);
         accountIdentifierEntities.add(accountIdentifierEntity);
         // create account identifier for email
         accountIdentifierEntity = new AccountIdentifierEntity();
@@ -270,6 +276,7 @@ public class OrgApiBiz {
         accountIdentifierEntity.setIdentifier(orgRegisterRequest.getEmail());
         accountIdentifierEntity.setIdentifierType(IdentifierType.EMAIL.getType());
         accountIdentifierEntity.setOperatorId(accountInstanceEntity.getAccountInstanceId());
+        accountIdentifierEntity.setAppId(appId);
         accountIdentifierEntities.add(accountIdentifierEntity);
         // batch save account identifier
         accountIdentifierService.saveBatch(accountIdentifierEntities);
@@ -279,6 +286,7 @@ public class OrgApiBiz {
         orgRegisterEntity.setOrgRootId(orgTreeEntity.getOrgTreeId());
         // shell account identifier for org register
         orgRegisterEntity.setAccountInstanceId(accountInstanceEntity.getAccountInstanceId());
+        orgRegisterEntity.setAppId(appId);
         // batch save org register
         orgRegisterService.save(orgRegisterEntity);
 
@@ -288,115 +296,126 @@ public class OrgApiBiz {
         orgNodeEntity.setOrgTreeId(orgTreeEntity.getOrgTreeId());
         orgNodeEntity.setAccountInstanceId(accountInstanceEntity.getAccountInstanceId());
         orgNodeEntity.setOperatorId(accountInstanceEntity.getAccountInstanceId());
+        orgNodeEntity.setAppId(appId);
         // batch save org node
         orgNodeService.save(orgNodeEntity);
-        return BeanUtil.copyProperties(orgRegisterEntity, OrgRegisterResponse.class);
+
+        // 保存租户应用
+        TenantAppRequest tenantAppRequest = new TenantAppRequest();
+        tenantAppRequest.setOrgRegisterId(orgRegisterEntity.getOrgRegisterId());
+        tenantAppRequest.setCompanyName(orgRegisterEntity.getOrgName());
+        tenantAppRequest.setAppId(appId);
+        TenantAppResponse tenantApp = tenantAppBiz.save(tenantAppRequest);
+
+        OrgRegisterResponse register = BeanUtil.copyProperties(orgRegisterEntity, OrgRegisterResponse.class);
+        register.setNamespace(tenantApp.getNamespace());
+        return register;
     }
 
-
-    /**
-     * 注册企业账号
-     *
-     * @param orgRegisterRequest
-     * @return
-     */
-    @Transactional
-    public List<OrgRegisterResponse> getOrgWithRegister(List<OrgRegisterRequest> orgRegisterRequest) {
-        //判断邮箱是否为空，或重复
-        for (OrgRegisterRequest item : orgRegisterRequest) {
-            if (StringUtils.isEmpty(item.getEmail())) {
-                throw new UimException(item.getOrgName() + " 邮箱为空，无法保存");
-            }
-            List<OrgEmailEntity> orgEmailEntities = QueryChain.of(OrgEmailEntity.class)
-                    .eq(OrgEmailEntity::getEmail, item.getEmail(), Objects.nonNull(item.getEmail())).list();
-            if (Objects.nonNull(orgEmailEntities) && !orgEmailEntities.isEmpty()) {
-                throw new UimException(item.getOrgName() + "， 【" + item.getEmail() + "】邮箱已存在，无法保存");
-            }
-
-            if (Objects.nonNull(item.getTelephone())) {
-                List<AccountIdentifierEntity> accountIdentifierEntities = QueryChain.of(AccountIdentifierEntity.class)
-                        .eq(AccountIdentifierEntity::getIdentifier, item.getTelephone(), Objects.nonNull(item.getTelephone()))
-                        .eq(AccountIdentifierEntity::getIdentifierType, IdentifierType.PHONE.getType()).list();
-                if (Objects.nonNull(accountIdentifierEntities) && !accountIdentifierEntities.isEmpty()) {
-                    throw new UimException(item.getOrgName() + "， 【" + item.getTelephone() + "】手机号已存在，无法保存");
-                }
-            }
-            /*OrgTreeEntity one = orgTreeService
-                    .getOne(QueryWrapper.create().eq(OrgTreeEntity::getOrgName, item.getOrgName()));*/
-        }
-
-
-        // 批量保存组织树
-        List<OrgTreeEntity> orgTreeEntities = BeanUtil.copyToList(orgRegisterRequest, OrgTreeEntity.class);
-        orgTreeService.saveOrUpdateBatch(orgTreeEntities);
-        // 批量保存注册信息
-        List<OrgRegisterEntity> orgRegisterEntities = BeanUtil.copyToList(orgRegisterRequest, OrgRegisterEntity.class);
-        // 批量保存账号信息
-        List<AccountInstanceEntity> accountInstanceEntities = new ArrayList<>();
-        // 批量报保存企业邮箱信息
-        List<OrgEmailEntity> orgEmailEntities = new ArrayList<>();
-        for (int i = 0; i < orgTreeEntities.size(); i++) {
-            OrgRegisterEntity orgRegisterEntity = orgRegisterEntities.get(i);
-            orgRegisterEntity.setOrgRootId(orgTreeEntities.get(i).getOrgTreeId());
-
-            AccountInstanceEntity accountInstanceEntity = new AccountInstanceEntity();
-            accountInstanceEntity.setTelephone(orgRegisterEntity.getTelephone());
-            // todo 设置密码 需要加密
-            String password = orgRegisterRequest.get(i).getPassword();
-//            accountInstanceEntity.setPassword(passwordEncoder.encode(password));
-            accountInstanceEntity.setPassword(encryptApi.getBCryptPassword(password));
-            // 设置为超级账号
-            accountInstanceEntity.setSuperAccount(1);
-            accountInstanceEntities.add(accountInstanceEntity);
-
-            // 构建企业邮箱
-            OrgEmailEntity orgEmailEntity = new OrgEmailEntity();
-            orgEmailEntity.setEmail(orgRegisterEntity.getEmail());
-            orgEmailEntity.setOrgTreeId(orgTreeEntities.get(i).getOrgTreeId());
-            orgEmailEntity.setOrgRootId(orgTreeEntities.get(i).getOrgTreeId());
-            orgEmailEntities.add(orgEmailEntity);
-        }
-        // batch save account instance
-        accountInstanceService.saveBatch(accountInstanceEntities);
-
-        List<AccountIdentifierEntity> accountIdentifierEntities = new ArrayList<>();
-        for (int i = 0; i < accountInstanceEntities.size(); i++) {
-            AccountInstanceEntity accountInstanceEntity = accountInstanceEntities.get(i);
-            // create account identifier for phone
-            AccountIdentifierEntity accountIdentifierEntity = new AccountIdentifierEntity();
-            accountIdentifierEntity.setAccountInstanceId(accountInstanceEntity.getAccountInstanceId());
-            accountIdentifierEntity.setIdentifier(accountInstanceEntity.getTelephone());
-            accountIdentifierEntity.setIdentifierType(IdentifierType.PHONE.getType());
-            accountIdentifierEntities.add(accountIdentifierEntity);
-            // create account identifier for email
-            accountIdentifierEntity = new AccountIdentifierEntity();
-            accountIdentifierEntity.setAccountInstanceId(accountInstanceEntity.getAccountInstanceId());
-            accountIdentifierEntity.setIdentifier(orgRegisterRequest.get(i).getEmail());
-            accountIdentifierEntity.setIdentifierType(IdentifierType.EMAIL.getType());
-            accountIdentifierEntities.add(accountIdentifierEntity);
-            // shell account identifier for org register
-            orgRegisterEntities.get(i).setAccountInstanceId(accountInstanceEntity.getAccountInstanceId());
-        }
-        // batch save account identifier
-        accountIdentifierService.saveBatch(accountIdentifierEntities);
-        // batch save org register
-        orgRegisterService.saveOrUpdateBatch(orgRegisterEntities);
-        // 批量保存企业邮箱
-        orgEmailService.saveBatch(orgEmailEntities);
-
-        // 将当前账号关联组织节点
-        List<OrgNodeEntity> orgNodeEntities = new ArrayList<>();
-        for (int i = 0; i < orgRegisterEntities.size(); i++) {
-            OrgNodeEntity orgNodeEntity = new OrgNodeEntity();
-            orgNodeEntity.setOrgRootId(orgTreeEntities.get(i).getOrgTreeId());
-            orgNodeEntity.setOrgTreeId(orgTreeEntities.get(i).getOrgTreeId());
-            orgNodeEntity.setAccountInstanceId(accountInstanceEntities.get(i).getAccountInstanceId());
-            orgNodeEntities.add(orgNodeEntity);
-        }
-        // batch save org node
-        orgNodeService.saveBatch(orgNodeEntities);
-        return BeanUtil.copyToList(orgRegisterEntities, OrgRegisterResponse.class);
-    }
+//
+//    /**
+//     * 注册企业账号
+//     *
+//     * @param orgRegisterRequest
+//     * @return
+//     */
+//    @Transactional
+//    public List<OrgRegisterResponse> getOrgWithRegister(List<OrgRegisterRequest> orgRegisterRequest) {
+//        //判断邮箱是否为空，或重复
+//        for (OrgRegisterRequest item : orgRegisterRequest) {
+//            if (StringUtils.isEmpty(item.getEmail())) {
+//                throw new UimException(item.getOrgName() + " 邮箱为空，无法保存");
+//            }
+//            List<OrgEmailEntity> orgEmailEntities = QueryChain.of(OrgEmailEntity.class)
+//                    .eq(OrgEmailEntity::getEmail, item.getEmail(), Objects.nonNull(item.getEmail())).list();
+//            if (Objects.nonNull(orgEmailEntities) && !orgEmailEntities.isEmpty()) {
+//                throw new UimException(item.getOrgName() + "， 【" + item.getEmail() + "】邮箱已存在，无法保存");
+//            }
+//
+//            if (Objects.nonNull(item.getTelephone())) {
+//                List<AccountIdentifierEntity> accountIdentifierEntities = QueryChain.of(AccountIdentifierEntity.class)
+//                        .eq(AccountIdentifierEntity::getIdentifier, item.getTelephone(), Objects.nonNull(item.getTelephone()))
+//                        .eq(AccountIdentifierEntity::getIdentifierType, IdentifierType.PHONE.getType()).list();
+//                if (Objects.nonNull(accountIdentifierEntities) && !accountIdentifierEntities.isEmpty()) {
+//                    throw new UimException(item.getOrgName() + "， 【" + item.getTelephone() + "】手机号已存在，无法保存");
+//                }
+//            }
+//            /*OrgTreeEntity one = orgTreeService
+//                    .getOne(QueryWrapper.create().eq(OrgTreeEntity::getOrgName, item.getOrgName()));*/
+//        }
+//
+//
+//        // 批量保存组织树
+//        List<OrgTreeEntity> orgTreeEntities = BeanUtil.copyToList(orgRegisterRequest, OrgTreeEntity.class);
+//        orgTreeService.saveOrUpdateBatch(orgTreeEntities);
+//        // 批量保存注册信息
+//        List<OrgRegisterEntity> orgRegisterEntities = BeanUtil.copyToList(orgRegisterRequest, OrgRegisterEntity.class);
+//        // 批量保存账号信息
+//        List<AccountInstanceEntity> accountInstanceEntities = new ArrayList<>();
+//        // 批量报保存企业邮箱信息
+//        List<OrgEmailEntity> orgEmailEntities = new ArrayList<>();
+//        for (int i = 0; i < orgTreeEntities.size(); i++) {
+//            OrgRegisterEntity orgRegisterEntity = orgRegisterEntities.get(i);
+//            orgRegisterEntity.setOrgRootId(orgTreeEntities.get(i).getOrgTreeId());
+//
+//            AccountInstanceEntity accountInstanceEntity = new AccountInstanceEntity();
+//            accountInstanceEntity.setTelephone(orgRegisterEntity.getTelephone());
+//            // todo 设置密码 需要加密
+//            String password = orgRegisterRequest.get(i).getPassword();
+////            accountInstanceEntity.setPassword(passwordEncoder.encode(password));
+//            accountInstanceEntity.setPassword(encryptApi.getBCryptPassword(password));
+//            // 设置为超级账号
+//            accountInstanceEntity.setSuperAccount(1);
+//            accountInstanceEntities.add(accountInstanceEntity);
+//
+//            // 构建企业邮箱
+//            OrgEmailEntity orgEmailEntity = new OrgEmailEntity();
+//            orgEmailEntity.setEmail(orgRegisterEntity.getEmail());
+//            orgEmailEntity.setOrgTreeId(orgTreeEntities.get(i).getOrgTreeId());
+//            orgEmailEntity.setOrgRootId(orgTreeEntities.get(i).getOrgTreeId());
+//            orgEmailEntities.add(orgEmailEntity);
+//        }
+//        // batch save account instance
+//        accountInstanceService.saveBatch(accountInstanceEntities);
+//
+//        List<AccountIdentifierEntity> accountIdentifierEntities = new ArrayList<>();
+//        for (int i = 0; i < accountInstanceEntities.size(); i++) {
+//            AccountInstanceEntity accountInstanceEntity = accountInstanceEntities.get(i);
+//            // create account identifier for phone
+//            AccountIdentifierEntity accountIdentifierEntity = new AccountIdentifierEntity();
+//            accountIdentifierEntity.setAccountInstanceId(accountInstanceEntity.getAccountInstanceId());
+//            accountIdentifierEntity.setIdentifier(accountInstanceEntity.getTelephone());
+//            accountIdentifierEntity.setIdentifierType(IdentifierType.PHONE.getType());
+//            accountIdentifierEntities.add(accountIdentifierEntity);
+//            // create account identifier for email
+//            accountIdentifierEntity = new AccountIdentifierEntity();
+//            accountIdentifierEntity.setAccountInstanceId(accountInstanceEntity.getAccountInstanceId());
+//            accountIdentifierEntity.setIdentifier(orgRegisterRequest.get(i).getEmail());
+//            accountIdentifierEntity.setIdentifierType(IdentifierType.EMAIL.getType());
+//            accountIdentifierEntities.add(accountIdentifierEntity);
+//            // shell account identifier for org register
+//            orgRegisterEntities.get(i).setAccountInstanceId(accountInstanceEntity.getAccountInstanceId());
+//        }
+//        // batch save account identifier
+//        accountIdentifierService.saveBatch(accountIdentifierEntities);
+//        // batch save org register
+//        orgRegisterService.saveOrUpdateBatch(orgRegisterEntities);
+//        // 批量保存企业邮箱
+//        orgEmailService.saveBatch(orgEmailEntities);
+//
+//        // 将当前账号关联组织节点
+//        List<OrgNodeEntity> orgNodeEntities = new ArrayList<>();
+//        for (int i = 0; i < orgRegisterEntities.size(); i++) {
+//            OrgNodeEntity orgNodeEntity = new OrgNodeEntity();
+//            orgNodeEntity.setOrgRootId(orgTreeEntities.get(i).getOrgTreeId());
+//            orgNodeEntity.setOrgTreeId(orgTreeEntities.get(i).getOrgTreeId());
+//            orgNodeEntity.setAccountInstanceId(accountInstanceEntities.get(i).getAccountInstanceId());
+//            orgNodeEntities.add(orgNodeEntity);
+//        }
+//        // batch save org node
+//        orgNodeService.saveBatch(orgNodeEntities);
+//        return BeanUtil.copyToList(orgRegisterEntities, OrgRegisterResponse.class);
+//    }
 
     public OrgRegisterResponse getOrgInfo(OrgRegisterRequest orgRegisterRequest) {
         // 查询企业邮箱

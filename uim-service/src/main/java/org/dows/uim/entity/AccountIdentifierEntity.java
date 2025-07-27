@@ -8,8 +8,8 @@ import com.mybatisflex.core.keygen.KeyGenerators;
 import com.tangzc.mybatisflex.autotable.annotation.ColumnDefine;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
+import org.dows.rade.crud.AutoFillDataListener;
 import org.dows.rade.crud.BaseEntity;
-import org.dows.uim.AutoFillDataListener;
 
 import java.util.Date;
 
