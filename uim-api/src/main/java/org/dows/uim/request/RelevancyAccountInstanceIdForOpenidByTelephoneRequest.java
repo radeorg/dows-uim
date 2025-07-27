@@ -20,4 +20,5 @@ public class RelevancyAccountInstanceIdForOpenidByTelephoneRequest {
     private String identifier;
     // 账号标识符类型
     private IdentifierType identifierType;
+    private String appId;
 }

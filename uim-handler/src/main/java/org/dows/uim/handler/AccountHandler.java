@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.rade.aac.AacContext;
 import org.dows.rade.constant.IdentifierType;
+import org.dows.rade.context.AppContext;
+import org.dows.rade.crud.AppIdIgnoreUtils;
 import org.dows.rade.encrypt.EncryptApi;
 import org.dows.uim.constant.AccountType;
 import org.dows.uim.constant.CommonDelEnum;
@@ -21,7 +23,10 @@ import org.dows.uim.service.*;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
+
+import static org.checkerframework.checker.units.qual.Prefix.one;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -134,12 +139,10 @@ public class AccountHandler {
 
         } else { // 新增
             // 检测手机账号标识是否存在
-            AccountIdentifierEntity one = accountIdentifierService.getOne(QueryWrapper.create()
-                    .eq(AccountIdentifierEntity::getIdentifier, saveOrgAccountRequest.getTelephone())
-                    .eq(AccountIdentifierEntity::getIdentifierType, IdentifierType.PHONE.getType()));
+            AccountIdentifierEntity one = getByIdentifierAndIgnoreAppId(saveOrgAccountRequest.getTelephone(),
+                    IdentifierType.PHONE.getType());
 
-            AccountInstanceEntity accountInstance = accountInstanceService.getOne(QueryWrapper.create()
-                    .eq(AccountInstanceEntity::getTelephone, saveOrgAccountRequest.getTelephone()));
+            AccountInstanceEntity accountInstance = getByTelephoneAndIgnoreAppId(saveOrgAccountRequest.getTelephone());
 
             Long accountInstanceId;
             AccountTypeEntity accountTypeEntity;
@@ -152,11 +155,10 @@ public class AccountHandler {
             if (one != null && Objects.nonNull(one.getAccountInstanceId()) && one.getDeleted() == CommonDelEnum.NORMAL.getCode()) {
                 //判断在组织树是否存在，如存在提示重复
                 // 检查是否已经存在关联的组织
-                OrgNodeEntity dbOrgNode = orgNodeService.getOne(QueryWrapper.create()
-                        .eq(OrgNodeEntity::getAccountInstanceId, one.getAccountInstanceId())
-                        .eq(OrgNodeEntity::getOrgRootId, aacContext.getAacUser().getOrgRootId(), Objects.nonNull(aacContext.getAacUser().getOrgRootId())));
+                OrgNodeEntity dbOrgNode = getByAccountInstanceIdAndIgnoreAppId(one.getAccountInstanceId());
                 if (Objects.nonNull(dbOrgNode) && one.getDeleted() == CommonDelEnum.NORMAL.getCode()) {
-                    if(Objects.nonNull(accountInstance) && accountInstance.getDeleted() == CommonDelEnum.NORMAL.getCode()) {
+                    if(Objects.nonNull(accountInstance) && (!accountInstance.getAppId().equals(AppContext.getAppId())
+                    || accountInstance.getDeleted() == CommonDelEnum.NORMAL.getCode())) {
                         throw new RuntimeException("该手机号已经存在，不能重复提交");
                     }
                 }
@@ -229,8 +231,7 @@ public class AccountHandler {
             // 关联组织
             // todo 处理组织
             OrgTreeEntity dbOrgTree = orgTreeService.getOne(QueryWrapper.create()
-                    .eq(OrgTreeEntity::getOrgName, saveOrgAccountRequest.getOrgName())
-                    .eq(OrgTreeEntity::getAppId, saveOrgAccountRequest.getAppId()));
+                    .eq(OrgTreeEntity::getOrgName, saveOrgAccountRequest.getOrgName()));
             Long orgTreeId = saveOrgAccountRequest.getOrgTreeId();
             if(Objects.isNull(orgTreeId) && Objects.nonNull(dbOrgTree)){
                 orgTreeId = dbOrgTree.getOrgTreeId();
@@ -368,5 +369,47 @@ public class AccountHandler {
             orgNodeService.saveBatch(orgNodeEntities);
         }
 
+    }
+
+    /**
+     * 不带appId查询
+     */
+    public AccountIdentifierEntity getByIdentifierAndIgnoreAppId(String identifier, Integer identifierType) {
+        AtomicReference<AccountIdentifierEntity> holder = new AtomicReference<>();
+        AppIdIgnoreUtils.executeWithoutTenant(() -> {
+            AccountIdentifierEntity one = accountIdentifierService.getOne(QueryWrapper.create()
+                    .eq(AccountIdentifierEntity::getIdentifier, identifier)
+                    .eq(AccountIdentifierEntity::getIdentifierType, identifierType));
+            holder.set(one);
+        });
+        return holder.get();
+    }
+
+    /**
+     * 不带appId查询
+     */
+    public AccountInstanceEntity getByTelephoneAndIgnoreAppId(String telephone) {
+        AtomicReference<AccountInstanceEntity> holder = new AtomicReference<>();
+        AppIdIgnoreUtils.executeWithoutTenant(() -> {
+            AccountInstanceEntity accountInstance = accountInstanceService.getOne(QueryWrapper.create()
+                    .eq(AccountInstanceEntity::getTelephone, telephone));
+            holder.set(accountInstance);
+        });
+        return holder.get();
+    }
+
+    /**
+     * 不带appId查询
+     */
+    public OrgNodeEntity getByAccountInstanceIdAndIgnoreAppId(Long accountInstanceId) {
+        AtomicReference<OrgNodeEntity> holder = new AtomicReference<>();
+        AppIdIgnoreUtils.executeWithoutTenant(() -> {
+            OrgNodeEntity dbOrgNode = orgNodeService.getOne(QueryWrapper.create()
+                    .eq(OrgNodeEntity::getAccountInstanceId, accountInstanceId)
+                    .eq(OrgNodeEntity::getOrgRootId, aacContext.getAacUser().getOrgRootId(), Objects.nonNull(aacContext.getAacUser().getOrgRootId())));
+
+            holder.set(dbOrgNode);
+        });
+        return holder.get();
     }
 }
