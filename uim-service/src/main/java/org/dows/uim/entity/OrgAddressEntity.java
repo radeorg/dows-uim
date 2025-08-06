@@ -68,7 +68,7 @@ public class OrgAddressEntity extends BaseEntity<OrgAddressEntity> {
     private Integer deleted;
 
     @Schema(description = "应用ID")
-//    @Column(value = "app_id", tenantId = true)
+    @Column(value = "app_id")
     private String appId;
     @Schema(description = "时间戳")
     @Column(value = "ts")

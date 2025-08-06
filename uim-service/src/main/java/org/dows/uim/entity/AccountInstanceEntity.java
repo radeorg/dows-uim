@@ -87,7 +87,7 @@ public class AccountInstanceEntity extends BaseEntity<AccountInstanceEntity> {
      * 应用ID
      */
     @Schema(description = "应用ID")
-//    @Column(value = "app_id", tenantId = true)
+    @Column(value = "app_id")
     private String appId;
 
     /**

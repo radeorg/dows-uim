@@ -64,7 +64,7 @@ public class TenantAppEntity extends BaseEntity<TenantAppEntity> {
      * 应用ID
      */
     @Schema(description = "应用ID")
-//    @Column(value = "app_id", tenantId = true)
+    @Column(value = "app_id")
     private String appId;
 
     /**
