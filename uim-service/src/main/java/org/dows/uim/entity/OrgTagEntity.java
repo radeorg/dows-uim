@@ -66,7 +66,7 @@ public class OrgTagEntity extends BaseEntity<OrgTagEntity> {
      * 应用ID
      */
     @Schema(description = "应用ID")
-    @Column(value = "app_id", tenantId = true)
+//    @Column(value = "app_id", tenantId = true)
     private String appId;
 
     /**

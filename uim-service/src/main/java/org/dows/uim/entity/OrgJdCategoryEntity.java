@@ -47,7 +47,7 @@ public class OrgJdCategoryEntity extends BaseEntity<OrgJdCategoryEntity> {
      * 应用ID
      */
     @Schema(description = "应用ID")
-    @Column(value = "app_id", tenantId = true)
+//    @Column(value = "app_id", tenantId = true)
     private String appId;
     /**
      * 时间戳

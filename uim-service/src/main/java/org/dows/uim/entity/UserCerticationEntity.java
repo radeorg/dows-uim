@@ -39,7 +39,7 @@ public class UserCerticationEntity extends BaseEntity<UserCerticationEntity> {
     @Column(value = "cert_no")
     private String certNo;
 
-    @Column(value = "app_id", tenantId = true)
+//    @Column(value = "app_id", tenantId = true)
     private String appId;
 
     @Column(value = "perminent")

@@ -7,7 +7,6 @@ import com.mybatisflex.core.query.QueryWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.rade.constant.IdentifierType;
-import org.dows.rade.crud.AppIdIgnoreUtils;
 import org.dows.uim.api.AccountTypeRequest;
 import org.dows.uim.api.AccountTypeResponse;
 import org.dows.uim.entity.AccountIdentifierEntity;
@@ -28,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -90,19 +88,16 @@ public class AccountApiBiz {
     }
 
     public AccountIdentifierResponse getAccountIdentifier(FindAccountIdentifierRequest findAccountIdentifierRequest) {
-        AccountIdentifierEntity[] identifierHolder = new AccountIdentifierEntity[1];
-        AppIdIgnoreUtils.executeWithoutTenant(() -> {
-            identifierHolder[0] = accountIdentifierService.getOne(QueryWrapper.create()
-                    .eq(AccountIdentifierEntity::getAccountInstanceId, findAccountIdentifierRequest.getAccountInstanceId(), Objects.nonNull(findAccountIdentifierRequest.getAccountInstanceId()))
-                    .eq(AccountIdentifierEntity::getIdentifier, findAccountIdentifierRequest.getIdentifier())
-                    .eq(AccountIdentifierEntity::getIdentifierType, findAccountIdentifierRequest.getIdentifierType().getType()));
-        });
-        return BeanUtil.copyProperties(identifierHolder[0], AccountIdentifierResponse.class);
+        AccountIdentifierEntity one = accountIdentifierService.getOne(QueryWrapper.create()
+                .eq(AccountIdentifierEntity::getAccountInstanceId, findAccountIdentifierRequest.getAccountInstanceId(), Objects.nonNull(findAccountIdentifierRequest.getAccountInstanceId()))
+                .eq(AccountIdentifierEntity::getIdentifier, findAccountIdentifierRequest.getIdentifier())
+                .eq(AccountIdentifierEntity::getIdentifierType, findAccountIdentifierRequest.getIdentifierType().getType()));
+        return BeanUtil.copyProperties(one, AccountIdentifierResponse.class);
     }
 
 
     public AccountInstanceResponse getAccountInstanceById(Long accountInstanceId) {
-        AccountInstanceEntity one = getByAccountInstanceIdAndIgnoreAppId(accountInstanceId);
+        AccountInstanceEntity one = getByAccountInstanceId(accountInstanceId);
         return BeanUtil.copyProperties(one, AccountInstanceResponse.class);
     }
 
@@ -133,7 +128,7 @@ public class AccountApiBiz {
      * @return AccountInstanceResponse
      */
     public AccountInstanceResponse getAccountInstanceByIdentifier(String accountIdentifier) {
-        AccountIdentifierEntity accountIdentifierEntity = getByIdentifierAndIgnoreAppId(accountIdentifier);
+        AccountIdentifierEntity accountIdentifierEntity = getByIdentifier(accountIdentifier);
         if (accountIdentifierEntity == null) {
             return null;
         }
@@ -144,7 +139,7 @@ public class AccountApiBiz {
             return null;
         }
 
-        AccountInstanceEntity accountInstanceEntity = getByAccountInstanceIdAndIgnoreAppId(accountInstanceId);
+        AccountInstanceEntity accountInstanceEntity = getByAccountInstanceId(accountInstanceId);
         if (Objects.isNull(accountInstanceEntity)) {
             return null;
         }
@@ -246,7 +241,7 @@ public class AccountApiBiz {
     @Transactional
     public Long getAccountByTelephone(String telephone) {
         // 查询账号标识（手机号）是否存在
-        AccountIdentifierEntity one = accountHandler.getByIdentifierAndIgnoreAppId(telephone, IdentifierType.PHONE.getType());;
+        AccountIdentifierEntity one = accountHandler.getByIdentifier(telephone, IdentifierType.PHONE.getType());;
         // 存在则返回账号实例ID，不存在则创建账号实例并返回账号实例ID
         if (one != null) {
             return one.getAccountInstanceId();
@@ -267,10 +262,10 @@ public class AccountApiBiz {
     @Transactional
     public Long getAccountByTelephone(String telephone,String email) {
         // 查询账号标识（手机号）是否存在
-        AccountIdentifierEntity onePhone = accountHandler.getByIdentifierAndIgnoreAppId(telephone, IdentifierType.PHONE.getType());
+        AccountIdentifierEntity onePhone = accountHandler.getByIdentifier(telephone, IdentifierType.PHONE.getType());
         // 存在则返回账号实例ID，不存在则创建账号实例并返回账号实例ID
         if (onePhone != null) {
-            AccountIdentifierEntity oneEmail = accountHandler.getByIdentifierAndIgnoreAppId(email, IdentifierType.EMAIL.getType());;
+            AccountIdentifierEntity oneEmail = accountHandler.getByIdentifier(email, IdentifierType.EMAIL.getType());;
             if (oneEmail == null) {
             // 保存账号标识;
                 AccountIdentifierEntity oneEmailEntity = new AccountIdentifierEntity();
@@ -326,7 +321,7 @@ public class AccountApiBiz {
      */
     public AccountIdentifierResponse saveAccountIdentifier(String identifier, IdentifierType identifierType) {
 
-        AccountIdentifierEntity one = accountHandler.getByIdentifierAndIgnoreAppId(identifier, identifierType.getType());
+        AccountIdentifierEntity one = accountHandler.getByIdentifier(identifier, identifierType.getType());
         // 存在则返回账号标识ID，不存在则创建账号标识并返回账号标识ID
         if (one != null) {
             return BeanUtil.copyProperties(one, AccountIdentifierResponse.class);
@@ -352,9 +347,7 @@ public class AccountApiBiz {
         one.setAccountInstanceId(relevancyAccountInstanceIdByTelephoneRequest.getAccountInstanceId());
         one.setOperatorId(relevancyAccountInstanceIdByTelephoneRequest.getAccountInstanceId());
         one.setAppId(relevancyAccountInstanceIdByTelephoneRequest.getAppId());
-        AppIdIgnoreUtils.executeWithoutTenant(() -> {
-            accountIdentifierService.updateById(one, true);
-        });
+        accountIdentifierService.updateById(one, true);
     }
     /**
      * 根据账号实例ID修改账号密码
@@ -372,23 +365,12 @@ public class AccountApiBiz {
     /**
      * 不带appId查询
      */
-    private AccountIdentifierEntity getByIdentifierAndIgnoreAppId(String identifier) {
-        AtomicReference<AccountIdentifierEntity> holder = new AtomicReference<>();
-        AppIdIgnoreUtils.executeWithoutTenant(() -> {
-            holder.set(accountIdentifierService.getOne(QueryWrapper.create()
-                    .eq(AccountIdentifierEntity::getIdentifier, identifier)));
-        });
-        return holder.get();
+    private AccountIdentifierEntity getByIdentifier(String identifier) {
+        return accountIdentifierService.getOne(QueryWrapper.create()
+                .eq(AccountIdentifierEntity::getIdentifier, identifier));
     }
 
-    /**
-     * 不带appId查询
-     */
-    private AccountInstanceEntity getByAccountInstanceIdAndIgnoreAppId(Long accountInstanceId) {
-        AtomicReference<AccountInstanceEntity> holder = new AtomicReference<>();
-        AppIdIgnoreUtils.executeWithoutTenant(() -> {
-            holder.set(accountInstanceService.getById(accountInstanceId));
-        });
-        return holder.get();
+    private AccountInstanceEntity getByAccountInstanceId(Long accountInstanceId) {
+        return accountInstanceService.getById(accountInstanceId);
     }
 }

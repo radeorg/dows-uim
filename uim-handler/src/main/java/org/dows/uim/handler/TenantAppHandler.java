@@ -4,7 +4,6 @@ import cn.hutool.core.bean.BeanUtil;
 import com.mybatisflex.core.query.QueryWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dows.rade.crud.AppIdIgnoreUtils;
 import org.dows.uim.entity.TenantAppEntity;
 import org.dows.uim.request.TenantAppRequest;
 import org.dows.uim.response.TenantAppResponse;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 /**
@@ -89,17 +87,8 @@ public class TenantAppHandler {
         return DateTimeFormatterUtil.generateTimestamp();
     }
 
-    /**
-     * 不带appId查询
-     */
     private TenantAppEntity getByNamespaceAndIgnoreAppId(String namespace) {
-        AtomicReference<TenantAppEntity> holder = new AtomicReference<>();
-        AppIdIgnoreUtils.executeWithoutTenant(() -> {
-            TenantAppEntity entity = tenantAppsService.getOne(QueryWrapper.create()
-                    .eq(TenantAppEntity::getNamespace, namespace));
-
-            holder.set(entity);
-        });
-        return holder.get();
+        return tenantAppsService.getOne(QueryWrapper.create()
+                .eq(TenantAppEntity::getNamespace, namespace));
     }
 }
