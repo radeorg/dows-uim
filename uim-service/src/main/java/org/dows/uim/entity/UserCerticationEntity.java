@@ -5,7 +5,7 @@ import com.mybatisflex.annotation.Table;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.dows.rade.crud.BaseEntity;
-import org.dows.uim.AutoFillDataListener;
+import org.dows.rade.crud.AutoFillDataListener;
 
 import java.util.Date;
 
@@ -39,7 +39,7 @@ public class UserCerticationEntity extends BaseEntity<UserCerticationEntity> {
     @Column(value = "cert_no")
     private String certNo;
 
-    @Column(value = "app_id", tenantId = true)
+    @Column(value = "app_id")
     private String appId;
 
     @Column(value = "perminent")

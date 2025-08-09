@@ -7,46 +7,51 @@ import com.mybatisflex.annotation.Table;
 import com.mybatisflex.core.keygen.KeyGenerators;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import org.dows.rade.crud.BaseEntity;
 import org.dows.rade.crud.AutoFillDataListener;
+import org.dows.rade.crud.BaseEntity;
 
 import java.util.Date;
 
 /**
- * 账号用户表 实体类。
+ * 租户应用表 实体类。
  *
- * @author lait.zhang@gmail.com
- * @since 1.0
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(name = "账号用户表")
-@Table(value = "account_user", onUpdate = AutoFillDataListener.class, onInsert = AutoFillDataListener.class)
-public class AccountUserEntity extends BaseEntity<AccountUserEntity> {
+@Schema(name = "租户应用表")
+@Table(value = "tenant_app", onUpdate = AutoFillDataListener.class, onInsert = AutoFillDataListener.class)
+public class TenantAppEntity extends BaseEntity<TenantAppEntity> {
 
     /**
-     * 账号用户ID
+     * 租户应用ID
      */
-    @Schema(description = "账号用户ID")
+    @Schema(description = "租户应用ID")
     @Id(keyType = KeyType.Generator, value = KeyGenerators.snowFlakeId)
-    private Long accountUserId;
+    private Long tenantAppId;
 
     /**
-     * 账号实例ID
+     * 租户实例ID
      */
-    @Schema(description = "账号实例ID")
-    @Column(value = "account_instance_id")
-    private Long accountInstanceId;
+    @Schema(description = "租户实例ID")
+    @Column(value = "tenant_instance_id")
+    private Long tenantInstanceId;
 
     /**
-     * 用户ID
+     * 组织登记ID
      */
-    @Schema(description = "用户ID")
-    @Column(value = "user_instance_id")
-    private Long userInstanceId;
+    @Schema(description = "组织登记ID")
+    @Column(value = "org_register_id")
+    private Long orgRegisterId;
+
+    /**
+     * 组织空间
+     */
+    @Schema(description = "组织空间")
+    @Column(value = "namespace")
+    private String namespace;
 
     /**
      * 操作者ID
@@ -63,9 +68,9 @@ public class AccountUserEntity extends BaseEntity<AccountUserEntity> {
     private String appId;
 
     /**
-     * 乐观锁，默认为0
+     * 版本
      */
-    @Schema(description = "乐观锁，默认为0")
+    @Schema(description = "版本")
     @Column(value = "ver", onUpdateValue = "ver+1")
     private Integer ver;
 
@@ -85,9 +90,4 @@ public class AccountUserEntity extends BaseEntity<AccountUserEntity> {
 
     @Column(value = "ut")
     private Date ut;
-
-    @Column(value = "owner_id")
-    private Long ownerId;
-
-
 }

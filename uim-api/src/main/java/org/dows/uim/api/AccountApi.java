@@ -78,12 +78,11 @@ public interface AccountApi {
     /**
      * 根据账号标识获取账号实例ID
      *
-     * @param appId
      * @param identifier
      * @return
      */
     @GetMapping("/v1/open/uim/account/info")
-    default AccountInstanceResponse getAccountInstanceByIdentifier(String appId, String identifier) {
+    default AccountInstanceResponse getAccountInstanceByIdentifier(String identifier) {
         throw new UnsupportedOperationException("not class implement");
     }
 

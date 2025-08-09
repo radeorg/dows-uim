@@ -7,32 +7,30 @@ import com.mybatisflex.annotation.Table;
 import com.mybatisflex.core.keygen.KeyGenerators;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import org.dows.rade.crud.BaseEntity;
 import org.dows.rade.crud.AutoFillDataListener;
+import org.dows.rade.crud.BaseEntity;
 
 import java.util.Date;
 
 /**
- * 账号用户表 实体类。
+ * 租户实例表 实体类。
  *
- * @author lait.zhang@gmail.com
- * @since 1.0
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(name = "账号用户表")
-@Table(value = "account_user", onUpdate = AutoFillDataListener.class, onInsert = AutoFillDataListener.class)
-public class AccountUserEntity extends BaseEntity<AccountUserEntity> {
+@Schema(name = "租户实例表")
+@Table(value = "tenant_instance", onUpdate = AutoFillDataListener.class, onInsert = AutoFillDataListener.class)
+public class TenantInstanceEntity extends BaseEntity<TenantInstanceEntity> {
 
     /**
-     * 账号用户ID
+     * 租户实例ID
      */
-    @Schema(description = "账号用户ID")
+    @Schema(description = "租户实例ID")
     @Id(keyType = KeyType.Generator, value = KeyGenerators.snowFlakeId)
-    private Long accountUserId;
+    private Long tenantInstanceId;
 
     /**
      * 账号实例ID
@@ -42,11 +40,11 @@ public class AccountUserEntity extends BaseEntity<AccountUserEntity> {
     private Long accountInstanceId;
 
     /**
-     * 用户ID
+     * 租户名称
      */
-    @Schema(description = "用户ID")
-    @Column(value = "user_instance_id")
-    private Long userInstanceId;
+    @Schema(description = "租户名称")
+    @Column(value = "tenant_name")
+    private String tenantName;
 
     /**
      * 操作者ID
@@ -63,9 +61,9 @@ public class AccountUserEntity extends BaseEntity<AccountUserEntity> {
     private String appId;
 
     /**
-     * 乐观锁，默认为0
+     * 版本
      */
-    @Schema(description = "乐观锁，默认为0")
+    @Schema(description = "版本")
     @Column(value = "ver", onUpdateValue = "ver+1")
     private Integer ver;
 
@@ -85,9 +83,4 @@ public class AccountUserEntity extends BaseEntity<AccountUserEntity> {
 
     @Column(value = "ut")
     private Date ut;
-
-    @Column(value = "owner_id")
-    private Long ownerId;
-
-
 }

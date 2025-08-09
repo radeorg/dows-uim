@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.dows.rade.crud.AutoFillDataListener;
 import org.dows.rade.crud.BaseEntity;
 
 import java.util.Date;
@@ -25,7 +26,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(name = "企业情况表")
-@Table(value = "hrm_enterprise_situation")
+@Table(value = "hrm_enterprise_situation", onUpdate = AutoFillDataListener.class, onInsert = AutoFillDataListener.class)
 public class HrmEnterpriseSituationEntity extends BaseEntity<HrmEnterpriseSituationEntity> {
 
     /**
@@ -96,7 +97,7 @@ public class HrmEnterpriseSituationEntity extends BaseEntity<HrmEnterpriseSituat
      * 逻辑删除，0未删除，1删除
      */
     @Schema(description = "逻辑删除，0未删除，1删除")
-    @Column(value = "deleted")
+    @Column(value = "deleted", isLogicDelete = true)
     private Integer deleted;
 
     /**

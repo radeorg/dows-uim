@@ -153,6 +153,12 @@ public class HrAccountHandler {
                 .eq(AccountInstanceEntity::getAccountInstanceId, accountInstanceId, Objects.nonNull(accountInstanceId))
                 .eq(AccountInstanceEntity::getVer, accountInstanceEntity.getVer())
                 .update();
+
+        UpdateChain.of(OrgNodeEntity.class)
+                .set(OrgNodeEntity::getDeleted, CommonDelEnum.DELETE.getCode())
+                .set(OrgNodeEntity::getUt, new Date())
+                .eq(OrgNodeEntity::getAccountInstanceId, accountInstanceId, Objects.nonNull(accountInstanceId))
+                .update();
         if (!update) {
             log.warn("招聘官删除失败,操作失败请重试：{}", accountInstanceId);
             throw new UimException(CommonStatusCode.FAILED);

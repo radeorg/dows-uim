@@ -56,7 +56,6 @@ public class AccountApiBiz {
         accountIdentifierEntity.setIdentifier(accountInstance.getIdentifier());
         // fix #2023-04-09 账号标识类型
         accountIdentifierEntity.setIdentifierType(accountInstance.getIdentifierType());
-//        accountIdentifierEntity.setAppId(accountInstance.getAppId());
         accountIdentifierEntity.setOperatorId(accountInstanceId);
         accountIdentifierService.save(accountIdentifierEntity);
         return accountInstanceId;
@@ -93,13 +92,12 @@ public class AccountApiBiz {
                 .eq(AccountIdentifierEntity::getAccountInstanceId, findAccountIdentifierRequest.getAccountInstanceId(), Objects.nonNull(findAccountIdentifierRequest.getAccountInstanceId()))
                 .eq(AccountIdentifierEntity::getIdentifier, findAccountIdentifierRequest.getIdentifier())
                 .eq(AccountIdentifierEntity::getIdentifierType, findAccountIdentifierRequest.getIdentifierType().getType()));
-
         return BeanUtil.copyProperties(one, AccountIdentifierResponse.class);
     }
 
 
     public AccountInstanceResponse getAccountInstanceById(Long accountInstanceId) {
-        AccountInstanceEntity one = accountInstanceService.getById(accountInstanceId);
+        AccountInstanceEntity one = getByAccountInstanceId(accountInstanceId);
         return BeanUtil.copyProperties(one, AccountInstanceResponse.class);
     }
 
@@ -126,28 +124,22 @@ public class AccountApiBiz {
     }
 
     /**
-     * @param appId
-     * @param accountIdentifier
-     * @return
+     * @param accountIdentifier 账号标识
+     * @return AccountInstanceResponse
      */
-    public AccountInstanceResponse getAccountInstanceByIdentifier(String appId, String accountIdentifier) {
-        //todo ?? 为什么时集合？不应该是只有一个么？
-        List<AccountIdentifierEntity> accountIdentifierEntityList = QueryChain.of(AccountIdentifierEntity.class)
-                .eq(AccountIdentifierEntity::getIdentifier, accountIdentifier, Objects.nonNull(accountIdentifier))
-                .eq(AccountIdentifierEntity::getAppId, appId, Objects.nonNull(appId)).list();
-        if (Objects.isNull(accountIdentifierEntityList) || accountIdentifierEntityList.isEmpty()) {
+    public AccountInstanceResponse getAccountInstanceByIdentifier(String accountIdentifier) {
+        AccountIdentifierEntity accountIdentifierEntity = getByIdentifier(accountIdentifier);
+        if (accountIdentifierEntity == null) {
             return null;
         }
 
-        Long accountInstanceId = accountIdentifierEntityList.get(0).getAccountInstanceId();
+        Long accountInstanceId = accountIdentifierEntity.getAccountInstanceId();
         if (accountInstanceId == null) {
             log.debug("accountInstanceId is null");
             return null;
         }
-        /*AccountInstanceEntity accountInstanceEntity = QueryChain.of(AccountInstanceEntity.class)
-                .eq(AccountInstanceEntity::getAccountInstanceId, accountInstanceId)
-                .eq(AccountInstanceEntity::getAppId, appId, Objects.nonNull(appId)).one();*/
-        AccountInstanceEntity accountInstanceEntity = accountInstanceService.getById(accountInstanceId);
+
+        AccountInstanceEntity accountInstanceEntity = getByAccountInstanceId(accountInstanceId);
         if (Objects.isNull(accountInstanceEntity)) {
             return null;
         }
@@ -155,7 +147,7 @@ public class AccountApiBiz {
                 .copyProperties(accountInstanceEntity, AccountInstanceResponse.class);
         accountInstanceResponse.setIdentifier(accountIdentifier);
         IdentifierType byIdentifierType = IdentifierType
-                .getByIdentifierType(accountIdentifierEntityList.get(0).getIdentifierType());
+                .getByIdentifierType(accountIdentifierEntity.getIdentifierType());
         accountInstanceResponse.setIdentifierType(byIdentifierType);
         return accountInstanceResponse;
     }
@@ -249,9 +241,7 @@ public class AccountApiBiz {
     @Transactional
     public Long getAccountByTelephone(String telephone) {
         // 查询账号标识（手机号）是否存在
-        AccountIdentifierEntity one = accountIdentifierService.getOne(QueryWrapper.create()
-                //.eq(AccountIdentifierEntity::getAppId, appId, Objects.nonNull(appId))
-                .eq(AccountIdentifierEntity::getIdentifier, telephone, Objects.nonNull(telephone)));
+        AccountIdentifierEntity one = accountHandler.getByIdentifier(telephone, IdentifierType.PHONE.getType());;
         // 存在则返回账号实例ID，不存在则创建账号实例并返回账号实例ID
         if (one != null) {
             return one.getAccountInstanceId();
@@ -272,14 +262,10 @@ public class AccountApiBiz {
     @Transactional
     public Long getAccountByTelephone(String telephone,String email) {
         // 查询账号标识（手机号）是否存在
-        AccountIdentifierEntity onePhone = accountIdentifierService.getOne(QueryWrapper.create()
-                .eq(AccountIdentifierEntity::getIdentifierType, IdentifierType.PHONE.getType())
-                .eq(AccountIdentifierEntity::getIdentifier, telephone, Objects.nonNull(telephone)));
+        AccountIdentifierEntity onePhone = accountHandler.getByIdentifier(telephone, IdentifierType.PHONE.getType());
         // 存在则返回账号实例ID，不存在则创建账号实例并返回账号实例ID
         if (onePhone != null) {
-            AccountIdentifierEntity oneEmail = accountIdentifierService.getOne(QueryWrapper.create()
-                    .eq(AccountIdentifierEntity::getIdentifierType, IdentifierType.EMAIL.getType())
-                    .eq(AccountIdentifierEntity::getIdentifier, email, Objects.nonNull(email)));
+            AccountIdentifierEntity oneEmail = accountHandler.getByIdentifier(email, IdentifierType.EMAIL.getType());;
             if (oneEmail == null) {
             // 保存账号标识;
                 AccountIdentifierEntity oneEmailEntity = new AccountIdentifierEntity();
@@ -335,13 +321,10 @@ public class AccountApiBiz {
      */
     public AccountIdentifierResponse saveAccountIdentifier(String identifier, IdentifierType identifierType) {
 
-        AccountIdentifierEntity one = accountIdentifierService.getOne(QueryWrapper.create()
-                .eq(AccountIdentifierEntity::getIdentifier, identifier)
-                .eq(AccountIdentifierEntity::getIdentifierType, identifierType.getType()));
+        AccountIdentifierEntity one = accountHandler.getByIdentifier(identifier, identifierType.getType());
         // 存在则返回账号标识ID，不存在则创建账号标识并返回账号标识ID
         if (one != null) {
             return BeanUtil.copyProperties(one, AccountIdentifierResponse.class);
-            //return one.getAccountIdentifierId();
         }
         // 保存账号标识
         one = new AccountIdentifierEntity();
@@ -363,8 +346,8 @@ public class AccountApiBiz {
         one.setAccountIdentifierId(relevancyAccountInstanceIdByTelephoneRequest.getAccountIdentifierId());
         one.setAccountInstanceId(relevancyAccountInstanceIdByTelephoneRequest.getAccountInstanceId());
         one.setOperatorId(relevancyAccountInstanceIdByTelephoneRequest.getAccountInstanceId());
+        one.setAppId(relevancyAccountInstanceIdByTelephoneRequest.getAppId());
         accountIdentifierService.updateById(one, true);
-
     }
     /**
      * 根据账号实例ID修改账号密码
@@ -377,5 +360,17 @@ public class AccountApiBiz {
             one.setPassword(newPassword);
             accountInstanceService.updateById(one, true);
         }
+    }
+
+    /**
+     * 不带appId查询
+     */
+    private AccountIdentifierEntity getByIdentifier(String identifier) {
+        return accountIdentifierService.getOne(QueryWrapper.create()
+                .eq(AccountIdentifierEntity::getIdentifier, identifier));
+    }
+
+    private AccountInstanceEntity getByAccountInstanceId(Long accountInstanceId) {
+        return accountInstanceService.getById(accountInstanceId);
     }
 }

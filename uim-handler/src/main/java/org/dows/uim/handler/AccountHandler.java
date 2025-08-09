@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.rade.aac.AacContext;
 import org.dows.rade.constant.IdentifierType;
+import org.dows.rade.context.AppContext;
 import org.dows.rade.encrypt.EncryptApi;
 import org.dows.uim.constant.AccountType;
 import org.dows.uim.constant.CommonDelEnum;
@@ -134,12 +135,10 @@ public class AccountHandler {
 
         } else { // 新增
             // 检测手机账号标识是否存在
-            AccountIdentifierEntity one = accountIdentifierService.getOne(QueryWrapper.create()
-                    .eq(AccountIdentifierEntity::getIdentifier, saveOrgAccountRequest.getTelephone())
-                    .eq(AccountIdentifierEntity::getIdentifierType, IdentifierType.PHONE.getType()));
+            AccountIdentifierEntity one = getByIdentifier(saveOrgAccountRequest.getTelephone(),
+                    IdentifierType.PHONE.getType());
 
-            AccountInstanceEntity accountInstance = accountInstanceService.getOne(QueryWrapper.create()
-                    .eq(AccountInstanceEntity::getTelephone, saveOrgAccountRequest.getTelephone()));
+            AccountInstanceEntity accountInstance = getByTelephone(saveOrgAccountRequest.getTelephone());
 
             Long accountInstanceId;
             AccountTypeEntity accountTypeEntity;
@@ -152,11 +151,10 @@ public class AccountHandler {
             if (one != null && Objects.nonNull(one.getAccountInstanceId()) && one.getDeleted() == CommonDelEnum.NORMAL.getCode()) {
                 //判断在组织树是否存在，如存在提示重复
                 // 检查是否已经存在关联的组织
-                OrgNodeEntity dbOrgNode = orgNodeService.getOne(QueryWrapper.create()
-                        .eq(OrgNodeEntity::getAccountInstanceId, one.getAccountInstanceId())
-                        .eq(OrgNodeEntity::getOrgRootId, aacContext.getAacUser().getOrgRootId(), Objects.nonNull(aacContext.getAacUser().getOrgRootId())));
+                OrgNodeEntity dbOrgNode = getByAccountInstanceId(one.getAccountInstanceId());
                 if (Objects.nonNull(dbOrgNode) && one.getDeleted() == CommonDelEnum.NORMAL.getCode()) {
-                    if(Objects.nonNull(accountInstance) && accountInstance.getDeleted() == CommonDelEnum.NORMAL.getCode()) {
+                    if(Objects.nonNull(accountInstance) && (!accountInstance.getAppId().equals(AppContext.getAppId())
+                    || accountInstance.getDeleted() == CommonDelEnum.NORMAL.getCode())) {
                         throw new RuntimeException("该手机号已经存在，不能重复提交");
                     }
                 }
@@ -229,8 +227,7 @@ public class AccountHandler {
             // 关联组织
             // todo 处理组织
             OrgTreeEntity dbOrgTree = orgTreeService.getOne(QueryWrapper.create()
-                    .eq(OrgTreeEntity::getOrgName, saveOrgAccountRequest.getOrgName())
-                    .eq(OrgTreeEntity::getAppId, saveOrgAccountRequest.getAppId()));
+                    .eq(OrgTreeEntity::getOrgName, saveOrgAccountRequest.getOrgName()));
             Long orgTreeId = saveOrgAccountRequest.getOrgTreeId();
             if(Objects.isNull(orgTreeId) && Objects.nonNull(dbOrgTree)){
                 orgTreeId = dbOrgTree.getOrgTreeId();
@@ -368,5 +365,22 @@ public class AccountHandler {
             orgNodeService.saveBatch(orgNodeEntities);
         }
 
+    }
+
+    public AccountIdentifierEntity getByIdentifier(String identifier, Integer identifierType) {
+        return accountIdentifierService.getOne(QueryWrapper.create()
+                .eq(AccountIdentifierEntity::getIdentifier, identifier)
+                .eq(AccountIdentifierEntity::getIdentifierType, identifierType));
+    }
+
+    public AccountInstanceEntity getByTelephone(String telephone) {
+        return accountInstanceService.getOne(QueryWrapper.create()
+                .eq(AccountInstanceEntity::getTelephone, telephone));
+    }
+
+    public OrgNodeEntity getByAccountInstanceId(Long accountInstanceId) {
+        return orgNodeService.getOne(QueryWrapper.create()
+                .eq(OrgNodeEntity::getAccountInstanceId, accountInstanceId)
+                .eq(OrgNodeEntity::getOrgRootId, aacContext.getAacUser().getOrgRootId(), Objects.nonNull(aacContext.getAacUser().getOrgRootId())));
     }
 }

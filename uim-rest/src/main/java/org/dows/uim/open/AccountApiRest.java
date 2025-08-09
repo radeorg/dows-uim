@@ -59,8 +59,8 @@ public class AccountApiRest implements AccountApi{
 
 
     @Operation(summary = "通过账户标识符获取账户实例")
-    public AccountInstanceResponse getAccountInstanceByIdentifier(@RequestParam String appId, @RequestParam String accountIdentifier) {
-        return accountApiBiz.getAccountInstanceByIdentifier(appId, accountIdentifier);
+    public AccountInstanceResponse getAccountInstanceByIdentifier(@RequestParam String accountIdentifier) {
+        return accountApiBiz.getAccountInstanceByIdentifier(accountIdentifier);
     }
 
 

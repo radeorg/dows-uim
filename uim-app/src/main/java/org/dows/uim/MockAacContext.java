@@ -83,6 +83,16 @@ public class MockAacContext implements AacContext {
                     public Integer getIdentifierType() {
                         return 0;
                     }
+
+                    @Override
+                    public String getAppId() {
+                        return "";
+                    }
+
+                    @Override
+                    public String getNameSpace() {
+                        return "";
+                    }
                 };
         return aacUser;
     };

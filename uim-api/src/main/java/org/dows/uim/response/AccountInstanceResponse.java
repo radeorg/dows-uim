@@ -12,4 +12,6 @@ public class AccountInstanceResponse {
     private String nickname;
     private String telephone;
     private IdentifierType identifierType;
+    private String appId;
+    private String namespace;
 }
