@@ -77,6 +77,13 @@ public class OrgApiBiz {
 
 //    private final PasswordEncoder passwordEncoder;
 
+    public OrgJdResponse getOrgJdByOrgJdId(Long orgJdId) {
+        OrgJdResponse response = new OrgJdResponse();
+        OrgJdEntity orgJdEntity = orgJdService.getById(orgJdId);
+        BeanUtils.copyProperties(orgJdEntity, response);
+        return response;
+    }
+
     public JobIndicatorResponse getOrgIndicatorByIndicatorId(Long orgRootId, Long orgRuleId) {
         JobIndicatorResponse response = new JobIndicatorResponse();
         Long jdId = orgRuleId;

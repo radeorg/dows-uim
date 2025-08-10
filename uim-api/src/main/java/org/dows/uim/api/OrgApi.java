@@ -42,6 +42,12 @@ public interface OrgApi {
         throw new UnsupportedOperationException("not class implement");
     }
 
+    @PostMapping("/v1/uim/org/jd/get")
+    @Operation(summary = "通过岗位ID获取岗位信息")
+    default OrgJdResponse getOrgJdById(Long orgJdId) {
+        throw new UnsupportedOperationException("not class implement");
+    }
+
     @PostMapping("/v1/uim/org/jd/state/update")
     default OrgJobJDResponse upOrDownJd(OrgJDUpOrDownRequest orgJDUpOrDownRequest) throws UnavailableException {
         throw new UnsupportedOperationException("not class implement");

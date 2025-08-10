@@ -164,6 +164,10 @@ public class OrgJdEntity extends BaseEntity<OrgJdEntity> {
     @Column(value = "description")
     private String description;
 
+    @Schema(description = "岗位标签内容")
+    @Column(value = "tag_content")
+    private String tagContent;
+
     /**
      * 状态[1:下架，2:上架]
      */
