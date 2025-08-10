@@ -25,6 +25,9 @@ public class OrgJdResponse {
     @Schema(description = "岗位名称+岗位编号")
     private String jdName;
 
+    @Schema(description = "招聘官id")
+    private Long ownerId;
+
     @Schema(description = "岗位标签内容")
     private String tagContent;
 }
