@@ -955,7 +955,6 @@ public class OrgApiBiz {
                 .select(HrmJdCodeEntity::getCode, HrmJdCodeEntity::getValue)
                 .eq(HrmJdCodeEntity::getCodeType, hrmJdCodeQueryRequest.getCodeType())
                 .eq(HrmJdCodeEntity::getValue, hrmJdCodeQueryRequest.getValue(), Objects.nonNull(hrmJdCodeQueryRequest.getValue()))
-                .eq(HrmJdCodeEntity::getAppId, AppContext.getAppId())
                 .eq(HrmJdCodeEntity::getDeleted, CommonDelEnum.NORMAL.getCode())
                 .one(); // 查询单条
         JdCodeResponse response = null;
