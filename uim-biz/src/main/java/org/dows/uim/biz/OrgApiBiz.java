@@ -2,6 +2,7 @@ package org.dows.uim.biz;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -496,7 +497,7 @@ public class OrgApiBiz {
                 .eq(HrmJdCodeEntity::getDeleted, CommonDelEnum.NORMAL.getCode())
                 .orderBy(HrmJdCodeEntity::getCode,false)
                 .list();
-        if (CollectionUtil.isNotEmpty(jdCodeEntities)) {
+        if (CollectionUtil.isEmpty(jdCodeEntities)) {
             // 检查是否存在匹配的 value（忽略大小写）
             boolean exists =
                     jdCodeEntities.stream()
@@ -507,7 +508,7 @@ public class OrgApiBiz {
             if (exists) {
                 throw new UnavailableException("值 '" + hrmJdCodeQueryRequest.getValue() + "' 已存在");
             }
-            Integer  nextCode = jdCodeEntities.get(0).getCode() + 1;
+            Integer  nextCode = (jdCodeEntities.isEmpty() ? 0 : jdCodeEntities.get(0).getCode())+ 1;
             HrmJdCodeEntity newEntity = HrmJdCodeEntity.builder()
                     .code(nextCode)
                     .value(hrmJdCodeQueryRequest.getValue())
@@ -717,6 +718,29 @@ public class OrgApiBiz {
         return orgJdEntityList;
     }
 
+    @Operation(summary = "获取JD下拉列表数据")
+    public List<OrgJdSelectorResponse> getJdSelector() {
+        List<OrgJdEntity> orgJdEntityList = QueryChain.of(OrgJdEntity.class)
+                .eq(OrgJdEntity::getAppId, aacContext.getAacUser().getAppId())
+                .orderBy(OrgJdEntity::getTs, false)
+                .list();
+        List<OrgJdSelectorResponse> result = BeanUtil.copyToList(orgJdEntityList, OrgJdSelectorResponse.class);
+        if (!result.isEmpty()) {
+            Map<Long, OrgTreeEntity> map = new HashMap<>();
+            result.forEach(jd -> {
+                OrgTreeEntity tree = map.get(jd.getOrgTreeId());
+                if (tree == null) {
+                    tree = orgTreeService.getById(jd.getOrgRootId());
+                    map.put(jd.getOrgJdId(), tree);
+                }
+                if (tree != null) {
+                    jd.setOrgRootName(tree.getOrgName());
+                }
+            });
+        }
+
+        return result;
+    }
 
     @Operation(summary = "获取JD列表")
     public OrgJdListResponse getJdList(OrgJdQueryRequest orgJdQueryRequest) throws UnavailableException {
@@ -1169,6 +1193,7 @@ public class OrgApiBiz {
         if (StringUtils.isNotBlank(saveRequest.getJdRequire().getTechStack())) {
             jdEntity.setTechStack(saveRequest.getJdRequire().getTechStack());
         }
+        jdEntity.setTagContent(JSONUtil.parse(saveRequest).toString());
         jdEntity.setEnterpriseSituationId(enterpriseSituationId);
         jdEntity.setHrmFeatureBenefitsId(benefitsEntity.getHrmFeatureBenefitsId());
         jdEntity.setDescription(saveRequest.getRequirements());

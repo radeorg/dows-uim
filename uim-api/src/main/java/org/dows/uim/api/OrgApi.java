@@ -89,6 +89,11 @@ public interface OrgApi {
         throw new UnsupportedOperationException("not class implement");
     }
 
+    @GetMapping("/v1/uim/org/jd/selector")
+    default List<OrgJdSelectorResponse> getJdSelector(){
+        throw new UnsupportedOperationException("not class implement");
+    }
+
     @PostMapping("/v1/uim/org/rule/save")
     default OrgRuleResponse saveOrgRule(OrgRuleSaveRequest orgRuleSaveRequest) {
         throw new UnsupportedOperationException("not class implement");
