@@ -36,6 +36,16 @@ public class OrgApiRest implements OrgApi, OrgAccountApi, OrgEmailApi {
         return orgApiBiz.getOrgJdByOrgJdId(orgJdId);
     }
 
+    @Operation(summary = "通过岗位名称关键词获取岗位信息")
+    public List<OrgJdResponse> listOrgJdByKeywords(List<String> keywords, String appId){
+        return orgApiBiz.listOrgJdByKeywords(keywords, appId);
+    }
+
+    @Operation(summary = "通过岗位编号获取岗位信息")
+    public OrgJdResponse getOrgJdByJdNo(String jdNo) {
+        return orgApiBiz.getOrgJdByJdNo(jdNo);
+    }
+
     @Operation(summary = "JD上架或下架")
     public OrgJobJDResponse upOrDownJd(@RequestBody OrgJDUpOrDownRequest orgJDUpOrDownRequest) throws UnavailableException {
         return orgApiBiz.upOrDownJd(orgJDUpOrDownRequest);

@@ -30,4 +30,7 @@ public class OrgJdResponse {
 
     @Schema(description = "岗位标签内容")
     private String tagContent;
+
+    @Schema(description = "工作经验 0\"不限\", 1\"应届\",2 \"1-3年\",3 \"3-5年\", 4\"5-10年\",5 \"10年以上\"")
+    private Integer workExper;
 }

@@ -85,6 +85,23 @@ public class OrgApiBiz {
         return response;
     }
 
+    public List<OrgJdResponse> listOrgJdByKeywords(List<String> keywords, String appId){
+        QueryWrapper queryWrapper = QueryWrapper.create().eq(OrgJdEntity::getAppId, appId); // 初始条件
+        // 为每个关键词添加OR条件
+        for (String keyword : keywords) {
+            queryWrapper.or(OrgJdEntity::getJdName).like(keyword);
+        }
+        List<OrgJdEntity> entities = orgJdService.list(queryWrapper);
+        return BeanUtil.copyToList(entities, OrgJdResponse.class);
+    }
+
+    public OrgJdResponse getOrgJdByJdNo(String jdNo) {
+        OrgJdResponse response = new OrgJdResponse();
+        OrgJdEntity orgJdEntity = orgJdService.getOne(QueryWrapper.create().eq(OrgJdEntity::getJdNo, jdNo));
+        BeanUtils.copyProperties(orgJdEntity, response);
+        return response;
+    }
+
     public JobIndicatorResponse getOrgIndicatorByIndicatorId(Long orgRootId, Long orgRuleId) {
         JobIndicatorResponse response = new JobIndicatorResponse();
         Long jdId = orgRuleId;
