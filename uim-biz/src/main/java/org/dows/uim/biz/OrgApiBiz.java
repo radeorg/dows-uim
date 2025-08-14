@@ -87,9 +87,14 @@ public class OrgApiBiz {
 
     public List<OrgJdResponse> listOrgJdByKeywords(List<String> keywords, String appId){
         QueryWrapper queryWrapper = QueryWrapper.create().eq(OrgJdEntity::getAppId, appId); // 初始条件
-        // 为每个关键词添加OR条件
-        for (String keyword : keywords) {
-            queryWrapper.or(OrgJdEntity::getJdName).like(keyword);
+        // 创建一个嵌套的OR条件组（多个关键词之间是OR关系）
+        if (keywords != null && !keywords.isEmpty()) {
+            queryWrapper.and(q -> {
+                for (String keyword : keywords) {
+                    // 在 MyBatis-Flex 中，使用 or() 方法需要指定条件
+                    q.or(OrgJdEntity::getJdName).like(keyword);
+                }
+            });
         }
         List<OrgJdEntity> entities = orgJdService.list(queryWrapper);
         return BeanUtil.copyToList(entities, OrgJdResponse.class);
