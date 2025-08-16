@@ -573,26 +573,7 @@ public class OrgApiBiz {
 
     }
 
-    @Operation(summary = "JD删除")
-    @Transactional
-    public Boolean deleteJd(Long orgJdId) throws UnavailableException {
-        if (Objects.isNull(orgJdId)) {
-            throw new UnavailableException("orgJdId 必填");
-        }
 
-        List<OrgJdEntity> orgJdEntityList = QueryChain.of(OrgJdEntity.class)
-                .eq(OrgJdEntity::getOrgJdId, orgJdId).list();
-        if (Objects.isNull(orgJdEntityList) || orgJdEntityList.size() == 0) {
-            throw new UnavailableException("orgJdId 该Jd不存在");
-        }
-
-        boolean updateRec = UpdateChain.of(OrgJdEntity.class)
-                .set(OrgJdEntity::getDeleted, CommonDelEnum.DELETE.getCode())
-                .set(OrgJdEntity::getOperatorId, aacContext.getAacUser().getUserId())
-                .eq(OrgJdEntity::getOrgJdId, orgJdId).update();
-
-        return updateRec;
-    }
 
     @Operation(summary = "保存JD信息")
     @Transactional
@@ -1063,6 +1044,28 @@ public class OrgApiBiz {
 
         }
         return jdInfoResponse;
+    }
+
+    @Operation(summary = "JD删除")
+    @Transactional
+    public Boolean deleteJd(Long orgJdId) throws UnavailableException {
+        if (Objects.isNull(orgJdId)) {
+            throw new UnavailableException("orgJdId 必填");
+        }
+
+        List<OrgJdEntity> orgJdEntityList = QueryChain.of(OrgJdEntity.class)
+                .eq(OrgJdEntity::getOrgJdId, orgJdId).list();
+        if (Objects.isNull(orgJdEntityList) || orgJdEntityList.size() == 0) {
+            throw new UnavailableException("orgJdId 该Jd不存在");
+        }
+
+        boolean updateRec = UpdateChain.of(OrgJdEntity.class)
+                .set(OrgJdEntity::getDeleted, CommonDelEnum.DELETE.getCode())
+                .set(OrgJdEntity::getOperatorId, aacContext.getAacUser().getUserId())
+                .eq(OrgJdEntity::getOrgJdId, orgJdId).update();
+        String cacheKey = "jd:detail:id:" + orgJdId;
+        radeCache.del(cacheKey);
+        return updateRec;
     }
 
     public OrgJobJDResponse queryJdEntity(String jdNo) throws JsonProcessingException {
