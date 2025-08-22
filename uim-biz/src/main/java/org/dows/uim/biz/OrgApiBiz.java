@@ -1061,7 +1061,7 @@ public class OrgApiBiz {
 
         boolean updateRec = UpdateChain.of(OrgJdEntity.class)
                 .set(OrgJdEntity::getDeleted, CommonDelEnum.DELETE.getCode())
-                .set(OrgJdEntity::getOperatorId, aacContext.getAacUser().getUserId())
+                .set(OrgJdEntity::getOperatorId, aacContext.getAacUser().getAccountId())
                 .eq(OrgJdEntity::getOrgJdId, orgJdId).update();
         String cacheKey = "jd:detail:id:" + orgJdId;
         radeCache.del(cacheKey);
