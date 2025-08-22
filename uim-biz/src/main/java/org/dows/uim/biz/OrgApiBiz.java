@@ -836,7 +836,7 @@ public class OrgApiBiz {
     }
 
 
-    private Long  saveJd(Integer scale,Integer fundingStage,Integer projectType,Integer projectProgress,String similarPositions){
+    private Long  saveJd(Integer scale,Integer fundingStage,String projectType,Integer projectProgress,String similarPositions){
         // 创建新实体（使用Builder模式）
         HrmEnterpriseSituationEntity newEntity = HrmEnterpriseSituationEntity.builder()
                 // 设置变更字段
@@ -889,7 +889,7 @@ public class OrgApiBiz {
         switch (field) {
             case SCALE: return CompanyScaleEnum.getByCode(entity.getCompanyScale()).getDescription();
             case FUNDING_STAGE: return FinancingStageEnum.getByCode(entity.getFinancingStage()).getDescription();
-            case PROJECT_TYPE: return getProjectTypeDescription(entity.getProjectType());
+            case PROJECT_TYPE: return entity.getProjectType();
             case PROJECT_PROGRESS: return ProjectProgressEnum.getByCode(entity.getProjectProgress()).getDescription();
             case SIMILAR_POSITIONS: return entity.getSimilarPositions();
             default: return "";
@@ -934,7 +934,7 @@ public class OrgApiBiz {
             if(Objects.nonNull(situationEntity.getFinancingStage())){
                 response.setFundingStage(FinancingStageEnum.getByCode(situationEntity.getFinancingStage()).getDescription());
             }
-            response.setProjectType(getProjectTypeDescription(situationEntity.getProjectType()));
+            response.setProjectType(situationEntity.getProjectType());
             response.setProjectProgress(ProjectProgressEnum.getByCode(situationEntity.getProjectProgress()).getDescription());
             response.setSimilarPositions(situationEntity.getSimilarPositions());
 
@@ -1088,12 +1088,12 @@ public class OrgApiBiz {
         if(StringUtils.isNotBlank(companyInfo.getFundingStage())){
             fundingStage = FinancingStageEnum.getCodeByDescription(companyInfo.getFundingStage());
         }
-        HrmJdCodeQueryRequest hrmJdCodeQueryRequest = new HrmJdCodeQueryRequest();
+        /*HrmJdCodeQueryRequest hrmJdCodeQueryRequest = new HrmJdCodeQueryRequest();
         hrmJdCodeQueryRequest.setCodeType("projectType");
         hrmJdCodeQueryRequest.setValue(companyInfo.getProjectType());
-        JdCodeResponse jdCodeResponse = getJdCodeOne(hrmJdCodeQueryRequest);
+        JdCodeResponse jdCodeResponse = getJdCodeOne(hrmJdCodeQueryRequest);*/
         Long enterpriseSituationId = companyInfo.getHrmEnterpriseSituationId();
-        Integer projectType = jdCodeResponse.getCode();
+//        Integer projectType = jdCodeResponse.getCode();
         Integer projectProgress = ProjectProgressEnum.getCodeByDescription(companyInfo.getProjectProgress());
         if(!Objects.isNull(enterpriseSituationId)){
             HrmEnterpriseSituationEntity situationEntity = QueryChain.of(HrmEnterpriseSituationEntity.class)
@@ -1111,7 +1111,7 @@ public class OrgApiBiz {
                 if (!Objects.equals(situationEntity.getFinancingStage(), fundingStage)) {
                     changes.put(ChangeField.FUNDING_STAGE, companyInfo.getFundingStage());
                 }
-                if (!Objects.equals(situationEntity.getProjectType(), projectType)) {
+                if (!Objects.equals(situationEntity.getProjectType(), companyInfo.getProjectType())) {
                     changes.put(ChangeField.PROJECT_TYPE, companyInfo.getProjectType());
                 }
                 if (!Objects.equals(situationEntity.getProjectProgress(), projectProgress)) {
@@ -1127,7 +1127,7 @@ public class OrgApiBiz {
                             // 设置变更字段
                             .companyScale(scale)
                             .financingStage(fundingStage)
-                            .projectType(projectType)
+                            .projectType(companyInfo.getProjectType())
                             .projectProgress(projectProgress)
                             .similarPositions(companyInfo.getSimilarPositions())
 
@@ -1152,10 +1152,10 @@ public class OrgApiBiz {
             }else {
 
                 // 创建新实体（使用Builder模式）
-                enterpriseSituationId = saveJd(scale,fundingStage,projectType,projectProgress,companyInfo.getSimilarPositions());
+                enterpriseSituationId = saveJd(scale,fundingStage,companyInfo.getProjectType(),projectProgress,companyInfo.getSimilarPositions());
             }
         }else {
-            enterpriseSituationId = saveJd(scale,fundingStage,projectType,projectProgress,companyInfo.getSimilarPositions());
+            enterpriseSituationId = saveJd(scale,fundingStage,companyInfo.getProjectType(),projectProgress,companyInfo.getSimilarPositions());
         }
         SalaryBenefitInfo salaryBenefitInfo = saveRequest.getSalaryBenefitInfo();
 
@@ -1435,7 +1435,7 @@ public class OrgApiBiz {
                 companyInfo.setFundingStage(FinancingStageEnum.getByCode(situationEntity.getFinancingStage()).getDescription());
             }
             companyInfo.setHrmEnterpriseSituationId(jdEntity.getEnterpriseSituationId());
-            companyInfo.setProjectType(getProjectTypeDescription(situationEntity.getProjectType()));
+            companyInfo.setProjectType(situationEntity.getProjectType());
             companyInfo.setProjectProgress(ProjectProgressEnum.getByCode(situationEntity.getProjectProgress()).getDescription());
            response.setCompanyInfo(companyInfo);
             HrmFeatureBenefitsEntity benefitsEntity = QueryChain.of(HrmFeatureBenefitsEntity.class)

@@ -62,7 +62,7 @@ public class HrmEnterpriseSituationEntity extends BaseEntity<HrmEnterpriseSituat
      */
     @Schema(description = "项目类型")
     @Column(value = "project_type")
-    private Integer projectType;
+    private String projectType;
 
     /**
      * 项目进展
