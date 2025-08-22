@@ -157,9 +157,9 @@ public class OrgApiBiz {
         List<OrgJdEntity> orgJdEntities = QueryChain.of(OrgJdEntity.class)
                 .eq(OrgJdEntity::getOrgRootId, orgRootId, Objects.nonNull(orgRootId))
                 .eq(OrgJdEntity::getOrgJdId, orgJdId, Objects.nonNull(orgJdId))
-                .eq(OrgJdEntity::getJdNo, jdNo, Objects.nonNull(jdNo))
+                .eq(OrgJdEntity::getJdNo, jdNo, StringUtils.isNotBlank(jdNo))
                 .eq(OrgJdEntity::getDeleted, CommonDelEnum.NORMAL.getCode())
-                .like(OrgJdEntity::getJdName, jobName, Objects.nonNull(jobName)).list();
+                .like(OrgJdEntity::getJdName, jobName, StringUtils.isNotBlank(jobName)).list();
         if (Objects.nonNull(orgJdEntities) && orgJdEntities.size() > 0) {
             jdId = orgJdEntities.get(0).getOrgRuleId();
         }
