@@ -103,8 +103,11 @@ public class OrgApiBiz {
     public OrgJdResponse getOrgJdByJdNo(String jdNo) {
         OrgJdResponse response = new OrgJdResponse();
         OrgJdEntity orgJdEntity = orgJdService.getOne(QueryWrapper.create().eq(OrgJdEntity::getJdNo, jdNo));
-        BeanUtils.copyProperties(orgJdEntity, response);
-        return response;
+        if(null != orgJdEntity) {
+            BeanUtils.copyProperties(orgJdEntity, response);
+            return response;
+        }
+        return null;
     }
 
     public JobIndicatorResponse getOrgIndicatorByIndicatorId(Long orgRootId, Long orgRuleId) {
