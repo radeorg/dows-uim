@@ -725,7 +725,7 @@ public class OrgApiBiz {
     }
 
     @Operation(summary = "获取JD下拉列表数据")
-    public List<OrgJdSelectorResponse> getJdSelector() {
+    public List<OrgJdSelectorResponse> getJdSelect() {
         List<OrgJdEntity> orgJdEntityList = QueryChain.of(OrgJdEntity.class)
                 .eq(OrgJdEntity::getAppId, aacContext.getAacUser().getAppId())
                 .orderBy(OrgJdEntity::getTs, false)

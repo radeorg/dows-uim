@@ -100,8 +100,8 @@ public interface OrgApi {
         throw new UnsupportedOperationException("not class implement");
     }
 
-    @GetMapping("/v1/uim/org/jd/selector")
-    default List<OrgJdSelectorResponse> getJdSelector(){
+    @GetMapping("/v1/uim/org/jd/select")
+    default List<OrgJdSelectorResponse> getJdSelect(){
         throw new UnsupportedOperationException("not class implement");
     }
 

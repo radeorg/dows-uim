@@ -82,8 +82,8 @@ public class OrgApiRest implements OrgApi, OrgAccountApi, OrgEmailApi {
     }
 
     @Operation(summary = "获取JD下拉列表数据")
-    public List<OrgJdSelectorResponse> getJdSelector() {
-        return orgApiBiz.getJdSelector();
+    public List<OrgJdSelectorResponse> getJdSelect() {
+        return orgApiBiz.getJdSelect();
     }
 
     @Operation(summary = "保存岗位规则")
