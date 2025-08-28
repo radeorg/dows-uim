@@ -4,6 +4,7 @@ import com.mybatisflex.core.paginate.Page;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.dows.rade.web.Response;
 import org.dows.uim.biz.HrAccountApiBiz;
 import org.dows.uim.biz.InterviewBiz;
 import org.dows.uim.request.AccountInstanceRequest;
@@ -68,7 +69,7 @@ public class OrgRecruiterRest {
      */
     @Operation(summary = "招聘官删除")
     @PostMapping("/del")
-    public Boolean del(@RequestBody @Validated AccountInstanceRequest accountInstanceRequest) {
+    public Response del(@RequestBody @Validated AccountInstanceRequest accountInstanceRequest) {
         // todo 登录用户组织id
         Long orgRootId = null;
         return hrAccountApiBiz.delete(accountInstanceRequest.getAccountInstanceId());

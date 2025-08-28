@@ -8,6 +8,7 @@ import com.mybatisflex.core.query.QueryWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.rade.constant.IdentifierType;
+import org.dows.rade.web.Response;
 import org.dows.uim.api.AccountTypeRequest;
 import org.dows.uim.api.AccountTypeResponse;
 import org.dows.uim.entity.AccountIdentifierEntity;
@@ -38,7 +39,7 @@ public class HrAccountApiBiz {
     public Page<HrAccountInstanceResponse> page(HrAccountInstanceRequest request) {
         return hrAccountHandler.page(request);
     }
-    public Boolean delete(Long accountInstanceId) {
+    public Response delete(Long accountInstanceId) {
         return hrAccountHandler.delete(accountInstanceId);
     }
 }

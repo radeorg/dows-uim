@@ -1,5 +1,6 @@
 package org.dows.uim.handler;
 
+
 import com.mybatisflex.core.paginate.Page;
 import com.mybatisflex.core.query.QueryChain;
 import com.mybatisflex.core.row.DbChain;
@@ -8,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.rade.aac.AacContext;
 import org.dows.rade.status.CommonStatusCode;
+import org.dows.rade.web.Response;
 import org.dows.uim.constant.AccountType;
 import org.dows.uim.constant.CommonDelEnum;
 import org.dows.uim.entity.*;
@@ -17,6 +19,8 @@ import org.dows.uim.response.HrAccountInstanceResponse;
 import org.dows.uim.service.AccountInstanceService;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -139,11 +143,17 @@ public class HrAccountHandler {
      * @return
      */
     @Transactional
-    public Boolean delete(Long accountInstanceId) {
+    public Response delete(Long accountInstanceId) {
         AccountInstanceEntity accountInstanceEntity = accountInstanceService.getById(accountInstanceId);
         if (accountInstanceEntity == null || Objects.equals(CommonDelEnum.DELETE.getCode(), accountInstanceEntity.getDeleted())) {
             log.warn("招聘官删除失败,未找到有效的招聘官：{}", accountInstanceId);
-            return false;
+            return Response.failed("招聘官删除失败,未找到有效的招聘官");
+        }
+        List<OrgJdEntity> jdEntities = QueryChain.of(OrgJdEntity.class)
+                .like(OrgJdEntity::getOwnerId, accountInstanceId)
+                .eq(OrgJdEntity::getDeleted, CommonDelEnum.NORMAL.getCode()).list();
+        if(!CollectionUtils.isEmpty(jdEntities)){
+            return Response.failed("招聘官删除失败,请先删除关联的JD");
         }
 
         boolean update = UpdateChain.of(AccountInstanceEntity.class)
@@ -161,8 +171,8 @@ public class HrAccountHandler {
                 .update();
         if (!update) {
             log.warn("招聘官删除失败,操作失败请重试：{}", accountInstanceId);
-            throw new UimException(CommonStatusCode.FAILED);
+            return Response.failed("招聘官删除失败,操作失败请重试");
         }
-        return true;
+        return Response.ok();
     }
 }

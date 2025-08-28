@@ -541,7 +541,7 @@ public class OrgApiBiz {
                     .appId(AppContext.getAppId())
                     .ut(new Date())
                     .ts(new Date())
-                    .ownerId(aacContext.getAacUser().getUserId())
+                    .ownerId(aacContext.getAacUser().getAccountId())
                     .deleted(CommonDelEnum.NORMAL.getCode())
                     .build();
 
@@ -599,7 +599,7 @@ public class OrgApiBiz {
         objEntity1.setRuleName(orgJdSaveRequest.getJdName());
         objEntity1.setOrgTreeId(orgJdSaveRequest.getOrgTreeId());
         objEntity1.setAppId(orgJdSaveRequest.getAppId());
-        objEntity1.setOperatorId(aacContext.getAacUser().getUserId());
+        objEntity1.setOperatorId(aacContext.getAacUser().getAccountId());
         objEntity1.setTs(new Date());
         OrgRuleResponse response = saveOrgRule(objEntity1);
 
@@ -613,7 +613,7 @@ public class OrgApiBiz {
         }
         objEntity.setOrgRuleId(response.getOrgRuleId());
         objEntity.setDeleted(CommonDelEnum.NORMAL.getCode());
-        objEntity.setOperatorId(aacContext.getAacUser().getUserId());
+        objEntity.setOperatorId(aacContext.getAacUser().getAccountId());
         if (Objects.isNull(objEntity.getOrgJdId())) {
             //新增默认上架
             objEntity.setState(1);
@@ -851,7 +851,7 @@ public class OrgApiBiz {
                 // 继承未变更字段
                 .appId(AppContext.getAppId())
                 .deleted(0)
-                .ownerId(aacContext.getAacUser().getUserId())
+                .ownerId(aacContext.getAacUser().getAccountId())
                 // 时间戳
                 .ts(new Date())
                 .ut(new Date())
@@ -1137,7 +1137,7 @@ public class OrgApiBiz {
                             // 继承未变更字段
                             .appId(AppContext.getAppId())
                             .deleted(0)
-                            .ownerId(aacContext.getAacUser().getUserId())
+                            .ownerId(aacContext.getAacUser().getAccountId())
 
                             // 设置变更关系
                             .oldEnterpriseSituationId(enterpriseSituationId)
@@ -1190,7 +1190,7 @@ public class OrgApiBiz {
         benefitsEntity.setDeleted(0);
         benefitsEntity.setTs(new Date());
         benefitsEntity.setUt(new Date());
-        benefitsEntity.setOwnerId(aacContext.getAacUser().getUserId());
+        benefitsEntity.setOwnerId(aacContext.getAacUser().getAccountId());
         benefitsEntity.save();
 
         OrgJdEntity jdEntity = new OrgJdEntity();
@@ -1201,7 +1201,7 @@ public class OrgApiBiz {
         if(Objects.nonNull(saveRequest.getOwnerId())) {
             jdEntity.setOwnerId(saveRequest.getOwnerId());
         }
-        jdEntity.setOperatorId(aacContext.getAacUser().getUserId());
+        jdEntity.setOperatorId(aacContext.getAacUser().getAccountId());
         jdEntity.setJdNo(generateJdNo());
         jdEntity.setJdName(saveRequest.getBasicInfo().getJdName());
         //jdEntity.setGender(GenderRequirementEnum.getCodeByDescription(saveRequest.getBasicInfo().getGenderRequirement()));
@@ -1342,13 +1342,13 @@ public class OrgApiBiz {
         if(jdEntity != null){
             jdEntity.setOrgJdId(saveRequest.getOrgJdId());
             jdEntity.setUt(new Date());
-            jdEntity.setOperatorId(aacContext.getAacUser().getUserId());
+            jdEntity.setOperatorId(aacContext.getAacUser().getAccountId());
             jdEntity.updateById();
             if (!saveRequest.getSalaryBenefitInfo().getMonthlySalaryRange().equals(jdInfoResponse.getSalaryBenefitInfo().getMonthlySalaryRange())) {
                 HrmFeatureBenefitsEntity benefitsEntity = new HrmFeatureBenefitsEntity();
                 benefitsEntity.setHrmFeatureBenefitsId(saveRequest.getSalaryBenefitInfo().getHrmFeatureBenefitsId());
                 benefitsEntity.setUt(new Date());
-                benefitsEntity.setOwnerId(aacContext.getAacUser().getUserId());
+                benefitsEntity.setOwnerId(aacContext.getAacUser().getAccountId());
                 benefitsEntity.setMonthlySalaryRange(MonthlySalaryRangeEnum.getCodeByDescription(saveRequest.getSalaryBenefitInfo().getMonthlySalaryRange()));
                 benefitsEntity.updateById();
                 radeCache.set(cacheKey, objectMapper.writeValueAsString(saveRequest));
@@ -1362,7 +1362,7 @@ public class OrgApiBiz {
                 HrmFeatureBenefitsEntity benefitsEntity = new HrmFeatureBenefitsEntity();
                 benefitsEntity.setHrmFeatureBenefitsId(saveRequest.getSalaryBenefitInfo().getHrmFeatureBenefitsId());
                 benefitsEntity.setUt(new Date());
-                benefitsEntity.setOwnerId(aacContext.getAacUser().getUserId());
+                benefitsEntity.setOwnerId(aacContext.getAacUser().getAccountId());
                 benefitsEntity.setMonthlySalaryRange(MonthlySalaryRangeEnum.getCodeByDescription(saveRequest.getSalaryBenefitInfo().getMonthlySalaryRange()));
                 benefitsEntity.updateById();
                 radeCache.set(cacheKey, objectMapper.writeValueAsString(saveRequest));
