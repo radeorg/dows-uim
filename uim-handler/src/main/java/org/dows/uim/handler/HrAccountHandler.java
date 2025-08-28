@@ -149,10 +149,10 @@ public class HrAccountHandler {
             log.warn("招聘官删除失败,未找到有效的招聘官：{}", accountInstanceId);
             return Response.failed("招聘官删除失败,未找到有效的招聘官");
         }
-        List<OrgJdEntity> jdEntities = QueryChain.of(OrgJdEntity.class)
-                .like(OrgJdEntity::getOwnerId, accountInstanceId)
-                .eq(OrgJdEntity::getDeleted, CommonDelEnum.NORMAL.getCode()).list();
-        if(!CollectionUtils.isEmpty(jdEntities)){
+        Long countJd = QueryChain.of(OrgJdEntity.class)
+                .eq(OrgJdEntity::getOwnerId, accountInstanceId)
+                .eq(OrgJdEntity::getDeleted, CommonDelEnum.NORMAL.getCode()).count();
+        if(countJd > 0){
             return Response.failed("招聘官删除失败,请先删除关联的JD");
         }
 
