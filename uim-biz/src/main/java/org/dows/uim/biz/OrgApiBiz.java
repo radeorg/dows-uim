@@ -1387,6 +1387,7 @@ public class OrgApiBiz {
         if(Objects.nonNull(jdEntity)){
             response = new JDInfoResponse();
             response.setOrgJdId(orgJdId);
+            response.setOwnerId(jdEntity.getOwnerId());
             CompanyInfo companyInfo = new CompanyInfo();
             companyInfo.setOrgAddress(jdEntity.getOrgAddress());
             response.setJdNo(jdEntity.getJdNo());
