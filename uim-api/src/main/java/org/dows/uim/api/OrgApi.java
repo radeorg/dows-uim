@@ -49,7 +49,7 @@ public interface OrgApi {
     }
 
     @Operation(summary = "通过岗位名称关键词获取岗位信息")
-    default List<OrgJdResponse> listOrgJdByKeywords(List<String> keywords, String appId) {
+    default List<OrgJdResponse> listOrgJdByKeyword(String keyword, String appId) {
         throw new UnsupportedOperationException("not class implement");
     }
 

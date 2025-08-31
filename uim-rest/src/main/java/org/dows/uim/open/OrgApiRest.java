@@ -36,9 +36,9 @@ public class OrgApiRest implements OrgApi, OrgAccountApi, OrgEmailApi {
         return orgApiBiz.getOrgJdByOrgJdId(orgJdId);
     }
 
-    @Operation(summary = "通过岗位名称关键词获取岗位信息")
-    public List<OrgJdResponse> listOrgJdByKeywords(List<String> keywords, String appId){
-        return orgApiBiz.listOrgJdByKeywords(keywords, appId);
+    @Operation(summary = "通过岗位名称关键词获取岗位信息（双向匹配）")
+    public List<OrgJdResponse> listOrgJdByKeyword(String keyword, String appId){
+        return orgApiBiz.listOrgJdByKeyword(keyword, appId);
     }
 
     @Operation(summary = "通过岗位编号获取岗位信息")
