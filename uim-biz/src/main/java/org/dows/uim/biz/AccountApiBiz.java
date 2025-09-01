@@ -265,15 +265,7 @@ public class AccountApiBiz {
         AccountIdentifierEntity onePhone = accountHandler.getByIdentifier(telephone, IdentifierType.PHONE.getType());
         // 存在则返回账号实例ID，不存在则创建账号实例并返回账号实例ID
         if (onePhone != null) {
-            AccountIdentifierEntity oneEmail = accountHandler.getByIdentifier(email, IdentifierType.EMAIL.getType());;
-            if (oneEmail == null) {
-            // 保存账号标识;
-                AccountIdentifierEntity oneEmailEntity = new AccountIdentifierEntity();
-                oneEmailEntity.setAccountInstanceId(onePhone.getAccountInstanceId());
-                oneEmailEntity.setIdentifier(email);
-                oneEmailEntity.setIdentifierType(IdentifierType.EMAIL.getType());
-                accountIdentifierService.save(oneEmailEntity);
-            }
+            saveEmailAccount(email, onePhone.getAccountInstanceId());
 
             return onePhone.getAccountInstanceId();
 
@@ -288,14 +280,22 @@ public class AccountApiBiz {
         telephoneEntity.setIdentifier(telephone);
         telephoneEntity.setIdentifierType(IdentifierType.PHONE.getType());
         accountIdentifierService.save(telephoneEntity);
-        AccountIdentifierEntity emailEntity = new AccountIdentifierEntity();
-        emailEntity.setAccountInstanceId(accountInstanceEntity.getAccountInstanceId());
-        emailEntity.setIdentifier(email);
-        emailEntity.setIdentifierType(IdentifierType.EMAIL.getType());
-        accountIdentifierService.save(emailEntity);
+
+        saveEmailAccount(email, accountInstanceEntity.getAccountInstanceId());
         return accountInstanceEntity.getAccountInstanceId();
     }
 
+    private void saveEmailAccount(String email, Long accountInstanceId){
+        AccountIdentifierEntity oneEmail = accountHandler.getByIdentifier(email, IdentifierType.EMAIL.getType());;
+        if (oneEmail == null) {
+            // 保存账号标识;
+            AccountIdentifierEntity oneEmailEntity = new AccountIdentifierEntity();
+            oneEmailEntity.setAccountInstanceId(accountInstanceId);
+            oneEmailEntity.setIdentifier(email);
+            oneEmailEntity.setIdentifierType(IdentifierType.EMAIL.getType());
+            accountIdentifierService.save(oneEmailEntity);
+        }
+    }
     /**
      * 根据账号ID列表获取账号实例列表
      *
