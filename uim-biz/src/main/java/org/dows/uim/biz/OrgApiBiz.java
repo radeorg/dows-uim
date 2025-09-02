@@ -87,11 +87,11 @@ public class OrgApiBiz {
 
     public List<OrgJdResponse> listOrgJdByKeyword(String keyword, String appId){
         QueryWrapper queryWrapper = QueryWrapper.create().eq(OrgJdEntity::getAppId, appId); // 初始条件
-        // 创建一个嵌套的OR条件组（多个关键词之间是OR关系）
         if (keyword != null && !keyword.isEmpty()) {
-                    // 在 MyBatis-Flex 中，使用 or() 方法需要指定条件
-            queryWrapper.where("LOCATE(?, jd_name) > 0", keyword)
+            queryWrapper.and(q -> {
+                q.where("LOCATE(?, jd_name) > 0", keyword)
                         .or("LOCATE(jd_name, ?) > 0", keyword);
+            });
         }
         List<OrgJdEntity> entities = orgJdService.list(queryWrapper);
         return BeanUtil.copyToList(entities, OrgJdResponse.class);
