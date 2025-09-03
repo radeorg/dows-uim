@@ -53,6 +53,11 @@ public interface OrgApi {
         throw new UnsupportedOperationException("not class implement");
     }
 
+    @Operation(summary = "通过appId获取岗位集合")
+    default List<OrgJdResponse> listOrgJdByAppId(String appId) {
+        throw new UnsupportedOperationException("not class implement");
+    }
+
     @PostMapping("/v1/uim/org/jd/get/jdNo")
     @Operation(summary = "通过岗位编号获取岗位信息")
     default OrgJdResponse getOrgJdByJdNo(String jdNo) {

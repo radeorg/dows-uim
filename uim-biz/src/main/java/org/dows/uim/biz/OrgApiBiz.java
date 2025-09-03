@@ -85,6 +85,7 @@ public class OrgApiBiz {
         return response;
     }
 
+    // 双向匹配查询
     public List<OrgJdResponse> listOrgJdByKeyword(String keyword, String appId){
         QueryWrapper queryWrapper = QueryWrapper.create().eq(OrgJdEntity::getAppId, appId); // 初始条件
         if (keyword != null && !keyword.isEmpty()) {
@@ -93,6 +94,12 @@ public class OrgApiBiz {
                         .or("LOCATE(jd_name, ?) > 0", keyword);
             });
         }
+        List<OrgJdEntity> entities = orgJdService.list(queryWrapper);
+        return BeanUtil.copyToList(entities, OrgJdResponse.class);
+    }
+
+    public List<OrgJdResponse> listOrgJdByAppId(String appId) {
+        QueryWrapper queryWrapper = QueryWrapper.create().eq(OrgJdEntity::getAppId, appId);
         List<OrgJdEntity> entities = orgJdService.list(queryWrapper);
         return BeanUtil.copyToList(entities, OrgJdResponse.class);
     }

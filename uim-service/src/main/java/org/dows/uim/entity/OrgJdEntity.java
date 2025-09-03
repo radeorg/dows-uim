@@ -203,6 +203,6 @@ public class OrgJdEntity extends BaseEntity<OrgJdEntity> {
      * 逻辑删除，0未删除，1删除
      */
     @Schema(description = "逻辑删除，0未删除，1删除")
-    @Column(value = "deleted")
+    @Column(value = "deleted", isLogicDelete = true)
     private Integer deleted;
 }

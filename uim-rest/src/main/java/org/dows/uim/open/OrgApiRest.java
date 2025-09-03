@@ -41,6 +41,11 @@ public class OrgApiRest implements OrgApi, OrgAccountApi, OrgEmailApi {
         return orgApiBiz.listOrgJdByKeyword(keyword, appId);
     }
 
+    @Operation(summary = "通过appId获取岗位集合")
+    public List<OrgJdResponse> listOrgJdByAppId(String appId) {
+        return orgApiBiz.listOrgJdByAppId(appId);
+    }
+
     @Operation(summary = "通过岗位编号获取岗位信息")
     public OrgJdResponse getOrgJdByJdNo(String jdNo) {
         return orgApiBiz.getOrgJdByJdNo(jdNo);
