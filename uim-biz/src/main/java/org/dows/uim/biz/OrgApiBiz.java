@@ -268,7 +268,7 @@ public class OrgApiBiz {
                     if (accountIdentifierEntity != null
                             && StringUtils.isNotEmpty(accountIdentifierEntity.getAppId())
                             && !accountIdentifierEntity.getAppId().equals("0")) {
-                        throw new UimException(orgRegisterRequest.getOrgName() + "， 【" + orgRegisterRequest.getTelephone() + "】手机号已存在，无法保存");
+                        throw new UimException(orgRegisterRequest.getOrgName() + "， 【" + orgRegisterRequest.getTelephone() + "】该手机号已存在，无法保存");
                     } else {
                         phoneAccountIdentifier = accountIdentifierEntity;
                     }
@@ -283,7 +283,7 @@ public class OrgApiBiz {
                     if (accountIdentifierEntity != null
                             && StringUtils.isNotEmpty(accountIdentifierEntity.getAppId())
                             && !accountIdentifierEntity.getAppId().equals("0")) {
-                        throw new UimException(orgRegisterRequest.getOrgName() + "， 【" + orgRegisterRequest.getTelephone() + "】该邮箱已存在，无法保存");
+                        throw new UimException(orgRegisterRequest.getOrgName() + "， 【" + orgRegisterRequest.getEmail() + "】该邮箱已存在，无法保存");
                     } else {
                         emailAccountIdentifier = accountIdentifierEntity;
                     }
