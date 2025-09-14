@@ -249,12 +249,14 @@ public class AccountApiBiz {
         // 创建账号实例
         AccountInstanceEntity accountInstanceEntity = new AccountInstanceEntity();
         accountInstanceEntity.setTelephone(telephone);
+        accountInstanceEntity.setAppId("0");
         accountInstanceService.save(accountInstanceEntity);
         // 保存账号标识;
         AccountIdentifierEntity identifierEntity = new AccountIdentifierEntity();
         identifierEntity.setAccountInstanceId(accountInstanceEntity.getAccountInstanceId());
         identifierEntity.setIdentifier(telephone);
         identifierEntity.setIdentifierType(IdentifierType.PHONE.getType());
+        identifierEntity.setAppId("0");
         accountIdentifierService.save(identifierEntity);
         return accountInstanceEntity.getAccountInstanceId();
     }
@@ -273,12 +275,14 @@ public class AccountApiBiz {
         // 创建账号实例
         AccountInstanceEntity accountInstanceEntity = new AccountInstanceEntity();
         accountInstanceEntity.setTelephone(telephone);
+        accountInstanceEntity.setAppId("0");
         accountInstanceService.save(accountInstanceEntity);
         // 保存账号标识;
         AccountIdentifierEntity telephoneEntity = new AccountIdentifierEntity();
         telephoneEntity.setAccountInstanceId(accountInstanceEntity.getAccountInstanceId());
         telephoneEntity.setIdentifier(telephone);
         telephoneEntity.setIdentifierType(IdentifierType.PHONE.getType());
+        telephoneEntity.setAppId("0");
         accountIdentifierService.save(telephoneEntity);
 
         saveEmailAccount(email, accountInstanceEntity.getAccountInstanceId());
@@ -293,6 +297,7 @@ public class AccountApiBiz {
             oneEmailEntity.setAccountInstanceId(accountInstanceId);
             oneEmailEntity.setIdentifier(email);
             oneEmailEntity.setIdentifierType(IdentifierType.EMAIL.getType());
+            oneEmailEntity.setAppId("0");
             accountIdentifierService.save(oneEmailEntity);
         }
     }
