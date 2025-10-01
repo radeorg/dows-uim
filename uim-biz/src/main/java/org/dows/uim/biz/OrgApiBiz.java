@@ -20,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.dows.pojo.enums.*;
 import org.dows.rade.aac.AacContext;
+import org.dows.rade.aac.AacUser;
 import org.dows.rade.cache.RadeCache;
 import org.dows.rade.constant.IdentifierType;
 import org.dows.rade.context.AppContext;
@@ -59,6 +60,7 @@ public class OrgApiBiz {
     private final AccountInstanceService accountInstanceService;
     private final AccountIdentifierService accountIdentifierService;
     private final AccountTypeService accountTypeService;
+    private final AacContext aacContext;
 
     // 使用安全的随机数生成器
     private static final Random RANDOM = new SecureRandom();
@@ -67,7 +69,6 @@ public class OrgApiBiz {
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
     private final EncryptApi encryptApi;
-    private final AacContext aacContext;
 
     private enum ChangeField {
         SCALE, FUNDING_STAGE, PROJECT_TYPE, PROJECT_PROGRESS, SIMILAR_POSITIONS
@@ -1665,5 +1666,23 @@ public class OrgApiBiz {
 
     private OrgTreeEntity getByOrgName(String orgName) {
         return orgTreeService.getOne(QueryWrapper.create().eq(OrgTreeEntity::getOrgName, orgName));
+    }
+
+    public EmailStatusResponse isBoundEmail(){
+        AacUser aacUser = aacContext.getAacUser();
+        if (Objects.isNull(aacUser) || Objects.isNull(aacUser.getAccountId())) {
+            throw new UimException("登录账号不存在");
+        }
+        // 2. 查询当前用户是否已绑定邮箱（核心逻辑）
+        long count = QueryChain.of(AccountIdentifierEntity.class)
+                .eq(AccountIdentifierEntity::getAccountInstanceId, aacUser.getAccountId()) // 关联当前用户的账户实例
+                .eq(AccountIdentifierEntity::getIdentifierType, IdentifierType.EMAIL.getType()) // 筛选“邮箱”类型的标识
+                .count();
+        if (count > 0) {
+            return EmailStatusResponse.builder().boundStatus(true).build();
+        }else {
+            return EmailStatusResponse.builder().boundStatus(false).build();
+        }
+
     }
 }

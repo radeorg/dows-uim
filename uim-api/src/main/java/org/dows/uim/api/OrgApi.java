@@ -199,4 +199,9 @@ public interface OrgApi {
         throw new UnsupportedOperationException("not class implement");
     }
 
+    @PostMapping("/v1/open/uim/org/email/isBound")
+    default EmailStatusResponse isBoundEmail() throws UnavailableException, JsonProcessingException {
+        throw new UnsupportedOperationException("not class implement");
+    }
+
 }

@@ -202,5 +202,9 @@ public class OrgApiRest implements OrgApi, OrgAccountApi, OrgEmailApi {
         return orgApiBiz.updateJdInfo(saveRequest);
 
     }
+    @Operation(summary = "查询是否绑定企业邮箱")
+    public EmailStatusResponse isBoundEmail() {
+        return orgApiBiz.isBoundEmail();
+    }
 }
 
