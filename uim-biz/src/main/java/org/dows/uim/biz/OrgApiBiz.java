@@ -35,6 +35,7 @@ import org.dows.uim.request.JdKeyWord.*;
 import org.dows.uim.response.*;
 import org.dows.uim.service.*;
 import org.springframework.beans.BeanUtils;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -100,6 +101,7 @@ public class OrgApiBiz {
         return BeanUtil.copyToList(entities, OrgJdResponse.class);
     }
 
+    @Cacheable(value = "listOrgJdByAppIdCache#3000", key = "'appId:' + #appId")
     public List<OrgJdResponse> listOrgJdByAppId(String appId) {
         QueryWrapper queryWrapper = QueryWrapper.create()
                 .eq(OrgJdEntity::getAppId, appId)
