@@ -49,6 +49,7 @@ public class AccountIdentifierEntity extends BaseEntity<AccountIdentifierEntity>
     @Column(value = "identifier")
     private String identifier;
 
+
     /**
      * 操作者ID
      */
