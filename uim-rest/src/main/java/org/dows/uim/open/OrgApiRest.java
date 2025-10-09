@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.UnavailableException;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.dows.rade.aac.AacContext;
 import org.dows.rade.aac.AacUser;
 import org.dows.rade.constant.IdentifierType;
@@ -31,6 +32,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 //@RequestMapping("/open/org")
@@ -146,8 +148,9 @@ public class OrgApiRest implements OrgApi, OrgAccountApi, OrgEmailApi {
     @Override
     public AccountIdentifierResponse queryOrgInfo(FindAccountIdentifierRequest identifierRequest) {
         AccountIdentifierEntity entity = QueryChain.of(AccountIdentifierEntity.class)
-                .eq(AccountIdentifierEntity::getAccountInstanceId,identifierRequest.getAccountInstanceId())
-                .eq(AccountIdentifierEntity::getIdentifierType, IdentifierType.EMAIL.getType())
+                .eq(AccountIdentifierEntity::getAccountInstanceId,identifierRequest.getAccountInstanceId(), Objects.nonNull(identifierRequest.getAccountInstanceId()))
+                .eq(AccountIdentifierEntity::getIdentifierType, identifierRequest.getIdentifierType(), Objects.nonNull(identifierRequest.getIdentifierType()))
+                .eq(AccountIdentifierEntity::getIdentifier, identifierRequest.getIdentifier(), StringUtils.isNotBlank(identifierRequest.getIdentifier()))
                 .eq(AccountIdentifierEntity::getDeleted, CommonDelEnum.NORMAL.getCode())
                 .one();
         return BeanUtil.copyProperties(entity,AccountIdentifierResponse.class);
