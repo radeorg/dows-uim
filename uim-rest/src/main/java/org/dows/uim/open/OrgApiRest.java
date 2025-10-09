@@ -1,25 +1,35 @@
 package org.dows.uim.open;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mybatisflex.core.paginate.Page;
+import com.mybatisflex.core.query.QueryChain;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.UnavailableException;
 import lombok.RequiredArgsConstructor;
+import org.dows.rade.aac.AacContext;
+import org.dows.rade.aac.AacUser;
+import org.dows.rade.constant.IdentifierType;
 import org.dows.rade.web.Response;
 import org.dows.uim.api.OrgApi;
 import org.dows.uim.api.OrgEmailApi;
 import org.dows.uim.biz.AccountApiBiz;
 import org.dows.uim.biz.OrgApiBiz;
 import org.dows.uim.biz.OrgEmailBiz;
+import org.dows.uim.constant.CommonDelEnum;
+import org.dows.uim.entity.AccountIdentifierEntity;
 import org.dows.uim.request.*;
+import org.dows.uim.request.FindAccountIdentifierRequest;
 import org.dows.uim.request.JdKeyWord.JDSaveRequest;
 import org.dows.uim.response.*;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -30,6 +40,7 @@ public class OrgApiRest implements OrgApi, OrgAccountApi, OrgEmailApi {
     private final OrgApiBiz orgApiBiz;
     private final AccountApiBiz accountApiBiz;
     private final OrgEmailBiz orgEmailBiz;
+    private final AacContext aacContext;
 
     @Operation(summary = "通过岗位ID获取岗位信息")
     public OrgJdResponse getOrgJdById(Long orgJdId) {
@@ -120,6 +131,26 @@ public class OrgApiRest implements OrgApi, OrgAccountApi, OrgEmailApi {
             orgWithRegisters.add(orgWithRegister);
         }
         return orgWithRegisters;
+    }
+
+    @Override
+    public Response updateOrgInfo(AccountIdentifierRequest identifierRequest) {
+        AacUser aacUser = aacContext.getAacUser();
+        AccountIdentifierEntity entity = BeanUtil.copyProperties(identifierRequest,AccountIdentifierEntity.class);
+        entity.setUt(new Date());
+        entity.setOwnerId(aacUser.getAccountId());
+        entity.updateById();
+        return Response.ok();
+    }
+
+    @Override
+    public AccountIdentifierResponse queryOrgInfo(FindAccountIdentifierRequest identifierRequest) {
+        AccountIdentifierEntity entity = QueryChain.of(AccountIdentifierEntity.class)
+                .eq(AccountIdentifierEntity::getAccountInstanceId,identifierRequest.getAccountInstanceId())
+                .eq(AccountIdentifierEntity::getIdentifierType, IdentifierType.EMAIL.getType())
+                .eq(AccountIdentifierEntity::getDeleted, CommonDelEnum.NORMAL.getCode())
+                .one();
+        return BeanUtil.copyProperties(entity,AccountIdentifierResponse.class);
     }
 
     @Operation(summary = "增加企业账号[招聘官,企业管理员,企业用户...]")
