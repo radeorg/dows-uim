@@ -136,7 +136,7 @@ public class OrgApiRest implements OrgApi, OrgAccountApi, OrgEmailApi {
     }
 
     @Override
-    public Response updateOrgInfo(AccountIdentifierRequest identifierRequest) {
+    public Response updateIdentifierInfo(AccountIdentifierRequest identifierRequest) {
         AacUser aacUser = aacContext.getAacUser();
         AccountIdentifierEntity entity = BeanUtil.copyProperties(identifierRequest,AccountIdentifierEntity.class);
         entity.setUt(new Date());
@@ -146,7 +146,7 @@ public class OrgApiRest implements OrgApi, OrgAccountApi, OrgEmailApi {
     }
 
     @Override
-    public AccountIdentifierResponse queryOrgInfo(FindAccountIdentifierRequest identifierRequest) {
+    public AccountIdentifierResponse queryIdentifierInfo(FindAccountIdentifierRequest identifierRequest) {
         AccountIdentifierEntity entity = QueryChain.of(AccountIdentifierEntity.class)
                 .eq(AccountIdentifierEntity::getAccountInstanceId,identifierRequest.getAccountInstanceId(), Objects.nonNull(identifierRequest.getAccountInstanceId()))
                 .eq(AccountIdentifierEntity::getIdentifierType, identifierRequest.getIdentifierType().getType(), Objects.nonNull(identifierRequest.getIdentifierType().getType()))

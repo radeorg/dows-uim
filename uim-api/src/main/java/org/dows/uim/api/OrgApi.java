@@ -145,7 +145,7 @@ public interface OrgApi {
      * @return
      */
     @PostMapping("v1/uim/org/register/update")
-    Response updateOrgInfo(@RequestBody AccountIdentifierRequest identifierRequest);
+    Response updateIdentifierInfo(@RequestBody AccountIdentifierRequest identifierRequest);
 
     /**
      * 查询企业账号
@@ -154,7 +154,7 @@ public interface OrgApi {
      * @return
      */
     @PostMapping("v1/uim/org/register/one")
-    AccountIdentifierResponse queryOrgInfo(@RequestBody FindAccountIdentifierRequest identifierRequest);
+    AccountIdentifierResponse queryIdentifierInfo(@RequestBody FindAccountIdentifierRequest identifierRequest);
     /**
      * 注册企业账号
      *
