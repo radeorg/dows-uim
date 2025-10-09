@@ -149,7 +149,7 @@ public class OrgApiRest implements OrgApi, OrgAccountApi, OrgEmailApi {
     public AccountIdentifierResponse queryOrgInfo(FindAccountIdentifierRequest identifierRequest) {
         AccountIdentifierEntity entity = QueryChain.of(AccountIdentifierEntity.class)
                 .eq(AccountIdentifierEntity::getAccountInstanceId,identifierRequest.getAccountInstanceId(), Objects.nonNull(identifierRequest.getAccountInstanceId()))
-                .eq(AccountIdentifierEntity::getIdentifierType, identifierRequest.getIdentifierType(), Objects.nonNull(identifierRequest.getIdentifierType()))
+                .eq(AccountIdentifierEntity::getIdentifierType, identifierRequest.getIdentifierType().getType(), Objects.nonNull(identifierRequest.getIdentifierType().getType()))
                 .eq(AccountIdentifierEntity::getIdentifier, identifierRequest.getIdentifier(), StringUtils.isNotBlank(identifierRequest.getIdentifier()))
                 .eq(AccountIdentifierEntity::getDeleted, CommonDelEnum.NORMAL.getCode())
                 .one();
