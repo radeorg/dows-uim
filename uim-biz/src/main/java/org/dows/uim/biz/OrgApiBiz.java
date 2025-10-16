@@ -18,6 +18,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.dows.member.api.user.UserMemberInstanceApi;
+import org.dows.member.api.user.UserMemberMetricsApi;
+import org.dows.member.request.user.UserMemberInstanceSaveRequest;
 import org.dows.pojo.enums.*;
 import org.dows.rade.aac.AacContext;
 import org.dows.rade.aac.AacUser;
@@ -79,6 +82,8 @@ public class OrgApiBiz {
 
     private final ObjectMapper objectMapper;
     private final TenantAppBiz tenantAppBiz;
+    private final UserMemberInstanceApi userMemberInstanceApi;
+    private final UserMemberMetricsApi userMemberMetricsApi;
 
 //    private final PasswordEncoder passwordEncoder;
 
@@ -402,6 +407,12 @@ public class OrgApiBiz {
         tenantAppRequest.setAccountInstanceId(accountInstanceEntity.getAccountInstanceId());
         tenantAppRequest.setAppId(appId);
         TenantAppResponse tenantApp = tenantAppBiz.save(tenantAppRequest);
+
+        // 保存会员
+        UserMemberInstanceSaveRequest memberInstanceSaveRequest = new UserMemberInstanceSaveRequest();
+        memberInstanceSaveRequest.setAccountInstanceId(accountInstanceEntity.getAccountInstanceId());
+        memberInstanceSaveRequest.setAppId(appId);
+        userMemberInstanceApi.save(memberInstanceSaveRequest);
 
         OrgRegisterResponse register = BeanUtil.copyProperties(orgRegisterEntity, OrgRegisterResponse.class);
         register.setNamespace(tenantApp.getNamespace());
@@ -1148,6 +1159,7 @@ public class OrgApiBiz {
         return BeanUtil.copyProperties(jdEntity, OrgJobJDResponse.class);
     }
 
+    @Transactional
     @Operation(summary = "存储JD内容")
     public Response saveOrgJd(JDSaveRequest saveRequest) throws UnavailableException, JsonProcessingException {
         CompanyInfo companyInfo =saveRequest.getCompanyInfo();
@@ -1159,6 +1171,10 @@ public class OrgApiBiz {
         if(StringUtils.isNotBlank(companyInfo.getFundingStage())){
             fundingStage = FinancingStageEnum.getCodeByDescription(companyInfo.getFundingStage());
         }
+
+        // 验证是否有权限创建JD
+        userMemberMetricsApi.validateCreationJdPermission();
+
         /*HrmJdCodeQueryRequest hrmJdCodeQueryRequest = new HrmJdCodeQueryRequest();
         hrmJdCodeQueryRequest.setCodeType("projectType");
         hrmJdCodeQueryRequest.setValue(companyInfo.getProjectType());
@@ -1297,6 +1313,10 @@ public class OrgApiBiz {
         jdEntity.setTs(new Date());
         jdEntity.setUt(new Date());
         jdEntity.save();
+
+        // 创建JD次数增加
+        userMemberMetricsApi.addUsedCreationJdCount();
+
         // 用前缀隔离 key
         String cacheKey = "jd:detail:id:" + jdEntity.getOrgJdId();
         saveRequest.setOrgJdId(jdEntity.getOrgJdId());
