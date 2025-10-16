@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.UnavailableException;
 import org.dows.rade.web.Response;
 import org.dows.uim.request.*;
+import org.dows.uim.request.FindAccountIdentifierRequest;
 import org.dows.uim.request.JdKeyWord.JDSaveRequest;
 import org.dows.uim.response.*;
 import org.springframework.web.bind.annotation.*;
@@ -138,15 +139,30 @@ public interface OrgApi {
 
 
     /**
+     * 更新企业账号
+     *
+     * @param identifierRequest
+     * @return
+     */
+    @PostMapping("v1/uim/org/register/update")
+    Response updateIdentifierInfo(@RequestBody AccountIdentifierRequest identifierRequest);
+
+    /**
+     * 查询企业账号
+     *
+     * @param identifierRequest
+     * @return
+     */
+    @PostMapping("v1/uim/org/register/one")
+    AccountIdentifierResponse queryIdentifierInfo(@RequestBody FindAccountIdentifierRequest identifierRequest);
+    /**
      * 注册企业账号
      *
      * @param orgRegisterRequest
      * @return
      */
     @PostMapping("v1/uim/org/register/info")
-    OrgRegisterResponse getOrgInfo(@RequestBody OrgRegisterRequest orgRegisterRequest) ;/*{
-        throw new UnsupportedOperationException("not class implement");
-    }*/
+    OrgRegisterResponse getOrgInfo(@RequestBody OrgRegisterRequest orgRegisterRequest) ;
     default List<RootOrgResponse> getRootOrgListByAccountInstanceId(Long accountInstanceId){
         throw new UnsupportedOperationException("not class implement");
     }
