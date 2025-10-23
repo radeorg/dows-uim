@@ -99,6 +99,12 @@ public class OrgApiRest implements OrgApi, OrgAccountApi, OrgEmailApi {
         return orgApiBiz.getJdList(orgJdQueryRequest);
     }
 
+    @Operation(summary = "获取当前登陆者创建的JD总数")
+    public long getJdCountByCurrentAccount() {
+        AacUser aacUser = aacContext.getAacUser();
+        return orgApiBiz.getJdCountByOwnerId(aacUser.getAccountId());
+    }
+
     @Operation(summary = "获取JD下拉列表数据")
     public List<OrgJdSelectorResponse> getJdSelect() {
         return orgApiBiz.getJdSelect();

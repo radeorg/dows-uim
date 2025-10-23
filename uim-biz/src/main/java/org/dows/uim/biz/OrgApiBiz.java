@@ -1707,4 +1707,8 @@ public class OrgApiBiz {
         }
 
     }
+
+    public Long getJdCountByOwnerId(Long ownerId){
+        return orgJdService.count(QueryWrapper.create().eq(OrgJdEntity::getOwnerId, ownerId));
+    }
 }

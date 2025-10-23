@@ -75,7 +75,6 @@ public interface OrgApi {
         throw new UnsupportedOperationException("not class implement");
     }
 
-
     @DeleteMapping("/v1/uim/org/jd/delete")
     default Boolean deleteJd(Long orgJdId) throws UnavailableException {
         throw new UnsupportedOperationException("not class implement");
@@ -83,6 +82,12 @@ public interface OrgApi {
 
     @GetMapping("/v1/uim/org/jd/list")
     default OrgJdListResponse getJdList(OrgJdQueryRequest orgJdQueryRequest) throws UnavailableException {
+        throw new UnsupportedOperationException("not class implement");
+    }
+
+    /** 获取当前登陆者创建的JD总数 */
+    @GetMapping("/v1/open/uim/org/jd/count")
+    default long getJdCountByCurrentAccount() {
         throw new UnsupportedOperationException("not class implement");
     }
 
@@ -219,5 +224,4 @@ public interface OrgApi {
     default EmailStatusResponse isBoundEmail() throws UnavailableException, JsonProcessingException {
         throw new UnsupportedOperationException("not class implement");
     }
-
 }
