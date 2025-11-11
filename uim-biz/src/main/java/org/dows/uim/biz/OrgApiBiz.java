@@ -107,7 +107,7 @@ public class OrgApiBiz {
         return BeanUtil.copyToList(entities, OrgJdResponse.class);
     }
 
-    @Cacheable(value = "listOrgJdByAppIdCache#3000", key = "'appId:' + #appId")
+//    @Cacheable(value = "listOrgJdByAppIdCache#3000", key = "'appId:' + #appId")
     public List<OrgJdResponse> listOrgJdByAppId(String appId) {
         QueryWrapper queryWrapper = QueryWrapper.create()
                 .eq(OrgJdEntity::getAppId, appId)
