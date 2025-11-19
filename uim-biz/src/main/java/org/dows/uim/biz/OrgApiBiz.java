@@ -807,7 +807,7 @@ public class OrgApiBiz {
         List<OrgJdEntity> orgJdEntityList = QueryChain.of(OrgJdEntity.class)
                 .eq(OrgJdEntity::getAppId, aacContext.getAacUser().getAppId())
                 .eq(OrgJdEntity::getDeleted, CommonDelEnum.NORMAL.getCode())
-                .eq(OrgJdEntity::getState, 2)
+                .eq(OrgJdEntity::getState, 1)
                 .orderBy(OrgJdEntity::getTs, false)
                 .list();
         List<OrgJdSelectorResponse> result = BeanUtil.copyToList(orgJdEntityList, OrgJdSelectorResponse.class);
